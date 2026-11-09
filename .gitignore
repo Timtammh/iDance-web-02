@@ -1,0 +1,13 @@
+node_modules
+.env
+.env.local
+dist
+studio/.env
+studio/.env.local
+playwright-report
+test-results
+
+test-results-analytics
+*.tsbuildinfo
+
+test-results-cms

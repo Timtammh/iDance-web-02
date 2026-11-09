@@ -1,0 +1,116 @@
+.hero { position:relative; isolation:isolate; overflow:hidden; background:#000; color:#fff; padding:40px 4% 0; }
+.heading { text-align:center; position:relative; z-index:2; pointer-events:none; }
+.heading>span { font-size:10px; letter-spacing:3px; color:#aab1bd; }
+.heading h1 { font-size:clamp(28px,3.4vw,52px); margin:12px 0 8px; line-height:1.15; }
+.heading p { font-size:12px; letter-spacing:4px; color:#bdc3cc; margin:0; }
+.viewer { position:relative; height:clamp(350px,44vw,620px); width:min(1100px,100%); margin:0 auto; cursor:grab; touch-action:pan-y; user-select:none; z-index:1; }
+.viewer:active { cursor:grabbing; }
+.loading { position:absolute; inset:0; display:grid; place-items:center; font-size:12px; color:#b7c5d7; }
+.hint { position:relative; text-align:center; color:#a2a8b3; font-size:10px; letter-spacing:.5px; margin:10px 0 24px; }
+.footer { position:relative; border-top:1px solid #ffffff20; min-height:84px; display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:20px; font-size:11px; }
+.footer a { display:flex; gap:12px; align-items:center; }
+.cta { padding:12px 20px; background:#f2f3f5; color:#111; }
+.footer>span { justify-self:end; display:flex; align-items:center; gap:15px; color:#c3cad4; }
+.footer i { width:45px; height:1px; background:#ffffff50; }
+.hero :focus-visible { outline:2px solid #b4deff; outline-offset:4px; }
+@media(max-width:600px) { .hero { padding:30px 20px 0; } .heading h1 { font-size:30px; max-width:320px; margin:12px auto; } .viewer { height:390px; width:calc(100% + 32px); margin-left:-16px; } .footer { min-height:90px; grid-template-columns:1fr; justify-items:center; gap:16px; padding:16px 0; } .footer>span { display:none; } .footer a { font-size:10px; } }
+@media(prefers-reduced-motion:reduce) { .hero * { transition:none !important; } }
+
+.hero { padding-inline:var(--site-gutter); }
+
+.footer { z-index:1; padding-bottom:28px; }
+@media(max-width:600px) { .footer { padding-bottom:34px; } }
+
+
+
+.hero { background:transparent; }
+.viewer canvas { display:block; width:100%; height:100%; touch-action:pan-y; }
+.loading { pointer-events:none; text-align:center; padding:20px; }
+
+.canvas { position:absolute; inset:0; }
+
+@media(max-width:767px) {
+  .hero { padding:24px 20px 0; }
+  .heading h1 { font-size:clamp(25px,7vw,32px); max-width:340px; margin:12px auto; }
+  .heading>span { font-size:9px; letter-spacing:2px; }
+  .viewer { width:100%; height:clamp(240px,72vw,360px); margin:0 auto; }
+  .hint { margin:4px 0 18px; }
+  .footer { grid-template-columns:1fr; justify-items:center; gap:16px; min-height:0; padding:18px 0 24px; }
+  .footer>span { display:none; }
+}
+
+/* A bright editorial split replaces the full-width black stage. */
+.hero { display:grid; grid-template-columns:1fr 1.15fr; align-items:center; gap:0 40px; padding-top:62px; color:#252335; background:radial-gradient(ellipse at 75% 40%,#e9e0fb 0%,transparent 55%),#faf9f6; }
+.heading { text-align:left; pointer-events:auto; padding:24px 0; }
+.heading>span { color:#6746aa; }
+.heading h1 { font-size:clamp(48px,5.2vw,78px); max-width:620px; letter-spacing:-.065em; line-height:1.05; margin:22px 0; }
+.heading .description { color:#62616e; font-size:15px; letter-spacing:0; line-height:1.8; max-width:330px; margin:0 0 28px; }
+.stage { border-radius:48% 48% 24px 24px; background:linear-gradient(145deg,#fffaf7bb,#ded2eeaa); border:1px solid #ffffff; min-width:0; }
+.viewer { width:100%; height:clamp(320px,35vw,540px); }
+.cta { display:inline-flex; align-items:center; gap:16px; padding:16px 24px; border-radius:999px; background:#6746aa; color:white; font-size:12px; }
+.cta:hover { background:#50328d; }
+.hint { grid-column:2; color:#62616e; margin:15px 0 30px; }
+.footer { grid-column:1/-1; border-color:#dcd6e3; padding-top:20px; }
+.footer>span { color:#62616e; }
+.loading { color:#62616e; }
+@media(max-width:767px) {
+ .hero { grid-template-columns:1fr; gap:0; padding-top:26px; }
+ .heading { text-align:center; padding:8px 0 30px; }
+ .heading h1 { font-size:clamp(42px,10vw,62px); max-width:520px; margin:18px auto; }
+ .heading .description { margin:0 auto 22px; }
+ .stage { width:100%; }
+ .viewer { height:clamp(260px,75vw,420px); }
+ .hint { grid-column:1; margin-bottom:22px; }
+ .footer { grid-column:1; }
+}
+
+
+/* Predominantly white hero; the sound bars are a quiet neutral texture. */
+.hero { background:#fff var(--equalizer-texture) center bottom/960px 380px repeat-x; color:#252628; }
+.stage { position:relative; background:linear-gradient(145deg,#fafaf9b3,#efefed80); border-color:#e9e9e6; box-shadow:inset 0 1px 30px #ffffff80; }
+.loading,.hint,.heading .description { color:#626364; }
+.footer { border-color:#e4e4e1; }
+@media(max-width:767px) { .hero { background-size:720px 285px; } }
+
+/* Slow sound-wave lines replace the static bars in this Hero only. */
+.hero { background:#fff; }
+.stage,.hint { z-index:1; }
+
+/* Electric accents, with contrast-safe labels on the white hero. */
+.cta { background:#7138ed; color:#fff; transition:background-color .2s,box-shadow .2s; }
+.cta:hover { background:#5923c7; box-shadow:0 5px 18px #7138ed26; }
+.footer .cta { background:#27d9ef; color:#12212b; }
+.footer .cta:hover { background:#12bfd5; }
+.hero .cta:focus-visible { outline:3px solid #172133; outline-offset:4px; }
+
+.videoHero { padding:48px var(--site-gutter) 42px; background:#fff; color:#252628; }
+.videoHeading { text-align:center; margin:0 auto 28px; }
+.videoHeading>span { font-size:10px; letter-spacing:3px; color:#6746aa; }
+.videoHeading h1 { font-size:clamp(38px,5vw,72px); letter-spacing:-.055em; line-height:1.1; margin:14px 0; }
+.videoHeading p { color:#626364; font-size:15px; }
+.videoFrame { max-width:1400px; margin:auto; aspect-ratio:16/9; background:#16151b; border-radius:24px; overflow:hidden; box-shadow:0 16px 40px #24212722; }
+.videoFrame iframe { display:block; border:0; width:100%; height:100%; }
+.videoCover { position:relative; display:flex; align-items:center; justify-content:center; flex-direction:column; width:100%; height:100%; border:0; color:white; background:radial-gradient(ellipse at center,#353040,#121116 80%); cursor:pointer; }
+.videoCover>img { position:absolute; width:75%; height:100%; object-fit:contain; opacity:.62; }
+.videoCover>span { position:relative; display:flex; align-items:center; gap:12px; padding:18px 26px; border-radius:99px; background:#7138ed; font-size:15px; box-shadow:0 8px 30px #0006; }
+.videoCover>small { position:relative; margin-top:16px; letter-spacing:3px; font-size:10px; text-shadow:0 1px 4px #000; }
+.videoCover:hover>span { background:#5923c7; }
+.videoCover:focus-visible { outline:3px solid #27d9ef; outline-offset:-6px; }
+.videoCaption { max-width:1400px; margin:18px auto 0; display:flex; justify-content:space-between; align-items:center; gap:18px; color:#626364; font-size:11px; line-height:1.6; }
+.videoCaption p { margin:0; }
+.videoCaption a { display:flex; align-items:center; gap:6px; color:#5033a2; white-space:nowrap; text-decoration:underline; text-underline-offset:4px; }
+@media(max-width:767px) { .videoHero { padding-top:28px; } .videoFrame { border-radius:16px; } .videoCover>span { padding:12px 16px; font-size:12px; } .videoCover>small { font-size:8px; letter-spacing:1px; } .videoCaption { flex-direction:column; align-items:flex-start; } }
+
+/* Native cinematic background: no headline, card frame or player chrome. */
+.cinematicHero { width:100%; height:calc(100svh - 84px); min-height:360px; max-height:1000px; padding:0; background:#15141a url('/media/mixer-hero-v2-poster.jpg') center/cover no-repeat; }
+.cinematicHero .backgroundVideo { position:absolute !important; inset:0; width:100%; height:100%; object-fit:cover; display:block; z-index:0 !important; }
+.cinematicHero .videoMotion { position:absolute !important; right:22px; bottom:22px; z-index:2; display:grid; place-items:center; width:44px; height:44px; padding:0; border:1px solid #ffffff65; border-radius:50%; background:#0005; color:white; opacity:.65; cursor:pointer; }
+.cinematicHero .videoMotion:hover,.cinematicHero .videoMotion:focus-visible { opacity:1; background:#000a; }
+.cinematicHero .videoMotion:focus-visible { outline:3px solid #fff; outline-offset:4px; }
+@media(max-width:767px) { .cinematicHero { height:calc(78svh - 84px); min-height:360px; } .cinematicHero .videoMotion { right:16px; bottom:16px; } }
+.cinematicHero .videoMotion { right:auto; left:22px; }
+@media(max-width:767px) { .cinematicHero .videoMotion { left:16px; right:auto; } }
+
+/* A slightly shallower cinematic opening. */
+.cinematicHero { height:calc(85svh - 84px); min-height:320px; max-height:850px; }
+@media(max-width:767px) { .cinematicHero { height:calc(68svh - 84px); min-height:320px; } }

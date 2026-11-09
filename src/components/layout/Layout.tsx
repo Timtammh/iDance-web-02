@@ -8,6 +8,7 @@ import { savedConsent, setConsent } from "../../lib/analytics";
 import { MobileProductsMenu, ProductsMenu } from "./ProductsMenu";
 
 import bottomLogo from "../../pic/bottom.jpg";
+import headerLogo from "../../pic/idance-logo.svg";
 import instagramIcon from "../../icon/instagram (1).png";
 import facebookIcon from "../../icon/facebook.png";
 import youtubeIcon from "../../icon/youtube.png";
@@ -47,6 +48,8 @@ export function Layout() {
     !["/#find-your-sound", "#find-your-sound", "/#news", "#news", "/news"].includes(n.path) &&
     !["find your sound", "news"].includes(n.label.trim().toLowerCase()),
   );
+  const contactIndex = mainNav.findIndex(n => n.path === "/contact" || n.label.trim().toLowerCase() === "contact");
+  mainNav.splice(contactIndex < 0 ? mainNav.length : contactIndex, 0, { label: "News", path: "/#news" });
   const close = () => {
     setMenu(false);
     setSearch(false);
@@ -58,7 +61,7 @@ export function Layout() {
       </a>
       <header className="header">
         <Link className="wordmark" to="/" aria-label="iDance home">
-          <img src={bottomLogo} alt="iDance" width={47.3} height={57.2} />
+          <img src={headerLogo} alt="iDance" width={64} height={78} />
         </Link>
         <nav aria-label="Main navigation" className="desktop-nav">
           {mainNav.map((n) => n.path === "/products" ? (

@@ -8,6 +8,10 @@ export type Product = {
   slug: string;
   category: Category;
   images: Picture[];
+  campaignImage?: Picture;
+  productVideo?: string;
+  itemNumber?: string;
+  colour?: string;
   summary: string;
   description?: PortableTextBlock[];
   features: string[];

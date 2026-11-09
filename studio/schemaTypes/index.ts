@@ -120,6 +120,10 @@ export const schemaTypes = [
   doc("productCategory", [text("name", true), slug]),
   doc("product", [
     text("name", true),
+    picture("campaignImage"),
+    defineField({ name: "productVideo", type: "file", options: { accept: "video/mp4" } }),
+    defineField({ name: "itemNumber", type: "string" }),
+    defineField({ name: "colour", type: "string" }),
     slug,
     defineField({
       name: "category",

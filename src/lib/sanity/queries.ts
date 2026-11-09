@@ -1,5 +1,5 @@
 const image = '{...,"url":asset->url,alt}';
-const product = `{ "id":_id,name,"slug":slug.current,category->{"id":_id,name,"slug":slug.current},images[]${image},summary,description,features,specifications,"manual":manual.asset->url,isPopular,isNew,"relatedProducts":relatedProducts[]->_id,seo }`;
+const product = `{ "id":_id,name,"slug":slug.current,category->{"id":_id,name,"slug":slug.current},images[]${image},campaignImage${image},"productVideo":productVideo.asset->url,itemNumber,colour,summary,description,features,specifications,"manual":manual.asset->url,isPopular,isNew,"relatedProducts":relatedProducts[]->_id,seo }`;
 export const contentQuery = `{
  "products":*[_type=="product"] | order(name asc) ${product},
  "categories":*[_type=="productCategory"]{"id":_id,name,"slug":slug.current},

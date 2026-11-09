@@ -2,6 +2,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+// Mobile browser chrome changes height while scrolling, not the page layout.
+ScrollTrigger.config({ ignoreMobileResize: true });
 export { gsap, ScrollTrigger, useGSAP };
 
 // All distances are CSS pixels; keep large surfaces on transform/opacity only.

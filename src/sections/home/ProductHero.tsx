@@ -24,26 +24,48 @@ function HeroMedia({ source, poster, label, demo }: { source: string; poster: st
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
+  const userPaused = useRef(false);
+  const explicitPlay = useRef(false);
+  const syncPlayback = useRef(() => {});
   useEffect(() => {
     const el = video.current;
     if (!el) return;
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let onscreen = false;
     const apply = () => {
-      if (preference.matches) { el.pause(); setPlaying(false); }
-      else { el.muted = true; void el.play().catch(() => setPlaying(false)); }
+      if (!onscreen || document.hidden || (preference.matches && !explicitPlay.current) || userPaused.current) {
+        el.pause();
+      } else {
+        el.muted = true;
+        void el.play().catch(() => setPlaying(false));
+      }
     };
-    apply();
-    preference.addEventListener("change", apply);
-    return () => { preference.removeEventListener("change", apply); el.pause(); };
+    syncPlayback.current = apply;
+    const observer = new IntersectionObserver(([entry]) => {
+      onscreen = entry.isIntersecting;
+      apply();
+    });
+    observer.observe(el);
+    const preferenceChanged = () => { explicitPlay.current = false; apply(); };
+    preference.addEventListener("change", preferenceChanged);
+    document.addEventListener("visibilitychange", apply);
+    return () => {
+      observer.disconnect();
+      preference.removeEventListener("change", preferenceChanged);
+      document.removeEventListener("visibilitychange", apply);
+      syncPlayback.current = () => {};
+      el.pause();
+    };
   }, []);
   const toggle = () => {
     const el = video.current;
     if (!el) return;
-    if (el.paused) void el.play().catch(() => setPlaying(false));
-    else el.pause();
+    userPaused.current = !el.paused;
+    explicitPlay.current = el.paused;
+    syncPlayback.current();
   };
   return <section className={styles.cinematicHero} data-hero aria-label={demo ? "iDance product video" : label}>
-    <video ref={video} className={styles.backgroundVideo} src={source} poster={poster} muted loop playsInline preload="auto" aria-label={label} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onError={() => { setFailed(true); setPlaying(false); }} style={failed ? {visibility:"hidden"} : undefined} />
+    <video ref={video} className={styles.backgroundVideo} data-square-pixels={source === "/media/DJX101EV2-10MB.mp4" || undefined} src={source} poster={poster} muted loop playsInline preload="metadata" aria-label={label} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onError={() => { setFailed(true); setPlaying(false); }} style={failed ? {visibility:"hidden"} : undefined} />
     {failed && <img className={styles.backgroundVideo} src={poster} alt={label} onError={e => { if (!e.currentTarget.src.endsWith("/assets/fallback.svg")) e.currentTarget.src = "/assets/fallback.svg"; }} />}
     {!failed && <button className={styles.videoMotion} onClick={toggle} aria-label={playing ? "Pause background video" : "Play background video"} title={playing ? "Pause background video" : "Play background video"}>{playing ? <Pause size={16}/> : <Play size={16}/>}</button>}
   </section>;
@@ -51,7 +73,9 @@ function HeroMedia({ source, poster, label, demo }: { source: string; poster: st
 
 function MobileHero() {
   const [active, setActive] = useState(0);
+  const [displayed, setDisplayed] = useState(0);
   const [auto, setAuto] = useState(true);
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set());
   const [visible, setVisible] = useState(() => !document.hidden);
   const [onscreen, setOnscreen] = useState(true);
   const [reduced, setReduced] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -67,6 +91,10 @@ function MobileHero() {
     if (root.current) observer.observe(root.current);
     return () => { media.removeEventListener("change", preference); document.removeEventListener("visibilitychange", visibility); observer.disconnect(); };
   }, []);
+  // Keep the previous frame visible while a directly selected image downloads.
+  useEffect(() => {
+    if (loaded.has(active)) setDisplayed(active);
+  }, [active, loaded]);
   const running = auto && !reduced;
   useEffect(() => {
     if (!running || !visible || !onscreen) return;
@@ -79,7 +107,8 @@ function MobileHero() {
       onPointerDown={event => { start.current = { x: event.clientX, y: event.clientY }; }}
       onPointerUp={event => { const from = start.current; start.current = null; if (!from) return; const dx = event.clientX - from.x, dy = event.clientY - from.y; if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) select(active + (dx < 0 ? 1 : -1)); }}
       onPointerCancel={() => { start.current = null; }}>
-      {mobileHeroImages.map((picture, index) => <img key={picture.src} src={picture.src} alt={picture.alt} width={picture.width} height={picture.height} className={styles.mobileImage} data-active={index === active} aria-hidden={index !== active} loading={index === 0 ? "eager" : "lazy"} decoding="async" draggable={false}
+      {mobileHeroImages.map((picture, index) => <img key={picture.src} src={index === active || loaded.has(index) || (onscreen && loaded.has(active) && index === (active + 1) % mobileHeroImages.length) ? picture.src : undefined} alt={picture.alt} width={picture.width} height={picture.height} className={styles.mobileImage} data-active={index === displayed} aria-hidden={index !== displayed} loading={index === active ? "eager" : "lazy"} fetchPriority={index === active ? "high" : "low"} decoding="async" draggable={false}
+        onLoad={() => setLoaded(previous => previous.has(index) ? previous : new Set(previous).add(index))}
         onError={event => { if (!event.currentTarget.src.endsWith("/assets/fallback.svg")) event.currentTarget.src = "/assets/fallback.svg"; }} />)}
     </div>
     <div className={styles.mobileHeroControls}>

@@ -1,3 +1,4 @@
+import { XD301Product } from "./XD301Product";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { PortableText } from "@portabletext/react";
@@ -46,11 +47,8 @@ export function Products() {
         <p className="intro">
           Find your next singalong, celebration or spark of creativity.
         </p>
-        {data.demo && (
-          <p className="demo-notice">
-            Demo collection — product names, illustrations and descriptions are
-            placeholders.
-          </p>
+        {products.some(product => product.demo) && (
+          <p className="demo-notice">Items marked as demo are placeholder concepts. Other listings use supplied product information.</p>
         )}
         <div className="filters">
           <label className="field">
@@ -85,7 +83,7 @@ export function Products() {
           </label>
         </div>
         <p aria-live="polite" className="result-count">
-          {products.length} products
+          {products.length} {products.length === 1 ? "product" : "products"}
         </p>
         <div className="product-grid">
           {products.map((p) => (
@@ -142,6 +140,7 @@ export function ProductDetail() {
     return () => script.remove();
   }, [p]);
   if (!p) return <NotFound />;
+  if (p.slug === "xd301") return <XD301Product key={p.id} product={p} />;
   const related = data.products
     .filter(
       (r) =>
@@ -152,19 +151,20 @@ export function ProductDetail() {
     )
     .slice(0, 3);
   return (
-    <section className="page light">
+    <section className="page light product-detail-page" data-product={p.slug}>
       <div className="container">
-        <Link className="text-link" to="/products">
+        <Link className="text-link" to={`/products?category=${encodeURIComponent(p.category.slug)}`}>
           ← Back to collection
         </Link>
         <div className="detail-grid">
           <div>
-            <div className="detail-image">
+            <div className="detail-image" data-image-index={selected}>
               <PictureView
                 picture={p.images[selected] || p.images[0]}
                 priority
               />
             </div>
+            {p.slug === "xd301" && <p className="product-image-caption">{selected === 0 ? "Product visualisation. See the original product image for printed details." : "Original supplied product image."}</p>}
             {p.images.length > 1 && (
               <div className="thumbnails">
                 {p.images.map((img, i) => (
@@ -181,7 +181,7 @@ export function ProductDetail() {
             )}
           </div>
           <div>
-            <span className="eyebrow muted">{p.category.name}</span>
+            <span className="eyebrow muted">{p.slug === "xd301" ? "DS / DJ MIXER / PORTABLE DJ STATION" : p.category.name}</span>
             <h1>{p.name}</h1>
             <p className="intro">{p.summary}</p>
             {p.demo && (

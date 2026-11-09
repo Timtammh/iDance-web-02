@@ -94,26 +94,26 @@ export function Home() {
         </div>
       </section>
       {featured && (
-        <section className={`section light ${styles.featured} ${styles.withParticleBackdrop}`} data-featured>
+        <section id="spotlight" className={`section light ${styles.featured} ${styles.withParticleBackdrop}`} data-featured>
           <Light variant="refraction" color="#d9f4ff" intensity={0.3} />
           <div className={`container ${styles.featuredInner}`} data-reveal>
             <div className={styles.featuredImage}>
               <div className={styles.featureCircle} data-feature-depth />
               <div className={styles.featureProduct} data-feature-product>
-                {data.demo ? <img src="/assets/mixer.svg" alt="Illustrative graphite DJ mixer with channel faders, knobs and illuminated performance pads" width={800} height={700} style={{ width:"100%",height:"100%",objectFit:"contain" }} /> : <PictureView picture={spotlight?.image || featured.images[0]} />}
+                {data.demo ? <img src="/media/xd301-angled-preview.png" alt="Angled preview rendering of the iDance XD301 portable DJ station with dual turntables and illuminated sound pads" width={1536} height={1024} style={{ width:"100%",height:"100%",objectFit:"contain" }} /> : <PictureView picture={spotlight?.image || featured.images[0]} />}
               </div>
               <span>01 / THE SPOTLIGHT</span>
             </div>
             <div className={styles.featuredCopy}>
-              <span className="eyebrow muted">{spotlight?.eyebrow || "TURN UP THE MOMENT"}</span>
+              <span className="eyebrow muted">{spotlight?.eyebrow || "MEET THE XD301"}</span>
               <h2>
-                {data.demo ? <>A little louder.<br />A little closer.</> : spotlight?.title || featured.name}
+                {data.demo ? <>Your mix.<br />Your moment.</> : spotlight?.title || featured.name}
               </h2>
               <p>
-                {data.demo ? "An illustrative mixer concept. Explore the controls, shape your sound, and bring your next set to life." : spotlight?.description || featured.summary}
+                {data.demo ? "Mix, scratch and play with the iDance XD301 portable DJ station." : spotlight?.description || featured.summary}
               </p>
               <ul>
-                {(data.demo ? ["Mixer concept illustration", "Channel faders and performance pads", "Demo design, not product specifications"] : spotlight?.features || featured.features).map((f) => (
+                {(data.demo ? ["Dual turntables and 16 LED sound pads", "Gesture-controlled Space Control", "Rechargeable battery for portable play"] : spotlight?.features || featured.features).map((f) => (
                   <li key={f}>
                     <AudioLines size={16} />
                     {f}
@@ -122,15 +122,10 @@ export function Home() {
               </ul>
               <Link
                 className="button dark-button"
-                to={data.demo ? "/products" : `/products/${featured.slug}`}
+                to={data.demo ? "/products/xd301" : `/products/${featured.slug}`}
               >
-                {data.demo ? "Explore products" : spotlight?.ctaLabel || "Explore product"} <ArrowUpRight size={17} />
+                {data.demo ? "Explore XD301" : spotlight?.ctaLabel || "Explore product"} <ArrowUpRight size={17} />
               </Link>
-              {featured.demo && (
-                <small className="demo-label">
-                  Illustrative concept. Official product details to follow.
-                </small>
-              )}
             </div>
           </div>
         <SoundDivider />

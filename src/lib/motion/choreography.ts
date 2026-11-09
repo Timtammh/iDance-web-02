@@ -37,7 +37,7 @@ export function watchMotionLayout(container: Element) {
   let timer: ReturnType<typeof setTimeout>;
   const refresh = () => {
     clearTimeout(timer);
-    timer = setTimeout(() => { if (!disposed) ScrollTrigger.refresh(); }, 120);
+    timer = setTimeout(() => { if (!disposed) ScrollTrigger.refresh(true); }, 120);
   };
   container.addEventListener("load", refresh, true);
   container.addEventListener("error", refresh, true);

@@ -562,3 +562,50 @@
 .soundDivider { height:18px; bottom:8px; }
 .soundDivider i { display:block; width:100%; height:1px; margin-top:8px; background:linear-gradient(90deg,transparent,#cee3f188 30%,#cbbbe888 65%,transparent); box-shadow:0 2px 8px #cec1e833; }
 @media(max-width:767px) { .soundDivider { height:12px; opacity:.65; } }
+
+/* User-selected solid orange spotlight, sampled from the original CTA. */
+:global(#main) .featured.withParticleBackdrop:global(.light) {
+  background:#ff8646;
+  color:#251b15;
+}
+.featured > :global([data-light]), .featured > .soundDivider { display:none; }
+.featured .featureCircle { background:#ff8646; border-color:#251b1526; }
+.featured .featuredCopy h2,
+.featured .featuredCopy > p,
+.featured .featuredCopy li,
+.featured .featuredCopy li svg,
+.featured .featuredCopy :global(.eyebrow),
+.featured .featuredCopy :global(.demo-label),
+.featured .featuredImage > span { color:#251b15; }
+.featured .featuredCopy :global(.button) { background:#251b15; color:#fff; }
+.featured .featuredCopy :global(.button):hover { background:#442d20; }
+.featured .featuredCopy :global(.button):focus-visible { outline:3px solid #251b15; outline-offset:5px; }
+
+/* Preserve the supplied perspective; avoid nested rotation resampling.
+   The alpha-shaped shadow is static and travels with the existing product layer. */
+.featured .featureProduct img {
+  transform:none;
+  filter:drop-shadow(0 14px 12px rgb(57 25 9 / 28%));
+}
+:global(#main) .featured { padding-block:90.72px; }
+@media(max-width:1024px) { :global(#main) .featured { padding-block:71.28px; } }
+@media(max-width:767px) {
+  :global(#main) .featured { padding-block:55.08px; }
+  .featuredInner { row-gap:36px; }
+  .featured .featureProduct img { filter:drop-shadow(0 10px 9px rgb(57 25 9 / 28%)); }
+}
+
+/* Requested 20% smaller XD301 CTA; retain a comfortable transparent hit area. */
+.featured .featuredCopy :global(.button) {
+  position:relative;
+  font-size:10.4px;
+  gap:19.2px;
+  padding:13.6px 18.4px;
+  min-height:40px;
+  border-width:.8px;
+}
+.featured .featuredCopy :global(.button) svg { width:13.6px; height:13.6px; }
+.featured .featuredCopy :global(.button)::before { content:""; position:absolute; inset:-3px 0; }
+@media(max-width:767px) {
+  .featured .featuredCopy :global(.button) { font-size:9.6px; padding:12.8px; }
+}

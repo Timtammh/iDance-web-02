@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ContentProvider } from "./hooks/useContent";
 import { Layout } from "./components/layout/Layout";
 import { Home } from "./sections/home/Home";
+import { MajorCategory, Subcategory } from "./pages/Categories";
 import {
   Products,
   ProductDetail,
@@ -25,6 +26,8 @@ createRoot(document.getElementById("root")!).render(
           <Route element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
+            <Route path="products/category/:topic" element={<MajorCategory />} />
+            <Route path="products/category/:topic/:subcategory" element={<Subcategory />} />
             <Route path="products/:slug" element={<ProductDetail />} />
             <Route path="about" element={<About />} />
             <Route path="tv" element={<TV />} />

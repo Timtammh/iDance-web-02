@@ -49,13 +49,13 @@ export function useHomeMotion(root: RefObject<HTMLDivElement | null>) {
         if (featured) {
           const art = featured.querySelector(`.${styles.featuredImage}`);
           const copy = featured.querySelector(`.${styles.featuredCopy}`);
-          if (art) disposers.push(reveal(art, art, { x: mobile ? 0 : -72, scale: 0.9, rotation: mobile ? 0 : -3 }, mobile));
+          if (art) disposers.push(reveal(art, art, { x: mobile ? 0 : -72, force3D: false }, mobile));
           if (copy) disposers.push(reveal(copy, copy.children, { x: mobile ? 0 : 42, y: mobile ? 28 : 32, stagger: 0.11 }, mobile));
           if (!mobile) {
             const product = featured.querySelector("[data-feature-product]");
             const depth = featured.querySelector("[data-feature-depth]");
-            if (product) gsap.fromTo(product, { y: 56, rotation: 3 }, {
-              y: -56, rotation: -3, ease: "none",
+            if (product) gsap.fromTo(product, { y: 56 }, {
+              y: -56, force3D: false, snap: { y: 1 }, ease: "none",
               scrollTrigger: { trigger: featured, start: "top bottom", end: "bottom top", scrub: 1 },
             });
             if (depth) gsap.fromTo(depth, { y: -32, scale: 0.94 }, {

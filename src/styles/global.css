@@ -1158,3 +1158,83 @@ body { background:#fff; }
 
 /* Consistent tracking across all Bestigia page and section headings. */
 #main h1, #main h2 { letter-spacing:.01em; }
+
+/* Bound the intro's moving raster to one viewport instead of the entire page.
+   Restore natural height and fixed-position descendants when entry completes. */
+.intro-site-entering { height:100svh; overflow:clip; will-change:transform; }
+
+/* Reference masthead: iDance cyan, white vector mark, and a sweeping lower edge.
+   Static opaque layers avoid sampling video behind the sticky navigation. */
+.header {
+  --header-height:104px;
+  height:var(--header-height);
+  isolation:isolate;
+  background:#d9d9d9;
+  color:#123348;
+  border:0;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+.header::before {
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  --curve-width:112px;
+  width:calc(var(--site-gutter) + 64px + 16px + var(--curve-width));
+  z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(#00aeef,#00aeef) left/ calc(100% - var(--curve-width) + 1px) 100% no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath fill='%2300aeef' d='M0 0H100C88 52 42 100 0 100Z'/%3E%3C/svg%3E") right/var(--curve-width) 100% no-repeat;
+  border:0;
+  border-radius:0;
+}
+.header .wordmark { flex-basis:64px; width:64px; height:78px; }
+.header .wordmark img {
+  width:64px; height:78px; max-height:78px;
+  filter:brightness(0) invert(1);
+}
+.header .desktop-nav a { color:#123348; }
+.header .desktop-nav a:hover,.header .desktop-nav a.active { color:#071f30; }
+.header .desktop-nav a::after { background:currentColor; }
+.header .header-explore { border-color:#12334840; }
+.header :focus-visible { outline:3px solid #123348; outline-offset:5px; }
+.header .wordmark:focus-visible { outline-color:white; }
+@media(max-width:767px) {
+  .header { --header-height:88px; }
+  .header::before { --curve-width:70px; width:calc(var(--site-gutter) + 52px + 12px + var(--curve-width)); }
+  .header .wordmark { flex-basis:52px; width:52px; height:64px; }
+  .header .wordmark img { width:52px; height:64px; max-height:64px; }
+}
+
+/* Homepage News anchor clears the taller branded masthead. */
+#news { scroll-margin-top:120px; }
+@media(max-width:767px) { #news { scroll-margin-top:104px; } }
+
+/* XD301 first product-page direction. Existing CMS fields drive all content. */
+.product-detail-page[data-product="xd301"] { background:#faf9f6; color:#251b15; }
+.product-detail-page[data-product="xd301"] .detail-grid { align-items:start; gap:clamp(32px,5vw,84px); }
+.product-detail-page[data-product="xd301"] .detail-grid > div:first-child { position:sticky; top:128px; }
+.product-detail-page[data-product="xd301"] .detail-image { background:#ff8646; border-radius:28px; aspect-ratio:1; display:grid; place-items:center; }
+.product-detail-page[data-product="xd301"] .detail-image img { width:100%; height:100%; padding:24px; object-fit:contain; filter:drop-shadow(0 16px 14px #39190940); }
+.product-detail-page[data-product="xd301"] .detail-image[data-image-index="1"] { background:#fff; }
+.product-detail-page[data-product="xd301"] .detail-image[data-image-index="1"] img { filter:none; padding:0; }
+.product-detail-page[data-product="xd301"] h1 { font-size:clamp(64px,7vw,104px); margin:16px 0; line-height:1; }
+.product-detail-page[data-product="xd301"] .intro { font-size:20px; line-height:1.65; }
+.product-detail-page[data-product="xd301"] .feature-list { display:grid; gap:14px; padding-block:24px; border-block:1px solid #251b1524; }
+.product-detail-page[data-product="xd301"] .feature-list li { margin:0; line-height:1.6; }
+.product-detail-page[data-product="xd301"] .feature-list svg { flex-shrink:0; margin-top:2px; color:#8a390b; }
+.product-detail-page[data-product="xd301"] .specifications { margin:0 0 32px; }
+.product-detail-page[data-product="xd301"] .specifications > div { gap:24px; line-height:1.6; }
+.product-detail-page[data-product="xd301"] .specifications dd { margin:0; max-width:65%; text-align:right; }
+.product-detail-page[data-product="xd301"] .dark-button { background:#251b15; color:#fff; }
+.product-detail-page[data-product="xd301"] .dark-button:hover { background:#442d20; }
+.product-image-caption { font-size:11px; line-height:1.6; color:#66554a; margin:14px 0; }
+.product-detail-page[data-product="xd301"] .thumbnails button { border-radius:12px; overflow:hidden; background:#fff; min-height:64px; cursor:pointer; }
+.product-detail-page[data-product="xd301"] .thumbnails img { width:100%; height:64px; object-fit:contain; }
+.product-detail-page[data-product="xd301"] :focus-visible { outline:3px solid #8a390b; outline-offset:4px; }
+@media(max-width:767px) {
+  .product-detail-page[data-product="xd301"] .detail-grid > div:first-child { position:static; }
+  .product-detail-page[data-product="xd301"] .detail-image { border-radius:20px; }
+  .product-detail-page[data-product="xd301"] .intro { font-size:17px; }
+  .product-detail-page[data-product="xd301"] .specifications > div { gap:16px; }
+}

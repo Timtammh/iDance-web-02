@@ -244,16 +244,17 @@
 /* DJ response: composited decoration only, never in the pointer path. */
 .deck { --deck-accent:#64dcff; }
 .deckGlow { position:absolute; pointer-events:none; inset:0; border-radius:inherit; overflow:hidden; }
-.deckGlow::after { content:""; position:absolute; left:var(--light-x); top:0; width:38%; height:100%; transform:translateX(-50%); background:radial-gradient(ellipse at 50% 50%,color-mix(in srgb,var(--deck-accent) 15%,transparent),transparent 72%); }
+.deckGlow::after { content:""; position:absolute; left:0; top:0; width:100%; height:100%; transform:translateX(calc(var(--light-x) - 50%)); background:radial-gradient(ellipse at 50% 50%,color-mix(in srgb,var(--deck-accent) 15%,transparent),transparent 72%); background-size:38% 100%; background-position:center; background-repeat:no-repeat; }
 .levelLeds { position:absolute; bottom:9px; left:50%; transform:translateX(-50%); display:flex; gap:5px; pointer-events:none; }
 .levelLeds i { display:block; width:12px; height:3px; border-radius:2px; background:#ffffff12; }
 .levelLeds i[data-lit="true"] { background:var(--deck-accent); box-shadow:0 0 5px color-mix(in srgb,var(--deck-accent) 50%,transparent); }
 .cueEdge { position:absolute; inset:3px; pointer-events:none; border-radius:inherit; border:1px solid var(--deck-accent); opacity:0; clip-path:inset(0 100% 0 0); }
 .deck[data-cue="true"] .cueEdge { animation:deck-cue 1050ms ease-out both; }
 .deck[data-cue="true"] .levelLeds i { animation:led-cue 450ms ease-out var(--led-delay) both; }
-.deck[data-cue="true"] .product { animation:card-cue 650ms cubic-bezier(.22,1,.36,1) both; }
+/* Product transforms belong exclusively to the GSAP reveal.
+   A second CSS entrance previously overrode it mid-animation. */
 @keyframes deck-cue { 0%{clip-path:inset(0 100% 0 0);opacity:0} 25%{opacity:.7} 75%{clip-path:inset(0 0 0 0);opacity:.5} 100%{clip-path:inset(0 0 0 0);opacity:0} }
 @keyframes led-cue { 0%{opacity:.15} 40%{background:var(--deck-accent);opacity:1;box-shadow:0 0 7px var(--deck-accent)} 100%{opacity:1} }
-@keyframes card-cue { from{opacity:.75;transform:translateY(8px)} to{opacity:1;transform:none} }
-@media(max-width:767px) { .levelLeds { bottom:7px; gap:4px; } .levelLeds i { width:8px;height:2px; } .deckGlow::after { width:60%; } }
+
+@media(max-width:767px) { .levelLeds { bottom:7px; gap:4px; } .levelLeds i { width:8px;height:2px; } .deckGlow::after { background-size:60% 100%; } }
 @media(prefers-reduced-motion:reduce) { .cueEdge,.deck[data-cue="true"] .product,.deck[data-cue="true"] .levelLeds i { animation:none!important; } }

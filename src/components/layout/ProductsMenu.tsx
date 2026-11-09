@@ -4,30 +4,8 @@ import { ArrowUpRight, ChevronDown, ChevronRight } from "lucide-react";
 import type { Content } from "../../types/content";
 import styles from "./ProductsMenu.module.css";
 
-type MenuEntry = { label: string; unconfirmed?: boolean };
-type ProductTopic = { id: string; label: string; children: MenuEntry[] };
-
-// Navigation labels are editorial structure, not new catalogue data. Unreadable
-// handwritten labels stay pending until confirmed; never infer product facts.
-export const productTopics: ProductTopic[] = [
-  { id: "karaoke", label: "Karaoke", children: [
-    { label: "Party Mic" }, { label: "Trolley" }, { label: "Category to confirm", unconfirmed: true },
-  ] },
-  { id: "ds", label: "DS", children: [
-    { label: "Category to confirm", unconfirmed: true },
-    { label: "Disco Lighting" },
-    { label: "DEEJAY Mini Verse" },
-    { label: "Pocket" },
-    { label: "Lighting" },
-  ] },
-  { id: "musical-instruments", label: "Musical Instruments", children: [
-    { label: "Guitar" }, { label: "Keyboard" }, { label: "Pocket" },
-  ] },
-  { id: "interactive-board", label: "Interactive Board", children: [
-    { label: "My Stage" }, { label: "GrooveBrix" }, { label: "DEEJAY Mini Verse" },
-  ] },
-  { id: "apps", label: "Apps", children: [] },
-];
+import { productTopics, topicHref, subcategoryHref, getTopicProducts, type MenuEntry, type ProductTopic } from "../../data/productTopics";
+export { productTopics } from "../../data/productTopics";
 
 const normalize = (value: string) => value.trim().toLocaleLowerCase().replace(/[\s_-]+/g, " ");
 
@@ -45,21 +23,23 @@ export function productMenuHref(entry: MenuEntry, data: Pick<Content, "categorie
 
 type Catalogue = Pick<Content, "categories" | "products">;
 
-function TopicContent({ topic, data, onNavigate }: { topic: ProductTopic; data: Catalogue; onNavigate: () => void }) {
-  const href = productMenuHref(topic, data);
+function TopicContent({ topic, data, onNavigate, onEntry, activeEntry }: { topic: ProductTopic; data: Catalogue; onNavigate: () => void; onEntry?: (entry: MenuEntry) => void; activeEntry?: string }) {
   return <>
-    {topic.children.length > 0 && (href
-      ? <Link className={styles.collectionLink} to={href} onClick={onNavigate}>All {topic.label} <ArrowUpRight size={15} aria-hidden="true" /></Link>
-      : <span className={styles.collectionLabel}>All {topic.label}</span>)}
-    {topic.children.length > 0 ? <ul className={styles.subtopics}>
-      {topic.children.map(entry => {
-        const target = productMenuHref(entry, data);
-        return <li key={entry.label}>{target
-          ? <Link className={styles.subtopicLink} to={target} onClick={onNavigate}>{entry.label}<ArrowUpRight size={15} aria-hidden="true" /></Link>
-          : <span className={styles.pendingItem}>{entry.label}</span>}
-        </li>;
-      })}
-    </ul> : null}
+    <Link className={styles.collectionLink} to={topicHref(topic.id)} onClick={onNavigate}>All {topic.label} <ArrowUpRight size={15} aria-hidden="true" /></Link>
+    <ul className={styles.subtopics}>
+      {topic.children.filter(entry => !entry.unconfirmed).map(entry => <li key={entry.label}>
+        {entry.unconfirmed ? <span className={styles.pendingItem}>{entry.label}</span> : onEntry ?
+          <div className={styles.subtopicRow} data-active={entry.label === activeEntry} onPointerEnter={e => { if(e.pointerType === "mouse") onEntry(entry); }} onFocus={() => onEntry(entry)}>
+            <Link className={styles.subtopicLink} to={subcategoryHref(topic.id, entry.label)} onClick={onNavigate}>{entry.label}</Link>
+            <button className={styles.productDisclosure} aria-label={`Show ${entry.label} products`} aria-controls="desktop-product-list" aria-expanded={entry.label === activeEntry} onKeyDown={event => { if(event.key === "ArrowRight") { event.preventDefault(); document.querySelector<HTMLElement>("#desktop-product-list a")?.focus(); } }} onClick={() => onEntry(entry)}><ChevronRight size={16}/></button>
+          </div> :
+          <details className={styles.mobileSubcategory}><summary>{entry.label}<ChevronDown size={15}/></summary>
+            <Link to={subcategoryHref(topic.id, entry.label)} onClick={onNavigate}>All {entry.label} <ArrowUpRight size={15}/></Link>
+            {getTopicProducts(data, topic, entry).map(product => <Link key={product.id} to={`/products/${product.slug}`} onClick={onNavigate}>{product.name}<ArrowUpRight size={15}/></Link>)}
+            {!getTopicProducts(data, topic, entry).length && <p className={styles.emptyNote}>Product details coming soon.</p>}
+          </details>}
+      </li>)}
+    </ul>
   </>;
 }
 
@@ -75,8 +55,9 @@ export function ProductsMenu({ data, label = "Products" }: { data: Catalogue; la
   const mode = useRef<"hover" | "click" | "keyboard">("hover");
   const [open, setOpen] = useState(false);
   const [activeTopic, setTopicIndex] = useState(0);
+  const [activeEntry, setActiveEntry] = useState<MenuEntry | undefined>(productTopics[0].children.find(entry => !entry.unconfirmed));
   const [direction, setDirection] = useState("forward");
-  const setActiveTopic = (index: number) => { setDirection(index >= activeTopic ? "forward" : "backward"); setTopicIndex(index); };
+  const setActiveTopic = (index: number) => { setDirection(index >= activeTopic ? "forward" : "backward"); setTopicIndex(index); if(index !== activeTopic) setActiveEntry(productTopics[index].children.find(entry => !entry.unconfirmed)); };
 
   const cancelClose = useCallback(() => { clearTimeout(closeTimer.current); }, []);
   const close = useCallback(() => { cancelClose(); setOpen(false); mode.current = "hover"; }, [cancelClose]);
@@ -189,10 +170,16 @@ export function ProductsMenu({ data, label = "Products" }: { data: Catalogue; la
           role="region" aria-labelledby={`${id}-${topic.id}-trigger`}
           onKeyDown={event => { if (event.key === "ArrowLeft") { event.preventDefault(); focusTopic(index); } }}>
           <p className={styles.topicHeading}>{topic.label}</p>
-          <TopicContent topic={topic} data={data} onNavigate={close} />
+          <TopicContent topic={topic} data={data} onNavigate={close} onEntry={setActiveEntry} activeEntry={activeEntry?.label} />
         </div>)}
       </div>
-      <div className={styles.imagePlaceholder} data-product-image-placeholder aria-hidden="true" />
+      <div id="desktop-product-list" className={styles.productColumn} role="region" aria-label="Products in selected subcategory" onKeyDown={event => { if(event.key === "ArrowLeft") { event.preventDefault(); root.current?.querySelector<HTMLElement>(`button[aria-label="Show ${activeEntry?.label} products"]`)?.focus(); } }}>
+        <p className={styles.topicHeading}>{activeEntry?.label || productTopics[activeTopic].label}</p>
+        {getTopicProducts(data, productTopics[activeTopic], activeEntry).map(product => <Link className={styles.menuProduct} key={product.id} to={`/products/${product.slug}`} onClick={close}>
+          <span>{product.name}<ArrowUpRight size={16}/></span>
+        </Link>)}
+        {!getTopicProducts(data, productTopics[activeTopic], activeEntry).length && <p className={styles.emptyNote}>Product details coming soon.</p>}
+      </div>
     </div>
   </div>;
 }
@@ -208,8 +195,8 @@ export function MobileProductsMenu({ data, onNavigate, label = "Products" }: { d
       <Link className={styles.mobileAllProducts} to="/products" onClick={onNavigate}>All products <ArrowUpRight size={16} aria-hidden="true" /></Link>
       {productTopics.map(item => item.children.length === 0
         ? <div key={item.id} className={styles.mobileTopic}>
-          {productMenuHref(item, data)
-            ? <Link className={styles.mobileTopicToggle} to={productMenuHref(item, data)!} onClick={onNavigate}>{item.label}<ArrowUpRight size={16} aria-hidden="true" /></Link>
+          {topicHref(item.id)
+            ? <Link className={styles.mobileTopicToggle} to={topicHref(item.id)} onClick={onNavigate}>{item.label}<ArrowUpRight size={16} aria-hidden="true" /></Link>
             : <span className={styles.mobilePendingTopic}>{item.label}</span>}
         </div>
         : <div key={item.id} className={styles.mobileTopic}>

@@ -42,6 +42,7 @@ export async function loadContent(): Promise<Content> {
   data.products = data.products.map((p) => ({
     ...p,
     images: (p.images || []).map(image),
+    campaignImage: p.campaignImage ? image(p.campaignImage) : undefined,
     features: p.features || [],
   }));
   data.news = data.news.map((p) => ({ ...p, cover: image(p.cover) }));

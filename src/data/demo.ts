@@ -1,3 +1,4 @@
+import { djMixerCategory, xd301 } from "./xd301";
 import type { Content } from "../types/content";
 const photo = (id: string, alt: string) => ({
   url: `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=85`,
@@ -17,6 +18,7 @@ const categories = [
   { id: "party", slug: "party", name: "Party speakers" },
   { id: "family", slug: "family", name: "Kids & family" },
   { id: "creative", slug: "creative", name: "Music & creativity" },
+  djMixerCategory,
 ];
 export const demoContent: Content = {
   demo: true,
@@ -37,6 +39,7 @@ export const demoContent: Content = {
     cta: "Make every moment sound better.",
   },
   products: [
+    xd301,
     {
       id: "demo-party",
       name: "Pulse Party Speaker",

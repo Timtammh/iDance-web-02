@@ -38,7 +38,7 @@ npm run dev
 Or run `npm run studio` from the root after installing Studio dependencies. Studio explicitly refuses to start without a project ID.
 
 5. Create and publish one `siteSettings`, one `homePage` and one `aboutPage` document. These are singleton-by-editor-convention: do not create multiple copies. Add categories first, then products referencing categories; use cases reference categories and featured home content references products/videos. Add news posts with Portable Text body. Studio validates required titles, slugs, image alt and URL fields.
-6. Configure home headline, description, section headings and CTA; select featured products/videos. The first selected featured product supplies the featured story and fallback hero image. Optionally upload a separate hero cutout. Navigation paths must be internal paths beginning `/`.
+6. Configure section headings and CTA; select featured products/videos. The first selected featured product (in editor order) supplies the spotlight image, name, summary, features and product link. Optional `spotlight` fields override editorial copy/artwork without changing that link. Upload `heroVideo` (MP4/WebM), `heroPoster` and an accessible `heroVideoLabel` for the cinematic opening. Missing hero media retains the local demo video/poster; replace both before launch. If playback fails, the selected poster remains visible. `newsHeading`, `newsIntro` and ordered `featuredNews` control homepage news; leaving the selection empty shows the three latest published posts. An empty CMS has an honest empty-news message, not demo company news. Navigation paths must be internal paths beginning `/`.
 7. Set root `.env` values: `VITE_CONTENT_SOURCE=sanity`, `VITE_SANITY_PROJECT_ID`, `VITE_SANITY_DATASET`, `VITE_SANITY_API_VERSION`, `VITE_SITE_URL`. Restart Vite or rebuild.
 8. To deploy Studio, explicitly run `npm run deploy` inside `studio` after choosing your project and reviewing content. This is **not** run automatically. `npm run build` validates the Studio build with configured environment.
 
@@ -66,7 +66,7 @@ Real GA receipt cannot be verified without a valid measurement ID/property. Priv
 
 ## Interaction and accessibility
 
-Native `<dialog>` supplies focus containment; Escape/backdrop/close dismiss and effect cleanup returns focus to trigger and stops iframe playback. Players load only after interaction. Only YouTube watch/short URLs and numeric Vimeo URLs are accepted; missing/unsupported URL gets an honest unavailable state. No auto-playing homepage media.
+Native `<dialog>` supplies focus containment; Escape/backdrop/close dismiss and effect cleanup returns focus to trigger and stops iframe playback. Players load only after interaction. Only YouTube watch/short URLs and numeric Vimeo URLs are accepted; missing/unsupported URL gets an honest unavailable state. The cinematic homepage background loops muted, with a pause/play control; reduced-motion preference prevents automatic playback.
 
 Product tabs support arrows/Home/End; search and filters use native controls. Images have dimensions, descriptive alt and a local fallback. Hero loads eagerly, other images lazily. GSAP uses matchMedia cleanup and respects reduced motion; no scroll hijack. Light animations use opacity/transform, with lower mobile intensity.
 
@@ -105,3 +105,22 @@ See `VERIFICATION.md` for checks actually run and unresolved dependency advisori
 ## GSAP motion implementation
 
 The coordinated animation system now uses GSAP + ScrollTrigger + `@gsap/react` with scoped `useGSAP`, responsive/reduced-motion matchMedia, visibility-gated repeat animations and lifecycle cleanup. See `MOTION.md` for section-by-section behavior, exact tuning files, CSS/GSAP ownership and motion regression tests. The old CSS light drift and duplicate product-image hover transform were removed.
+
+## Homepage integration preparation (November 2026)
+
+The current demo layout/assets are preserved. No real GA4 ID, Sanity project or token is included. Sanity mode still fails explicitly on missing configuration or query errors; it never silently changes the entire site to demo mode.
+
+Homepage carousel analytics uses `view_item_list` only for cards at least 50% visible after consent, once per card per tab on each homepage mount. `select_item` includes list/item context. `product_collection_change` records actual tab changes and `product_carousel_interaction` records intentional navigation, not continuous scroll or decorative mixer activity. Demo images use stable local identifiers and the “Demo product concepts” category. Existing consent controls gate all events.
+
+Focused checks:
+
+```sh
+npm run typecheck
+npm run lint
+npm run build
+npx playwright test --config playwright.analytics.config.ts
+npx playwright test --config playwright.cms.config.ts tests/cms/home-content.spec.ts
+node tests/analytics-runtime.js
+```
+
+For a machine with Chromium instead of Google Chrome, prefix browser tests with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/path/to/chromium`. Tests bind only to loopback. CMS fixtures and a fake analytics ID do not verify live accounts. Rebuild normally after the analytics suite to remove the fake test ID from `dist`.

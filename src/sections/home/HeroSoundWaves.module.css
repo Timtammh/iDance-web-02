@@ -1,11 +1,43 @@
-.equalizer { --tile-step:22px; position:absolute; inset:0 auto 0 0; width:286px; overflow:hidden; pointer-events:none; z-index:0; display:flex; flex-direction:column; opacity:.58; mask-image:linear-gradient(to right,#000,#000b 55%,transparent); -webkit-mask-image:linear-gradient(to right,#000,#000b 55%,transparent); }
-.row { position:relative; flex:0 0 var(--tile-step); width:100%; }
-.base,.lit { position:absolute; inset:0; background-size:var(--tile-step) var(--tile-step); background-repeat:repeat-x; }
-.base { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Crect x='1' y='1' width='20' height='20' rx='3' fill='%23f0ecf5' stroke='%23fff' stroke-width='.7'/%3E%3C/svg%3E"); }
-.lit { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cdefs%3E%3ClinearGradient id='g' x2='1' y2='1'%3E%3Cstop stop-color='%23e1c9f5'/%3E%3Cstop offset='1' stop-color='%23b47cdb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='1' y='1' width='20' height='20' rx='3' fill='url(%23g)' stroke='%23ffffff' stroke-opacity='.5' stroke-width='.7'/%3E%3C/svg%3E"); clip-path:inset(0 var(--level) 0 0); animation:equalizer-rise var(--duration) ease-in-out var(--delay) infinite alternate paused; }
-.equalizer[data-running="true"] .lit { animation-play-state:running; }
-@keyframes equalizer-rise { 0% { clip-path:inset(0 76% 0 0); opacity:.65; } 45% { clip-path:inset(0 var(--level) 0 0); opacity:.9; } 100% { clip-path:inset(0 10% 0 0); opacity:1; } }
-@media(max-width:767px) { .equalizer { --tile-step:14px; width:140px; opacity:.34; } }
-@media(prefers-reduced-motion:reduce) { .equalizer[data-running="true"] .lit { animation:equalizer-rise var(--duration) ease-in-out var(--delay) infinite alternate running !important; } }
-
-.interactionPulse { position:absolute; z-index:2; left:0; width:100%; height:240px; opacity:0; pointer-events:none; transform-origin:left center; background:radial-gradient(ellipse at left center,var(--pulse-color,#64dcff),transparent 75%); }
+.glassField {
+  position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0;
+  /* Keep the reading column clear, even on narrower desktop screens. */
+  mask-image:linear-gradient(90deg,#000 0%,#000d 9%,transparent 32%,transparent 68%,#000d 91%,#000 100%);
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,#000d 9%,transparent 32%,transparent 68%,#000d 91%,#000 100%);
+}
+.piece { position:absolute; width:clamp(300px,32vw,540px); height:clamp(450px,46vw,740px); opacity:.88; }
+.piece1 { top:12%; left:-14%; --angle:-28deg; --duration:10s; }
+.piece2 { top:23%; right:-16%; --angle:24deg; --duration:13s; }
+.piece3 { top:42%; left:-17%; --angle:34deg; --duration:11s; }
+.piece4 { top:58%; right:-15%; --angle:-32deg; --duration:14s; }
+.piece5 { top:75%; left:-13%; --angle:-20deg; --duration:12s; }
+.piece6 { top:90%; right:-14%; --angle:32deg; --duration:15s; }
+.sculpture { position:relative; width:100%; height:100%; transform:rotate(var(--angle)); animation:glass-drift var(--duration) ease-in-out -3s infinite alternate paused; }
+.outer,.inner,.refraction { position:absolute; display:block; border-radius:46% 54% 64% 36% / 43% 34% 66% 57%; }
+.outer {
+  inset:0; border:1px solid #ffffffd9;
+  background:linear-gradient(125deg,#ffffffb0 2%,#e2eafa38 22%,#ffffff0a 43%,#dfd6f34d 65%,#ffffffa3 94%);
+  box-shadow:inset 8px 5px 18px #fff, inset -12px -8px 26px #a69fcb25, 10px 12px 35px #a5b5d51a;
+}
+.inner {
+  inset:9% 14% 13% 12%; border:1px solid #ffffffc4;
+  background:linear-gradient(135deg,#ffffffa8,#f5f2fb0d 52%,#cbe4f629);
+  box-shadow:inset -9px -4px 14px #fff9, -5px 0 14px #b8c9ee38, 8px 6px 18px #bba8de20;
+  transform:rotate(8deg);
+}
+.refraction {
+  inset:2% 4% 4% 3%;
+  border-left:3px solid #b7d9f57a; border-bottom:2px solid #c4b0e85e; border-right:2px solid #fff;
+  box-shadow:-7px 2px 14px #bedff43b, 5px 7px 15px #c5b3e52e;
+  filter:blur(.6px);
+}
+.glassField[data-running="true"] .piece[data-visible="true"] .sculpture { animation-play-state:running; }
+@keyframes glass-drift { from { transform:translate3d(-12px,-38px,0) rotate(calc(var(--angle) - 5deg)); } to { transform:translate3d(36px,42px,0) rotate(calc(var(--angle) + 9deg)); } }
+@media(max-width:767px) {
+  .glassField { mask-image:linear-gradient(90deg,#000,transparent 28%,transparent 72%,#000); -webkit-mask-image:linear-gradient(90deg,#000,transparent 28%,transparent 72%,#000); }
+  .piece { width:250px; height:420px; opacity:.6; }
+  .piece1,.piece3,.piece5 { left:-175px; }
+  .piece2,.piece4,.piece6 { right:-175px; }
+  .sculpture { animation-name:glass-drift-mobile; }
+}
+@keyframes glass-drift-mobile { from { transform:translate3d(-5px,-18px,0) rotate(calc(var(--angle) - 3deg)); } to { transform:translate3d(16px,22px,0) rotate(calc(var(--angle) + 5deg)); } }
+@media(prefers-reduced-motion:reduce) { .sculpture { animation:none !important; } }

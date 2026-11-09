@@ -7,6 +7,6 @@ export const contentQuery = `{
  "videos":*[_type=="video"]{"id":_id,title,thumbnail${image},url,category},
  "useCases":*[_type=="useCase"]{"id":_id,title,"slug":slug.current,image${image},description,"categories":categories[]->slug.current},
  "settings":*[_type=="siteSettings"][0]{...,logo${image}},
- "home":*[_type=="homePage"][0]{...,heroImage${image},"featuredProducts":featuredProducts[]->_id,"featuredVideos":featuredVideos[]->_id},
+ "home":*[_type=="homePage"][0]{...,heroImage${image},"heroVideo":heroVideo.asset->url,heroPoster${image},spotlight{...,image${image}},"featuredNews":featuredNews[]->_id,"featuredProducts":featuredProducts[]->_id,"featuredVideos":featuredVideos[]->_id},
  "about":*[_type=="aboutPage"][0]{headline,body}
 }`;

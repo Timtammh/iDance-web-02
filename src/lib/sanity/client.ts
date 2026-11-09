@@ -51,5 +51,8 @@ export async function loadContent(): Promise<Content> {
     thumbnail: image(p.thumbnail),
   }));
   if (data.home.heroImage) data.home.heroImage = image(data.home.heroImage);
+  if (data.home.heroPoster) data.home.heroPoster = image(data.home.heroPoster);
+  if (data.home.spotlight?.image)
+    data.home.spotlight.image = image(data.home.spotlight.image);
   return { ...data, demo: false };
 }

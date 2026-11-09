@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { pageView } from "../lib/analytics";
+import { usePageMotion } from "./usePageMotion";
 export function usePage(
   title: string,
   description = "Discover sound for parties, everyday moments and creative play with iDance.",
   image?: string,
 ) {
   const { pathname } = useLocation();
+  usePageMotion(pathname);
   useEffect(() => {
     document.title = `${title} | iDance`;
     const base = import.meta.env.VITE_SITE_URL || location.origin;

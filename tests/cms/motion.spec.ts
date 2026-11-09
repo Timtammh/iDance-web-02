@@ -70,7 +70,7 @@ test("real Sanity adapter: delayed response, error/retry, image builder and moti
       await route.abort();
     }
   });
-  await page.goto("/");
+  await page.goto("/"); await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click(); await page.locator(".intro-screen").waitFor({ state: "detached" });
   await expect(page.getByText("Setting the stage…")).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "We couldn’t load the content." }),

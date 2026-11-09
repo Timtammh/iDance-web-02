@@ -8,7 +8,7 @@ test("responsive pages, functional catalogue, dialogs and honest form", async ({
   page.on("request", (r) => {
     if (/google-analytics|googletagmanager/.test(r.url())) ga.push(r.url());
   });
-  await page.goto("/");
+  await page.goto("/"); await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click(); await page.locator(".intro-screen").waitFor({ state: "detached" });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Reject analytics" }),
@@ -50,20 +50,20 @@ test("responsive pages, functional catalogue, dialogs and honest form", async ({
   await expect(
     page.getByRole("button", { name: "Search products", exact: true }),
   ).toBeFocused();
-  await page.goto("/products?category=karaoke");
+  await page.goto("/products?category=karaoke"); await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click(); await page.locator(".intro-screen").waitFor({ state: "detached" });
   await expect(page.getByText("1 products")).toBeVisible();
   await page.getByRole("searchbox").fill("zzz");
   await expect(page.getByText("No sound found. Yet.")).toBeVisible();
   await page.getByRole("button", { name: "Clear filters" }).click();
   await expect(page.getByText("4 products")).toBeVisible();
-  await page.goto("/products/pulse-party-speaker");
+  await page.goto("/products/pulse-party-speaker"); await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click(); await page.locator(".intro-screen").waitFor({ state: "detached" });
   await page.reload();
   await expect(
     page.getByRole("heading", { name: "Pulse Party Speaker", exact: true }),
   ).toBeVisible();
-  await page.goto("/products/missing");
+  await page.goto("/products/missing"); await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click(); await page.locator(".intro-screen").waitFor({ state: "detached" });
   await expect(page.getByText("Let’s find your way back.")).toBeVisible();
-  await page.goto("/tv");
+  await page.goto("/tv"); await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click(); await page.locator(".intro-screen").waitFor({ state: "detached" });
   await page
     .getByRole("button", { name: /Meet your next party starter/ })
     .click();
@@ -72,14 +72,14 @@ test("responsive pages, functional catalogue, dialogs and honest form", async ({
   await expect(
     page.getByRole("button", { name: /Meet your next party starter/ }),
   ).toBeFocused();
-  await page.goto("/contact");
+  await page.goto("/contact"); await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click(); await page.locator(".intro-screen").waitFor({ state: "detached" });
   await page.getByLabel("Your name").fill("Preview");
   await page.getByLabel("Email address").fill("preview@example.com");
   await page.getByLabel("Subject").fill("Test");
   await page.getByLabel("Your message").fill("Testing the demo");
   await page.getByRole("button", { name: "Check enquiry" }).click();
   await expect(page.getByRole("status")).toContainText("Nothing has been sent");
-  await page.goto("/news/make-room-for-music");
+  await page.goto("/news/make-room-for-music"); await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click(); await page.locator(".intro-screen").waitFor({ state: "detached" });
   await expect(
     page.getByText("Sample story — not an official brand announcement."),
   ).toBeVisible();

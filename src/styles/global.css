@@ -262,7 +262,7 @@ section[id] {
   display: flex;
   gap: 32px;
   align-items: center;
-  font-size: 12px;
+  font-size: 13.2px;
 }
 .desktop-nav a {
   padding: 12px 0;
@@ -1124,3 +1124,37 @@ body { background:#fff; }
 /* Keep the original logo proportions at 120% of its previous size. */
 .header .wordmark { flex-basis:56.76px; width:56.76px; height:68.64px; }
 .header .wordmark img { width:56.76px; height:68.64px; max-height:68.64px; }
+
+/* The actual website rises over the intro; no blank-frame swap. */
+.intro-site { outline:none; }
+.intro-site-entering { position:fixed; inset:0; height:100svh; overflow:hidden; z-index:1001; background:#fff; transform:translateY(100svh); will-change:transform; }
+.intro-enter:disabled { cursor:default; }
+@media(prefers-reduced-motion:reduce) { .intro-site-entering { transform:none; } }
+
+/* Intro artwork occupies half the viewport width, centered on black. */
+.intro-screen video { position:absolute; left:50%; top:50%; width:50vw; height:auto; max-height:80svh; object-fit:contain; transform:translate(-50%,-50%); }
+
+/* Supplied display face, limited to page and major section headings. */
+@font-face {
+  font-family: "Bestigia";
+  src: url("/fonts/Bestigia-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+#main h1, #main h2 {
+  font-family: "Bestigia", "Parkinsans", Arial, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+}
+/* Keep decorative-motion control clear of the persistent sound dock. */
+[data-scene-motion] > button[title*="motion"], [data-scene-motion] > button[title*="glass"] { right:auto; left:16px; bottom:16px; }
+@media(max-width:767px) { [data-scene-motion] > button[title*="motion"], [data-scene-motion] > button[title*="glass"] { bottom:132px; } }
+.footer { padding-bottom:140px; }
+
+/* Intro prompt copy at 70%; the full-screen entry target stays unchanged. */
+.intro-enter > span { font-size:8.4px; }
+.intro-enter small { font-size:6.3px; }
+
+/* Consistent tracking across all Bestigia page and section headings. */
+#main h1, #main h2 { letter-spacing:.01em; }

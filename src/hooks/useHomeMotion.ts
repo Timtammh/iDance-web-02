@@ -1,313 +1,134 @@
 import type { RefObject } from "react";
-import {
-  conditions,
-  gsap,
-  motion,
-  safelyAnimate,
-  ScrollTrigger,
-  useGSAP,
-  visiblePlayback,
-} from "../lib/motion/gsap";
+import { conditions, gsap, safelyAnimate, useGSAP, visiblePlayback } from "../lib/motion/gsap";
+import { arrowInteraction, reveal, watchMotionLayout } from "../lib/motion/choreography";
+import styles from "../sections/home/Home.module.css";
+
 export function useHomeMotion(root: RefObject<HTMLDivElement | null>) {
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia(root);
-      mm.add(conditions, ({ conditions: media }) => {
-        if (media?.reduce) return;
-        const disposers: Array<() => void> = [];
-        const revert = safelyAnimate(() => {
-          const select = gsap.utils.selector(root);
-          const hero = select("[data-hero]")[0] as HTMLElement;
-          let entered = false;
-          let playback: ReturnType<typeof visiblePlayback> | undefined;
-          const entrance = gsap.timeline({
-            defaults: { ease: "power2.out" },
-            onComplete: () => {
-              entered = true;
-              playback?.sync();
-            },
-          });
-          entrance
-            .from(
-              select("[data-hero] [data-light]"),
-              { opacity: 0, duration: 1 },
-              0,
-            )
-            .from(
-              select("[data-hero-product]"),
-              {
-                opacity: 0,
-                y: motion.hero.y,
-                scale: motion.hero.scale,
-                duration: motion.hero.duration,
-              },
-              0.1,
-            )
-            .from(
-              select("[data-hero-copy]"),
-              {
-                opacity: 0,
-                y: 54,
-                duration: 1.95,
-                stagger: motion.hero.stagger,
-                clearProps: "opacity,transform",
-              },
-              0.35,
-            );
-          // Focus never has to wait for a visual entrance.
-          const showOnFocus = () => entrance.progress(1);
-          hero.addEventListener("focusin", showOnFocus);
-          disposers.push(() =>
-            hero.removeEventListener("focusin", showOnFocus),
-          );
-          if (media?.desktop) {
-            const floating = gsap.to(select("[data-hero-float]"), {
-              y: -motion.hero.floatY,
-              duration: motion.hero.floatDuration,
-              ease: "sine.inOut",
-              repeat: -1,
-              yoyo: true,
-              paused: true,
+  useGSAP(() => {
+    const container = root.current;
+    if (!container) return;
+    const mm = gsap.matchMedia(root);
+    mm.add(conditions, ({ conditions: media }) => {
+      if (media?.reduce) return;
+      const mobile = !media?.desktop;
+      const disposers: Array<() => void> = [];
+      const revert = safelyAnimate(() => {
+        const select = <T extends HTMLElement = HTMLElement>(selector: string) => Array.from(container.querySelectorAll<T>(selector));
+        // Keep the entire desktop video frame untouched: no zoom, crop or scrub.
+        // Hero media swaps at the mobile breakpoint, so all choreography below is
+        // attached to stable sections rather than to removed hero-copy wrappers.
+        select(".section-heading").forEach(heading => {
+          const copy = heading.querySelectorAll(":scope > div > *, :scope > p, :scope > a, :scope > span");
+          if (copy.length) disposers.push(reveal(heading, copy, { y: mobile ? 30 : 58, stagger: 0.1 }, mobile));
+        });
+
+        const scenes = select("[data-scene]");
+        scenes.forEach((card, index) => {
+          disposers.push(reveal(card, card, {
+            x: mobile ? 0 : (index % 2 ? 56 : -56),
+            y: mobile ? 36 : 76,
+            rotation: mobile ? 0 : (index % 2 ? 1.5 : -1.5),
+            scale: 0.94,
+          }, mobile));
+          const caption = card.querySelector(":scope > div");
+          if (caption) disposers.push(reveal(card, caption, { y: mobile ? 16 : 38, delay: 0.1 }, mobile));
+          disposers.push(arrowInteraction(card));
+          const photo = card.querySelector("img");
+          if (!mobile && photo) {
+            // Overscan stays inside the image card; CSS hover no longer competes
+            // with the same transform. The card's text and hit area do not scrub.
+            gsap.set(photo, { transition: "none" });
+            gsap.fromTo(photo, { yPercent: -5, scale: 1.14 }, {
+              yPercent: 5, scale: 1.14, ease: "none",
+              scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: 0.8 },
             });
-            const glow = gsap.to(
-              select("[data-hero] [data-light-animated] .light-layer"),
-              {
-                x: motion.light.drift,
-                y: 3,
-                duration: motion.light.driftDuration,
-                ease: "sine.inOut",
-                repeat: -1,
-                yoyo: true,
-                paused: true,
-              },
-            );
-            playback = visiblePlayback(hero, [floating, glow], () => entered);
+          }
+        });
+
+        const featured = container.querySelector<HTMLElement>("[data-featured]");
+        if (featured) {
+          const art = featured.querySelector(`.${styles.featuredImage}`);
+          const copy = featured.querySelector(`.${styles.featuredCopy}`);
+          if (art) disposers.push(reveal(art, art, { x: mobile ? 0 : -72, scale: 0.9, rotation: mobile ? 0 : -3 }, mobile));
+          if (copy) disposers.push(reveal(copy, copy.children, { x: mobile ? 0 : 42, y: mobile ? 28 : 32, stagger: 0.11 }, mobile));
+          if (!mobile) {
+            const product = featured.querySelector("[data-feature-product]");
+            const depth = featured.querySelector("[data-feature-depth]");
+            if (product) gsap.fromTo(product, { y: 56, rotation: 3 }, {
+              y: -56, rotation: -3, ease: "none",
+              scrollTrigger: { trigger: featured, start: "top bottom", end: "bottom top", scrub: 1 },
+            });
+            if (depth) gsap.fromTo(depth, { y: -32, scale: 0.94 }, {
+              y: 32, scale: 1.06, ease: "none",
+              scrollTrigger: { trigger: featured, start: "top bottom", end: "bottom top", scrub: 1.2 },
+            });
+          }
+        }
+
+        select(".video-grid").forEach(grid => {
+          const cards = grid.querySelectorAll(".video-card");
+          if (cards.length) disposers.push(reveal(grid, cards, {
+            y: mobile ? 38 : 84, scale: 0.94, rotation: mobile ? 0 : -1.5, stagger: mobile ? 0.09 : 0.17,
+          }, mobile));
+        });
+        select(".video-card").forEach(card => disposers.push(arrowInteraction(card)));
+        select("#news article").forEach((row, index) => {
+          disposers.push(reveal(row, row, { x: mobile ? 22 : 64, y: 0, delay: mobile ? 0 : index * 0.05 }, mobile));
+        });
+        const intro = container.querySelector(`.${styles.newsIntro}`);
+        if (intro) disposers.push(reveal(intro, intro, {}, mobile));
+
+        const cta = container.querySelector<HTMLElement>("[data-brand-cta]");
+        if (cta) {
+          const targets = cta.querySelectorAll("[data-cta-reveal]");
+          if (targets.length) disposers.push(reveal(cta, targets, {
+            y: mobile ? 38 : 86, scale: 0.94, duration: mobile ? 0.8 : 1.3, stagger: 0.14,
+          }, mobile));
+          cta.querySelectorAll<HTMLElement>("[data-cta-link]").forEach(link => disposers.push(arrowInteraction(link)));
+        }
+
+        select("[data-sound-divider]").forEach(divider => {
+          const line = divider.querySelector("i");
+          if (line) disposers.push(reveal(divider, line, {
+            y: 0, opacity: 0.5, scaleX: 0.04, transformOrigin: "50% 50%", duration: mobile ? 0.7 : 1.2, ease: "expo.out",
+          }, mobile));
+        });
+        select("section [data-light]").forEach(light => {
+          const layer = light.querySelector(".light-layer");
+          const section = light.closest("section");
+          if (!layer || !section) return;
+          if (light.dataset.light === "refraction") {
+            gsap.fromTo(layer, { x: -100, opacity: 0.15 }, {
+              x: 100, opacity: 1, duration: mobile ? 1.2 : 2, ease: "sine.inOut", immediateRender: false,
+              scrollTrigger: { trigger: section, start: "top 85%", once: true, fastScrollEnd: true },
+            });
+          } else if (!mobile && light.hasAttribute("data-light-animated")) {
+            const drift = gsap.to(layer, { x: 24, y: 12, duration: 6, ease: "sine.inOut", repeat: -1, yoyo: true, paused: true });
+            const playback = visiblePlayback(section, [drift]);
             disposers.push(playback.dispose);
           }
-          const cta = select("[data-brand-cta]")[0] as HTMLElement | undefined;
-          if (cta) {
-            const reveal = gsap.from(cta.querySelectorAll("[data-cta-reveal]"), {
-              opacity: 0,
-              y: 36,
-              duration: 1.2,
-              stagger: 0.16,
-              ease: "power3.out",
-              immediateRender: false,
-              clearProps: "opacity,transform",
-              scrollTrigger: {
-                trigger: cta,
-                start: "top 80%",
-                once: true,
-                fastScrollEnd: true,
-              },
-            });
-            const finishReveal = () => {
-              reveal.scrollTrigger?.kill(false);
-              reveal.progress(1);
-            };
-            cta.addEventListener("focusin", finishReveal);
-            disposers.push(() => cta.removeEventListener("focusin", finishReveal));
-
-            cta.querySelectorAll<HTMLElement>("[data-cta-link]").forEach((link) => {
-              const hover = gsap.to(link.querySelector("svg"), {
-                x: 5,
-                y: link.dataset.ctaLink === "contact" ? -5 : 0,
-                duration: 0.3,
-                ease: "power2.out",
-                paused: true,
-              });
-              let pointed = false;
-              let focused = false;
-              const sync = () => pointed || focused ? hover.play() : hover.reverse();
-              const enter = (event: PointerEvent) => {
-                pointed = event.pointerType === "mouse";
-                sync();
-              };
-              const leave = () => { pointed = false; sync(); };
-              const focus = () => { focused = link.matches(":focus-visible"); sync(); };
-              const blur = () => { focused = false; sync(); };
-              link.addEventListener("pointerenter", enter);
-              link.addEventListener("pointerleave", leave);
-              link.addEventListener("focus", focus);
-              link.addEventListener("blur", blur);
-              disposers.push(() => {
-                link.removeEventListener("pointerenter", enter);
-                link.removeEventListener("pointerleave", leave);
-                link.removeEventListener("focus", focus);
-                link.removeEventListener("blur", blur);
-              });
-            });
-          }
-          select("[data-reveal]").forEach((element: HTMLElement) => {
-            // Start at the trigger, not at page initialization: offscreen content remains readable on failure.
-            gsap.from(element, {
-              opacity: 0,
-              y: motion.reveal.y,
-              duration: motion.reveal.duration,
-              ease: "power2.out",
-              immediateRender: false,
-              clearProps: "opacity,transform",
-              scrollTrigger: {
-                trigger: element,
-                start: motion.reveal.start,
-                once: true,
-                fastScrollEnd: true,
-              },
-            });
-          });
-          select("section:not([data-hero]) [data-light]").forEach(
-            (light: HTMLElement) => {
-              const layer = light.querySelector(".light-layer");
-              const section = light.closest("section")!;
-              const type = light.dataset.light;
-              if (type === "refraction")
-                gsap.fromTo(
-                  layer,
-                  { x: -motion.light.sweep, opacity: 0.2 },
-                  {
-                    x: motion.light.sweep,
-                    opacity: 1,
-                    duration: motion.light.duration,
-                    ease: "sine.inOut",
-                    immediateRender: false,
-                    scrollTrigger: {
-                      trigger: section,
-                      start: "top 85%",
-                      once: true,
-                    },
-                  },
-                );
-              if (media?.desktop && (type === "halo" || type === "horizon"))
-                gsap.fromTo(
-                  layer,
-                  { y: 24 },
-                  {
-                    y: -24,
-                    ease: "none",
-                    scrollTrigger: {
-                      trigger: section,
-                      start: "top bottom",
-                      end: "bottom top",
-                      scrub: 1,
-                    },
-                  },
-                );
-              if (media?.desktop && light.hasAttribute("data-light-animated")) {
-                const drift = gsap.to(layer, {
-                  x: 8,
-                  y: 3,
-                  duration: 8,
-                  ease: "sine.inOut",
-                  repeat: -1,
-                  yoyo: true,
-                  paused: true,
-                });
-                const controller = visiblePlayback(section, [drift]);
-                disposers.push(controller.dispose);
-              }
-            },
-          );
-          if (media?.desktop) {
-            const section = select("[data-featured]")[0];
-            if (section) {
-              gsap.fromTo(
-                select("[data-feature-product]"),
-                { y: motion.feature.productY / 2 },
-                {
-                  y: -motion.feature.productY / 2,
-                  ease: "none",
-                  scrollTrigger: {
-                    trigger: section,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: motion.feature.scrub,
-                  },
-                },
-              );
-              gsap.fromTo(
-                select("[data-feature-depth]"),
-                { y: -motion.feature.lightY / 2 },
-                {
-                  y: motion.feature.lightY / 2,
-                  ease: "none",
-                  scrollTrigger: {
-                    trigger: section,
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: motion.feature.scrub,
-                  },
-                },
-              );
-            }
-          }
         });
-        return () => {
-          disposers.forEach((dispose) => dispose());
-          revert();
-        };
       });
-      // ContentProvider mounts after async CMS fetch. Refresh only for actual layout/assets changes.
-      let disposed = false;
-      let timer: ReturnType<typeof setTimeout>;
-      const refresh = () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          if (!disposed) ScrollTrigger.refresh();
-        }, 120);
-      };
-      const container = root.current!;
-      container.addEventListener("load", refresh, true);
-      container.addEventListener("error", refresh, true);
-      const resize = new ResizeObserver(refresh);
-      resize.observe(container);
-      void document.fonts.ready.then(() => {
-        if (!disposed) refresh();
-      });
-      refresh();
-      return () => {
-        disposed = true;
-        clearTimeout(timer);
-        resize.disconnect();
-        container.removeEventListener("load", refresh, true);
-        container.removeEventListener("error", refresh, true);
-        mm.revert();
-      };
-    },
-    { scope: root },
-  );
+      return () => { disposers.forEach(dispose => dispose()); revert(); };
+    });
+    const stopWatching = watchMotionLayout(container);
+    return () => { stopWatching(); mm.revert(); };
+  }, { scope: root });
 }
 
-export function useProductReveal(
-  root: RefObject<HTMLDivElement | null>,
-  key: string,
-) {
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia(root);
-      mm.add(conditions, ({ conditions: media }) => {
-        if (media?.reduce) return;
-        return safelyAnimate(() => {
-          const cards = root.current?.querySelectorAll("[data-card-reveal]");
-          if (cards?.length)
-            gsap.from(cards, {
-              opacity: 0,
-              y: 60,
-              duration: 1.8,
-              stagger: motion.reveal.stagger,
-              ease: "power2.out",
-              immediateRender: false,
-              clearProps: "opacity,transform",
-              scrollTrigger: {
-                trigger: root.current,
-                start: "top 85%",
-                once: true,
-                fastScrollEnd: true,
-              },
-            });
-        });
+// Retained for collection consumers with dedicated reveal wrappers.
+export function useProductReveal(root: RefObject<HTMLDivElement | null>, key: string) {
+  useGSAP(() => {
+    const mm = gsap.matchMedia(root);
+    mm.add(conditions, ({ conditions: media }) => {
+      if (media?.reduce || !root.current) return;
+      let dispose = () => {};
+      const revert = safelyAnimate(() => {
+        const cards = root.current!.querySelectorAll("[data-card-reveal]");
+        if (cards.length) dispose = reveal(root.current!, cards, { scale: 0.94, stagger: 0.13 }, !media?.desktop);
       });
-      return () => mm.revert();
-    },
-    { scope: root, dependencies: [key], revertOnUpdate: true },
-  );
+      return () => { dispose(); revert(); };
+    });
+    return () => mm.revert();
+  }, { scope: root, dependencies: [key], revertOnUpdate: true });
 }

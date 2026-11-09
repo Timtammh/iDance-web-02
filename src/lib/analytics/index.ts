@@ -1,8 +1,10 @@
 /* eslint-disable prefer-rest-params -- Google tag queue requires an Arguments object. */
-type Item = { item_id: string; item_name: string; item_category: string };
+type Item = { item_id: string; item_name: string; item_category: string; index?: number };
 type Events = {
-  view_item_list: { item_list_id: string; items: Item[] };
-  select_item: { items: Item[] };
+  view_item_list: { item_list_id: string; item_list_name?: string; items: Item[] };
+  select_item: { item_list_id?: string; item_list_name?: string; items: Item[] };
+  product_collection_change: { item_list_id: string; previous_list_id: string };
+  product_carousel_interaction: { item_list_id: string; method: "button" | "keyboard" | "drag" | "slider"; direction: "previous" | "next" };
   view_item: { items: Item[] };
   product_filter: { category: string };
   hero_cta_click: { destination: string };
@@ -22,6 +24,11 @@ const id = import.meta.env.VITE_GA4_MEASUREMENT_ID;
 let allowed = false,
   initialized = false,
   lastPage = "";
+const consentListeners = new Set<() => void>();
+export function subscribeAnalyticsConsent(listener: () => void) {
+  consentListeners.add(listener);
+  return () => { consentListeners.delete(listener); };
+}
 export type Consent = "accepted" | "rejected";
 export function savedConsent(): Consent | null {
   try {
@@ -42,11 +49,13 @@ export function setConsent(value: Consent) {
   if (!allowed) {
     lastPage = "";
     window.gtag?.("consent", "update", { analytics_storage: "denied" });
+    consentListeners.forEach(listener => listener());
     return;
   }
   init();
   window.gtag?.("consent", "update", { analytics_storage: "granted" });
   pageView(location.pathname, document.title);
+  consentListeners.forEach(listener => listener());
 }
 function init() {
   if (
@@ -85,7 +94,9 @@ export function pageView(path: string, title: string) {
   });
 }
 export function track<K extends keyof Events>(name: K, data: Events[K]) {
-  if (allowed && initialized) window.gtag?.("event", name, data);
+  if (!allowed || !initialized) return false;
+  window.gtag?.("event", name, data);
+  return true;
 }
 export const item = (p: {
   id: string;

@@ -1,8 +1,10 @@
 import { WaveMotionContext } from "./HeroSoundWaves";
-import { useContext, useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
+import { useContext, useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useContent } from "../../hooks/useContent";
+import { useDeckMotion } from "../../hooks/useDeckMotion";
+import { subscribeAnalyticsConsent, track } from "../../lib/analytics";
 import styles from "./ProductDeck.module.css";
 import mixer from "../../productShot/iDance Pocket Mix DJ Mixer Box.png";
 import speaker from "../../productShot/Rainbow LED Party Speaker and Microphone.png";
@@ -39,6 +41,9 @@ const shots = [
   { id: "studio", name: "Sing Creator Studio", image: studio },
   { id: "rgb", name: "RGB Party Speaker", image: party },
 ];
+const analyticsItem = (p: { id: string; name: string; category: string }, index: number) => ({
+  item_id: p.id, item_name: p.name, item_category: p.category, index,
+});
 export function ProductDeck() {
   const data = useContent();
   const motionEnabled = useContext(WaveMotionContext);
@@ -84,6 +89,7 @@ export function ProductDeck() {
     const d = drag.current, el = rail.current;
     if (!d.active) return;
     d.active = false;
+    if (!cancelled && d.moved && el) carouselInteraction("drag", d.scroll, el.scrollLeft);
     if (!cancelled && d.moved && el && isPhone()) {
       const step = stepSize(), delta = el.scrollLeft - d.scroll;
       const index = Math.abs(delta) > Math.min(55, step * .18)
@@ -112,9 +118,61 @@ export function ProductDeck() {
     preference.addEventListener("change", stopMotion);
     return () => { stopMotion(); preference.removeEventListener("change", stopMotion); };
   }, []);
-  const products = data.demo
-    ? (tab === "popular" ? shots : [...shots.slice(3), ...shots.slice(0, 3)]).map(p => ({ ...p, href: "/products" }))
-    : data.products.filter(p => tab === "popular" ? p.isPopular : p.isNew).map(p => ({ id: p.id, name: p.name, image: p.images[0]?.url, href: `/products/${p.slug}` }));
+  const products = useMemo(() => data.demo
+    ? (tab === "popular" ? shots : [...shots.slice(3), ...shots.slice(0, 3)]).map(p => ({ ...p, category: "Demo product concepts", href: "/products" }))
+    : data.products.filter(p => tab === "popular" ? p.isPopular : p.isNew).map(p => ({ id: p.id, name: p.name, image: p.images[0]?.url, category: p.category.name, href: `/products/${p.slug}` })), [data, tab]);
+  useDeckMotion(section, `${tab}:${products.map(p => p.id).join(",")}`);
+  const listId = `home_products_${tab}`;
+  const listName = tab === "popular" ? "Popular" : "New Releases";
+  const seenItems = useRef(new Set<string>());
+  const sliderStart = useRef<number | null>(null);
+  // Observe each clipped card against the viewport, not just the offscreen rail.
+  // Only successful, consented impressions enter the per-mount/tab dedupe set.
+  useEffect(() => {
+    const el = rail.current;
+    if (!el) return;
+    let observer: IntersectionObserver;
+    const observe = () => {
+      observer?.disconnect();
+      observer = new IntersectionObserver(entries => {
+        const visible = entries.filter(entry => entry.isIntersecting && entry.intersectionRatio >= .5)
+          .map(entry => Number((entry.target as HTMLElement).dataset.productIndex))
+          .filter(index => products[index] && !seenItems.current.has(`${listId}:${products[index].id}`))
+          .sort((a, b) => a - b);
+        if (!visible.length) return;
+        if (track("view_item_list", { item_list_id: listId, item_list_name: listName,
+          items: visible.map(index => analyticsItem(products[index], index)) })) {
+          visible.forEach(index => seenItems.current.add(`${listId}:${products[index].id}`));
+        }
+      }, { threshold: .5 });
+      el.querySelectorAll("[data-product-index]").forEach(card => observer.observe(card));
+    };
+    observe();
+    // Re-observing samples current visibility after consent, never past views.
+    const unsubscribe = subscribeAnalyticsConsent(observe);
+    return () => { observer.disconnect(); unsubscribe(); };
+  }, [products, listId, listName]);
+  const changeTab = (next: string) => {
+    if (next === tab) return;
+    track("product_collection_change", { item_list_id: `home_products_${next}`, previous_list_id: listId });
+    setTab(next);
+  };
+  const carouselInteraction = (method: "button" | "keyboard" | "drag" | "slider", from: number, to: number) => {
+    if (Math.abs(to - from) < 1) return;
+    track("product_carousel_interaction", { item_list_id: listId, method, direction: to > from ? "next" : "previous" });
+  };
+  const navigateCarousel = (direction: number, method: "button" | "keyboard") => {
+    const el = rail.current;
+    if (!el) return;
+    const target = Math.max(0, Math.min(el.scrollWidth - el.clientWidth,
+      el.scrollLeft + direction * (method === "keyboard" || isPhone() ? stepSize() : (el.scrollWidth - el.clientWidth) / 2)));
+    carouselInteraction(method, el.scrollLeft, target);
+    scrollTo(target, true);
+  };
+  const finishSlider = () => {
+    if (sliderStart.current !== null) carouselInteraction("slider", sliderStart.current, rail.current?.scrollLeft || 0);
+    sliderStart.current = null;
+  };
   useEffect(() => {
     const el = rail.current;
     if (!el) return;
@@ -169,10 +227,10 @@ export function ProductDeck() {
       <div className={styles.levelLeds} aria-hidden="true">{Array.from({length:12},(_,i)=><i key={i} data-lit={i <= (lightsMove ? Math.round(position / 100 * 11) : 5)} style={{"--led-delay":`${i * 45}ms`} as CSSProperties}/>)}</div>
       <div className={styles.top}>
         <MixerKnob label="Channel tone" />
-        <div role="tablist" aria-label="Product collections" className={styles.tabGroup}>{["popular", "new"].map((t, i) => <button key={t} role="tab" id={`tab-${t}`} aria-controls="home-products" aria-selected={tab === t} tabIndex={tab === t ? 0 : -1} onClick={() => setTab(t)} onKeyDown={e => {
+        <div role="tablist" aria-label="Product collections" className={styles.tabGroup}>{["popular", "new"].map((t, i) => <button key={t} role="tab" id={`tab-${t}`} aria-controls="home-products" aria-selected={tab === t} tabIndex={tab === t ? 0 : -1} onClick={() => changeTab(t)} onKeyDown={e => {
           if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
             e.preventDefault(); const next = e.key === "Home" ? "popular" : e.key === "End" ? "new" : i ? "popular" : "new";
-            setTab(next); document.getElementById(`tab-${next}`)?.focus();
+            changeTab(next); document.getElementById(`tab-${next}`)?.focus();
           }
         }}>{t === "popular" ? "Popular" : "New Releases"}</button>)}</div>
         <div className={styles.controls}><MixerKnob label="Left effect" /><span aria-hidden="true">▪ ▪ ▪</span><MixerKnob label="Right effect" /></div>
@@ -182,15 +240,15 @@ export function ProductDeck() {
         onPointerDown={startDrag} onPointerMove={updateDrag}
         onPointerUp={() => finishDrag()} onPointerCancel={() => finishDrag(true)}
         onLostPointerCapture={() => finishDrag()}
-        onKeyDown={e => { if (["ArrowLeft", "ArrowRight"].includes(e.key)) { e.preventDefault(); scrollTo(e.currentTarget.scrollLeft + (e.key === "ArrowRight" ? 1 : -1) * stepSize(), true); } }}
+        onKeyDown={e => { if (["ArrowLeft", "ArrowRight"].includes(e.key)) { e.preventDefault(); navigateCarousel(e.key === "ArrowRight" ? 1 : -1, "keyboard"); } }}
         onClickCapture={e => { if (drag.current.moved) { e.preventDefault(); drag.current.moved = false; } }}
         onDragStart={e => e.preventDefault()}>
-        {products.map(p => <Link to={p.href} className={styles.product} key={p.id} draggable={false}><div className={styles.disc}><img src={p.image} alt={p.name} loading="lazy" decoding="async" width={640} height={640} draggable={false} /></div><span>{p.name}<ArrowUpRight size={15} /></span></Link>)}
+        {products.map((p, index) => <Link data-product-index={index} onClick={e => { if (!e.defaultPrevented) track("select_item", { item_list_id: listId, item_list_name: listName, items: [analyticsItem(p, index)] }); }} to={p.href} className={styles.product} key={p.id} draggable={false}><div className={styles.disc}><img src={p.image} alt={p.name} loading="lazy" decoding="async" width={640} height={640} draggable={false} /></div><span>{p.name}<ArrowUpRight size={15} /></span></Link>)}
         {!products.length && <p>No products in this collection yet.</p>}
       </div>
       <div className={styles.bottom}>
         <MixerPads side="Left" onColor={changeLight} />
-        <div className={styles.faderGroup}><div className={styles.fader}><button aria-label="Previous products" disabled={!canScroll || position < 1} onClick={() => isPhone() ? scrollTo((rail.current?.scrollLeft || 0) - stepSize(), true) : move(Math.max(0, position - 50), true)}><ChevronLeft size={20}/></button><input aria-label="Slide through products" type="range" min="0" max="100" step="0.1" value={position} disabled={!canScroll} onChange={e => move(Number(e.target.value))}/><button aria-label="Next products" disabled={!canScroll || position > 99} onClick={() => isPhone() ? scrollTo((rail.current?.scrollLeft || 0) + stepSize(), true) : move(Math.min(100, position + 50), true)}><ChevronRight size={20}/></button></div><span>DRAG TO DISCOVER</span></div>
+        <div className={styles.faderGroup}><div className={styles.fader}><button aria-label="Previous products" disabled={!canScroll || position < 1} onClick={() => navigateCarousel(-1, "button")}><ChevronLeft size={20}/></button><input aria-label="Slide through products" type="range" min="0" max="100" step="0.1" value={position} disabled={!canScroll} onPointerDown={() => { sliderStart.current = rail.current?.scrollLeft || 0; }} onPointerUp={finishSlider} onPointerCancel={() => { sliderStart.current = null; }} onKeyDown={() => { sliderStart.current ??= rail.current?.scrollLeft || 0; }} onKeyUp={finishSlider} onBlur={finishSlider} onChange={e => move(Number(e.target.value))}/><button aria-label="Next products" disabled={!canScroll || position > 99} onClick={() => navigateCarousel(1, "button")}><ChevronRight size={20}/></button></div><span>DRAG TO DISCOVER</span></div>
         <MixerPads side="Right" onColor={changeLight} />
       </div>
       <MixerFader side="left"/><MixerFader side="right"/>

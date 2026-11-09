@@ -65,6 +65,20 @@ export type Content = {
     headline: string;
     description: string;
     heroImage?: Picture;
+    heroVideo?: string;
+    heroPoster?: Picture;
+    heroVideoLabel?: string;
+    spotlight?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      image?: Picture;
+      features?: string[];
+      ctaLabel?: string;
+    };
+    newsHeading?: string;
+    newsIntro?: string;
+    featuredNews?: string[];
     featuredProducts: string[];
     featuredVideos: string[];
     productsHeading: string;

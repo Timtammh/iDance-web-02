@@ -16,11 +16,12 @@ import {
   NotFound,
 } from "./pages/Pages";
 import "./styles/global.css";
+import { IntroGate } from "./components/layout/IntroGate";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <ContentProvider>
-        <Routes>
+        <IntroGate><Routes>
           <Route element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
@@ -33,7 +34,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="privacy" element={<Privacy />} />
             <Route path="*" element={<NotFound />} />
           </Route>
-        </Routes>
+        </Routes></IntroGate>
       </ContentProvider>
     </BrowserRouter>
   </StrictMode>,

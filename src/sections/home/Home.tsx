@@ -20,15 +20,7 @@ import { track } from "../../lib/analytics";
 import styles from "./Home.module.css";
 
 function SoundDivider() {
-  return (<div className={styles.soundDivider} aria-hidden="true" data-sound-divider>
-          <svg viewBox="0 0 600 44" focusable="false">
-            {Array.from({length:49},(_,i) => {
-              const envelope = Math.sin(Math.PI * (i + 1) / 50);
-              const height = 4 + envelope * (9 + ((i * 13) % 27));
-              return <rect key={i} x={i * 12 + 9} y={(44-height)/2} width="4" height={height} rx="2"/>;
-            })}
-          </svg>
-        </div>);
+  return <div className={styles.soundDivider} aria-hidden="true" data-sound-divider><i /></div>;
 }
 
 export function Home() {
@@ -43,8 +35,12 @@ export function Home() {
   }, []);
   const root = useRef<HTMLDivElement>(null);
   const featured =
-    data.products.find((p) => data.home.featuredProducts?.includes(p.id)) ||
+    data.home.featuredProducts?.map(id => data.products.find(p => p.id === id)).find(Boolean) ||
     data.products[0];
+  const spotlight = data.home.spotlight;
+  const news = (data.home.featuredNews?.length
+    ? data.home.featuredNews.map(id => data.news.find(post => post.id === id)).filter(post => !!post)
+    : data.news).slice(0, 3);
   usePage(
     data.settings.seo?.title || "Bring Your Sound to Life",
     data.settings.seo?.description,
@@ -55,8 +51,8 @@ export function Home() {
     <WaveMotionContext.Provider value={motion}>
     <div ref={root} className={styles.home} data-scene-motion={motion && !reduced}>
       <HeroSoundWaves />
-      <button className={styles.motionControl} onClick={() => setMotion(value => !value)} aria-pressed={motion} title={reduced ? "Reduced motion is on. Play to opt in to background animation." : "Control decorative background motion"}>
-        {motion ? "Pause equalizer" : "Play equalizer"}
+      <button className={styles.motionControl} onClick={() => setMotion(value => !value)} aria-pressed={motion} title={reduced ? "Reduced motion is on. Decorative glass stays still." : "Control decorative background motion"}>
+        {motion ? "Pause glass motion" : "Play glass motion"}
       </button>
       <ProductHero />
       <ProductDeck />
@@ -104,21 +100,20 @@ export function Home() {
             <div className={styles.featuredImage}>
               <div className={styles.featureCircle} data-feature-depth />
               <div className={styles.featureProduct} data-feature-product>
-                <img src="/assets/mixer.svg" alt="Illustrative graphite DJ mixer with channel faders, knobs and illuminated performance pads" width={800} height={700} style={{ width:"100%",height:"100%",objectFit:"contain" }} />
+                {data.demo ? <img src="/assets/mixer.svg" alt="Illustrative graphite DJ mixer with channel faders, knobs and illuminated performance pads" width={800} height={700} style={{ width:"100%",height:"100%",objectFit:"contain" }} /> : <PictureView picture={spotlight?.image || featured.images[0]} />}
               </div>
               <span>01 / THE SPOTLIGHT</span>
             </div>
             <div className={styles.featuredCopy}>
-              <span className="eyebrow muted">TURN UP THE MOMENT</span>
+              <span className="eyebrow muted">{spotlight?.eyebrow || "TURN UP THE MOMENT"}</span>
               <h2>
-                A little louder.
-                <br />A little closer.
+                {data.demo ? <>A little louder.<br />A little closer.</> : spotlight?.title || featured.name}
               </h2>
               <p>
-                An illustrative mixer concept. Explore the controls, shape your sound, and bring your next set to life.
+                {data.demo ? "An illustrative mixer concept. Explore the controls, shape your sound, and bring your next set to life." : spotlight?.description || featured.summary}
               </p>
               <ul>
-                {["Mixer concept illustration", "Channel faders and performance pads", "Demo design, not product specifications"].map((f) => (
+                {(data.demo ? ["Mixer concept illustration", "Channel faders and performance pads", "Demo design, not product specifications"] : spotlight?.features || featured.features).map((f) => (
                   <li key={f}>
                     <AudioLines size={16} />
                     {f}
@@ -127,9 +122,9 @@ export function Home() {
               </ul>
               <Link
                 className="button dark-button"
-                to="/products"
+                to={data.demo ? "/products" : `/products/${featured.slug}`}
               >
-                Explore products <ArrowUpRight size={17} />
+                {data.demo ? "Explore products" : spotlight?.ctaLabel || "Explore product"} <ArrowUpRight size={17} />
               </Link>
               {featured.demo && (
                 <small className="demo-label">
@@ -166,10 +161,11 @@ export function Home() {
       </section>
       <section id="news" className={`section light ${styles.newsSection} ${styles.withParticleBackdrop}`} aria-labelledby="news-title">
         <div className="container">
-          <div className="section-heading"><div><span className="eyebrow muted">WHAT’S NEXT</span><h2 id="news-title">News</h2></div><span className={styles.newsBadge}>DEMO · CONTENT COMING SOON</span></div>
-          <p className={styles.newsIntro}>A place for future iDance updates. These are layout placeholders, not published company news.</p>
+          <div className="section-heading"><div><span className="eyebrow muted">WHAT’S NEXT</span><h2 id="news-title">{data.home.newsHeading || "News"}</h2></div>{data.demo && <span className={styles.newsBadge}>DEMO · CONTENT COMING SOON</span>}</div>
+          {(data.demo || data.home.newsIntro) && <p className={styles.newsIntro}>{data.demo ? "A place for future iDance updates. These are layout placeholders, not published company news." : data.home.newsIntro}</p>}
           <div className={styles.newsList}>
-            {[['01','Product updates','New releases and product announcements will appear here.'],['02','Events & community','Upcoming events and community stories will appear here.'],['03','Behind the sound','Brand stories and creative inspiration will appear here.']].map(([n,title,description]) => <article key={n}><span>{n}</span><div><small>PLACEHOLDER</small><h3>{title}</h3><p>{description}</p></div><span className={styles.newsSoon}>Coming soon</span></article>)}
+            {data.demo ? [['01','Product updates','New releases and product announcements will appear here.'],['02','Events & community','Upcoming events and community stories will appear here.'],['03','Behind the sound','Brand stories and creative inspiration will appear here.']].map(([n,title,description]) => <article key={n}><span>{n}</span><div><small>PLACEHOLDER</small><h3>{title}</h3><p>{description}</p></div><span className={styles.newsSoon}>Coming soon</span></article>) : news.map((post, index) => <article key={post.id}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{post.category}</small><h3><Link to={`/news/${post.slug}`}>{post.title}</Link></h3><p>{post.excerpt}</p></div><Link className={styles.newsSoon} to={`/news/${post.slug}`} aria-label={`Read ${post.title}`}>Read story <ArrowUpRight size={15} /></Link></article>)}
+            {!data.demo && !news.length && <p>No news published yet.</p>}
           </div>
         </div>
         <SoundDivider />

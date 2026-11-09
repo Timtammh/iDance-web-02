@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { Search, Menu, ArrowUpRight } from "lucide-react";
 import { useContent } from "../../hooks/useContent";
+import { HomeAudio } from "../../sections/home/HomeAudio";
 import { Modal } from "../ui/Modal";
 import { savedConsent, setConsent } from "../../lib/analytics";
+import { MobileProductsMenu, ProductsMenu } from "./ProductsMenu";
 
 import bottomLogo from "../../pic/bottom.jpg";
 import instagramIcon from "../../icon/instagram (1).png";
@@ -41,7 +43,10 @@ export function Layout() {
         { label: "TV", path: "/tv" },
         { label: "Contact", path: "/contact" },
       ];
-  const navWithNews = nav.some(n => n.path === "/#news" || n.path === "/news") ? nav : [...nav.slice(0, -1), { label: "News", path: "/#news" }, ...nav.slice(-1)];
+  const mainNav = nav.filter(n =>
+    !["/#find-your-sound", "#find-your-sound", "/#news", "#news", "/news"].includes(n.path) &&
+    !["find your sound", "news"].includes(n.label.trim().toLowerCase()),
+  );
   const close = () => {
     setMenu(false);
     setSearch(false);
@@ -56,7 +61,9 @@ export function Layout() {
           <img src={bottomLogo} alt="iDance" width={47.3} height={57.2} />
         </Link>
         <nav aria-label="Main navigation" className="desktop-nav">
-          {navWithNews.map((n) => (
+          {mainNav.map((n) => n.path === "/products" ? (
+            <ProductsMenu key={n.path} data={data} label={n.label} />
+          ) : (
             <NavLink key={n.path} to={n.path} className={({ isActive }) => (n.path.includes("#") ? pathname + hash === n.path : isActive) ? "active" : undefined}>
               {n.label}
             </NavLink>
@@ -148,10 +155,13 @@ export function Layout() {
           </div>
         </div>
       </footer>
+      <HomeAudio />
       {menu && (
         <Modal title="Explore iDance" onClose={close}>
           <nav className="mobile-nav">
-            {navWithNews.map((n) => (
+            {mainNav.map((n) => n.path === "/products" ? (
+              <MobileProductsMenu key={n.path} data={data} label={n.label} onNavigate={close} />
+            ) : (
               <Link onClick={close} key={n.path} to={n.path}>
                 {n.label}
                 <ArrowUpRight />

@@ -48,7 +48,7 @@ export function ProductsMenu({ data, label = "Products" }: { data: Catalogue; la
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
-  const topicButtons = useRef<(HTMLButtonElement | null)[]>([]);
+  const topicButtons = useRef<(HTMLAnchorElement | null)[]>([]);
   const panels = useRef<(HTMLDivElement | null)[]>([]);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pointerWithin = useRef(false);
@@ -100,7 +100,7 @@ export function ProductsMenu({ data, label = "Products" }: { data: Catalogue; la
     };
   }, [open, close]);
 
-  const onTopicKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+  const onTopicKey = (event: KeyboardEvent<HTMLAnchorElement>, index: number) => {
     const next = event.key === "ArrowDown" ? (index + 1) % productTopics.length
       : event.key === "ArrowUp" ? (index - 1 + productTopics.length) % productTopics.length
       : event.key === "Home" ? 0 : event.key === "End" ? productTopics.length - 1 : null;
@@ -154,12 +154,12 @@ export function ProductsMenu({ data, label = "Products" }: { data: Catalogue; la
       <div className={styles.topicsColumn}>
         <ul className={styles.topics} aria-label="Product topics">
           {productTopics.map((topic, index) => <li key={topic.id}>
-            <button ref={element => { topicButtons.current[index] = element; }} type="button" className={styles.topic}
+            <Link ref={element => { topicButtons.current[index] = element; }} to={topicHref(topic.id)} className={styles.topic}
               id={`${id}-${topic.id}-trigger`} aria-expanded={activeTopic === index} aria-controls={`${id}-${topic.id}-content`}
               onPointerEnter={event => { if (event.pointerType === "mouse") setActiveTopic(index); }}
-              onFocus={() => setActiveTopic(index)} onClick={() => setActiveTopic(index)} onKeyDown={event => onTopicKey(event, index)}>
+              onFocus={() => setActiveTopic(index)} onClick={close} onKeyDown={event => onTopicKey(event, index)}>
               <span>{topic.label}</span>
-            </button>
+            </Link>
           </li>)}
         </ul>
         <Link className={styles.allProducts} to="/products" onClick={close}>All products <ArrowUpRight size={16} aria-hidden="true" /></Link>

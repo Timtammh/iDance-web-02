@@ -191,3 +191,10 @@
 .mobileSubcategory[open] summary svg { transform:rotate(180deg); }
 .mobileSubcategory > a { display:flex; justify-content:space-between; gap:12px; padding:14px 12px; min-height:48px; border-left:1px solid #d5d9df; }
 .mobileSubcategory .emptyNote { margin:0 0 12px 12px; }
+
+/* Topic names navigate; hover and arrow keys still reveal their subcategories. */
+.topic { display:block; text-decoration:none; }
+/* The active topic already has a span underline; suppress the global nav line. */
+.panel .topic::after { content:none; display:none; }
+/* Active titles have their own single line: hover must not add text underline. */
+.panel .topic, .panel .topic:hover, .panel .topic:focus-visible, .panel .topic:active { text-decoration:none; }

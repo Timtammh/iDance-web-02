@@ -11,3 +11,6 @@ test-results-analytics
 *.tsbuildinfo
 
 test-results-cms
+
+# macOS folder metadata
+.DS_Store

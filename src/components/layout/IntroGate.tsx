@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { gsap, ScrollTrigger } from "../../lib/motion/gsap";
 import introVideo from "../../video/intro.mp4";
+import introMobileVideo from "../../video/intro-mobile.mp4";
+import introPoster from "../../video/intro-poster.jpg";
 
 export function IntroGate({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<"intro" | "entering" | "entered">("intro");
   const [blocked, setBlocked] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
   const screen = useRef<HTMLDivElement>(null);
   const site = useRef<HTMLDivElement>(null);
@@ -33,8 +36,14 @@ export function IntroGate({ children }: { children: ReactNode }) {
     document.addEventListener("keydown", onKey);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduce.matches) { video.current?.pause(); setBlocked(true); }
-    else void video.current?.play().catch(() => setBlocked(true));
-    return () => document.removeEventListener("keydown", onKey);
+    else {
+      if (video.current) { video.current.muted = true; video.current.defaultMuted = true; }
+      void video.current?.play().catch(() => setBlocked(true));
+    }
+    const safeguard = window.setTimeout(() => {
+      if (!video.current || video.current.paused || video.current.readyState < 2) { setBlocked(true); setPlaying(false); }
+    }, 5000);
+    return () => { window.clearTimeout(safeguard); document.removeEventListener("keydown", onKey); };
   }, [phase, enter]);
 
   useLayoutEffect(() => {
@@ -56,7 +65,11 @@ export function IntroGate({ children }: { children: ReactNode }) {
 
   return <>
     {phase !== "entered" && <div ref={screen} className="intro-screen" data-intro-phase={phase}>
-      <video ref={video} src={introVideo} muted playsInline preload="auto" onEnded={enter} onError={enter} aria-hidden="true" />
+      <img className="intro-poster" src={introPoster} alt="" aria-hidden="true" />
+      <video ref={video} style={{ opacity: playing ? 1 : 0 }} poster={introPoster} muted playsInline preload="auto" onPlaying={() => { setPlaying(true); setBlocked(false); }} onWaiting={() => setPlaying(false)} onEnded={enter} onError={() => { setBlocked(true); setPlaying(false); }} aria-hidden="true">
+        <source src={introMobileVideo} media="(max-width: 767px)" type="video/mp4" />
+        <source src={introVideo} type="video/mp4" />
+      </video>
       <button ref={enterButton} type="button" className="intro-enter" onClick={enter} disabled={phase === "entering"} aria-label="Stop intro and enter iDance homepage">
         <span>{phase === "entering" ? "Welcome to iDance" : "Click or tap to enter"} <span aria-hidden="true">↑</span><small>{blocked ? "Ready when you are · Enter or Esc" : "Skip intro · Enter or Esc"}</small></span>
       </button>

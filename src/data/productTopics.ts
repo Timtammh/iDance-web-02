@@ -9,7 +9,7 @@ export const productTopics: ProductTopic[] = [
   { id: "karaoke", label: "Karaoke", children: [
     { label: "Party Mic" }, { label: "Trolley" }, { label: "Category to confirm", unconfirmed: true },
   ] },
-  { id: "ds", label: "DS", children: [
+  { id: "ds", label: "DJ", children: [
     { label: "DJ Mixer" },
     { label: "Category to confirm", unconfirmed: true },
     { label: "Disco Lighting" },

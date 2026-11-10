@@ -1,47 +1,32 @@
-# Update your existing Git checkout safely
+# Latest iDance source: 10 November 2026
 
-This snapshot is based on GitHub main `c496fe700085a7aeb4017c4a4f39818bc9bedd69`, rechecked on 9 November 2026. Remote main was unchanged. No tracked files were deleted or renamed. No push has been performed.
+Full source snapshot of the current preview, including all local media and font assets, tests, package lockfiles, and Sanity Studio source. This is not a Git repository. No GitHub push or deployment was performed.
 
-## Before copying
-1. Back up your existing local project folder, including hidden files. In Terminal, enter that existing checkout and run `git status` and `git remote -v`. Confirm it is Timtammh/iDance-web-02.
-2. If you have local edits, commit them to a backup branch or save a separate backup before overwriting. This archive cannot know about edits on your Mac. Compare any newer local commits before merging.
-3. Unzip this archive separately, for example in Downloads. Its top-level `iDance-web-02` folder contains the project files, not a Git repository.
-
-## Recommended Mac copy method
-Do NOT replace the existing project folder itself in Finder. Finder's Replace action on a directory can discard files not supplied by this archive, including .git, .env and local-only files. Dragging just src/public directories and choosing Replace can also lose your local-only files. A Finder Merge is not the same as replacing every modified file reliably.
-
-Use a non-deleting file merge instead. Replace both sample paths below with your actual extracted source and existing checkout. Keep the trailing slash on the source. First run a dry run:
+## Safe update
+1. Download and extract separately. Keep your existing Git checkout at /Users/designer4/Desktop/Timothy/iDance-web-02.
+2. Back up that existing folder, including hidden files. Check `git status` and `git remote -v` there. If you have uncommitted edits, preserve and compare them before copying.
+3. Merge the extracted iDance-web-02 contents into your existing checkout with rsync. Replace SOURCE below with the actual extracted folder. First preview:
 
 ```sh
-rsync -avn --exclude='.git/' --include='.env.example' --exclude='.env' --exclude='.env.*' --exclude='node_modules/' --exclude='dist/' '/path/to/extracted/iDance-web-02/' '/path/to/existing/iDance-web-02/'
+rsync -avn --exclude='.git/' --include='.env.example' --exclude='.env' --exclude='.env.*' --exclude='node_modules/' --exclude='dist/' 'SOURCE/' '/Users/designer4/Desktop/Timothy/iDance-web-02/'
 ```
 
-Review the paths and listed files, then remove only the `n` from `-avn` to copy (`-av`). Never add `--delete`. These exclusions preserve .git and all .env/.env.* files at both root and studio level while allowing blank .env.example templates.
+Then use `-av` instead of `-avn`. Never add `--delete`. Do not replace the entire existing project folder in Finder. Preserve .git and all local environment files.
 
-There are no required deletions or renames. The unused `src/sections/home/ProductModelViewer.tsx` is omitted as in prior no-3D packages; if already present locally, it can stay and is not imported. No GLB/GLTF asset is required. Old media files retained in the repository can remain.
-
-## Verify before pushing yourself
-From your existing checkout:
+4. In the existing checkout, review and check:
 
 ```sh
 git status --short
 git diff --stat
 git diff --check
 npm ci
-npm run typecheck
 npm run build
-npm run lint
-npm run dev
 ```
 
-Review changed/new source, media and fonts. Make sure no .env, tokens, node_modules or dist files are staged. Then commit and push using your normal workflow. Nothing in this package pushes or deploys automatically. Existing local environment settings take precedence; preserve them rather than copying example files over them.
+5. Review exactly what to stage. Existing unrelated local files should not be added. Yesterday's excluded files were src/logo.svg and .DS_Store. They are absent from this archive. The current source does not need src/logo.svg; before removing a local copy, check it has not been newly used in local work. .DS_Store is now ignored. No existing files are automatically deleted by this overlay.
+6. Once changes are reviewed, stage the intended files, inspect `git diff --cached --stat`, commit with a descriptive message, then `git push origin main` only if you are on the intended main branch. Do not use force push. If rejected because remote changed, stop and reconcile rather than overwriting it.
 
-## Included current work
-This package contains the latest source matching private Site version 25: responsive XD301 product page and supplied media, distinct overview and detailed feature copy, gesture-controlled Space Control wording, product/category navigation, header and performance updates. The original 93-second XD301 video and previous site assets are included.
+## Verification
+Typecheck and production build passed on 10 November 2026 in cloud Linux. ESLint has zero errors and one existing ProductDeck useEffect dependency warning. Browser/end-to-end tests were not rerun for this packaging task. Studio source is included but its independent build was not run. No claim is made about your local Mac build or current remote branch state.
 
-## Limits and launch notes
-- Full frontend build/typecheck, lint and isolated analytics checks were run in cloud Linux. One pre-existing ProductDeck hook warning remains. This is not a claim of a build on your Mac.
-- Browser interactions were checked in managed desktop/mobile-width previews. Full Playwright execution is blocked by this cloud browser sandbox; supplied regression tests are not claimed to pass end-to-end. Some legacy tests still describe older demo content and may need further updates.
-- Real GA4/Sanity accounts remain unconnected. Category routes include honest empty states where products have not yet been supplied. Apps has no subcategories.
-- Bestigia font metadata says ©2021 Ronny Studio, all rights reserved. The supplied font alone does not establish web/commercial licensing; confirm rights before public deployment.
-- Audio starts when the visitor presses Play; phone volume may use device buttons. It continues across client-side page navigation, not a browser reload.
+The snapshot includes the current menu/category link and layout updates. The zip contains no dependencies, compiled output, .git, local secrets, test output, or hosting-specific .openai metadata. All current project media is retained; an unused-looking asset is not treated as permission to delete it.

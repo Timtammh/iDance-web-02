@@ -1238,3 +1238,6 @@ body { background:#fff; }
   .product-detail-page[data-product="xd301"] .intro { font-size:17px; }
   .product-detail-page[data-product="xd301"] .specifications > div { gap:16px; }
 }
+
+/* Keep the matching logo frame visible while mobile autoplay loads or is blocked. */
+.intro-screen .intro-poster { position:absolute; left:50%; top:50%; width:50vw; height:auto; max-height:80svh; object-fit:contain; transform:translate(-50%,-50%); pointer-events:none; }

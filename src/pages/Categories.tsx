@@ -17,6 +17,21 @@ import { item, track } from "../lib/analytics";
 import type { Product } from "../types/content";
 import styles from "./Categories.module.css";
 
+// Existing campaign artwork only: these banners do not add catalogue products.
+const categoryArtwork: Record<string, { url: string; alt: string; contain?: boolean }> = {
+  karaoke: { url: "/media/mobile-hero/01-speaker-and-microphone.webp", alt: "iDance karaoke speaker and microphone", contain: true },
+  ds: { url: "/media/mixer-hero-v2-poster.jpg", alt: "Close-up of an illuminated iDance DJ mixer" },
+  "musical-instruments": { url: "/media/mobile-hero/08-pocket-chord.webp", alt: "iDance Pocket Chord musical instrument", contain: true },
+};
+
+function CategoryHero({ topic }: { topic: ProductTopic }) {
+  const artwork = categoryArtwork[topic.id];
+  return <div className={`${styles.hero} ${artwork?.contain ? styles.heroContained : ""}`} data-category-hero>
+    {artwork ? <PictureView picture={artwork} priority /> :
+      <img src="/assets/equalizer-texture.svg" alt="" width="960" height="380" className={styles.heroTexture} />}
+  </div>;
+}
+
 function Breadcrumbs({ topic, entry }: { topic: ProductTopic; entry?: MenuEntry }) {
   return <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
     <ol>
@@ -29,6 +44,15 @@ function Breadcrumbs({ topic, entry }: { topic: ProductTopic; entry?: MenuEntry 
   </nav>;
 }
 
+function ColourDots({ products }: { products: Product[] }) {
+  const colours = [...new Set(products.map(product => product.colour?.trim()).filter((colour): colour is string => !!colour))];
+  const palette: Record<string, string> = { black: "#111", white: "#fff", red: "#c53737", blue: "#306bc0", pink: "#e66ea5", silver: "#b9bec5", grey: "#858585", gray: "#858585" };
+  return <div className={styles.colourDots} aria-label={colours.length ? `Colours: ${colours.join(", ")}` : "Colour details coming soon"}>
+    {colours.length ? colours.map(colour => <span key={colour} className={styles.colourDot} style={{ backgroundColor: palette[colour.toLowerCase()] || "#ddd" }} title={colour} />) :
+      <span className={`${styles.colourDot} ${styles.colourPending}`} title="Colour details coming soon" />}
+  </div>;
+}
+
 function CategoryCard({ topic, entry, products }: { topic: ProductTopic; entry: MenuEntry; products: Product[] }) {
   const picture = products.find(product => product.images.length > 0)?.images[0];
   const content = <>
@@ -38,6 +62,8 @@ function CategoryCard({ topic, entry, products }: { topic: ProductTopic; entry: 
         <span className={styles.placeholderTitle}>{entry.label}</span>
       </div>}
     </div>
+    <ColourDots products={products} />
+    <p className={styles.productCategory}>{topic.label}</p>
     <div className={styles.cardHeading}>
       <h2 className={styles.cardTitle}>{entry.label}</h2>
       {!entry.unconfirmed && <ArrowRight size={20} aria-hidden="true" />}
@@ -61,6 +87,7 @@ function ProductTile({ product, listId }: { product: Product; listId: string }) 
         <span className={styles.placeholderTitle}>Image coming soon</span>
       </div>}
     </div>
+    <ColourDots products={[product]} />
     <p className={styles.productCategory}>{product.category.name}</p>
     <h2 className={styles.cardTitle}>{product.name}</h2>
     <p className={styles.cardCaption}>{product.summary}</p>
@@ -108,8 +135,9 @@ export function MajorCategory() {
   usePage(topic ? `${topic.label} Products` : "Category not found", topic ? `Explore the iDance ${topic.label} collection and its product categories.` : undefined);
   if (!topic) return <MissingCategory />;
   const products = getTopicProducts(data, topic);
-  return <section className={`page light ${styles.page}`} data-category-page="major" data-product-topic={topic.id}>
-    <div className={`container ${styles.container}`}>
+  return <section className={`page light ${styles.page} ${styles.majorPage}`} data-category-page="major" data-product-topic={topic.id}>
+    <CategoryHero topic={topic} />
+    <div className={`container ${styles.container} ${styles.majorContent}`}>
       <Breadcrumbs topic={topic} />
       <header className={styles.header}>
         <span className={`eyebrow muted ${styles.eyebrow}`}>PRODUCT COLLECTION</span>

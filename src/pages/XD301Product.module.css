@@ -149,3 +149,34 @@
 
 .productScene { width:100%; margin:0; padding:0; }
 .productScene img { display:block; width:100%; height:auto; aspect-ratio:2/1; object-fit:contain; }
+
+/* Cinematic, edge-to-edge video stage inspired by the product reference. */
+.page .section.videoStage { position:relative; padding:0; background:#080808; color:#fff; overflow:hidden; }
+.page .section.videoStage > :not(video) { margin:0; }
+.videoStage .video { width:100%; aspect-ratio:16/9; min-height:360px; max-height:800px; object-fit:cover; }
+.videoStage .video[controls] { object-fit:contain; }
+.videoCopy { position:absolute; inset:0; padding:clamp(28px,5vw,80px); pointer-events:none; background:linear-gradient(180deg,rgba(0,0,0,.55),transparent 65%); }
+.videoCopy h2 { margin:14px 0 0; text-shadow:0 2px 18px #0008; }
+.videoCopy .eyebrow { color:#fff; }
+.videoActions { position:absolute; left:0; right:0; bottom:0; display:flex; justify-content:space-between; gap:20px; padding:32px clamp(24px,4vw,64px); background:linear-gradient(transparent,#000a); }
+.videoActions button { border:0; background:transparent; color:#fff; cursor:pointer; min-height:44px; padding:10px 0; font:inherit; font-size:14px; }
+.videoActions button:first-child { display:flex; align-items:center; gap:16px; }
+.videoActions button:last-child { font-size:12px; }
+.videoActions button:hover { text-decoration:underline; text-underline-offset:5px; }
+.page .section:focus { outline:none; }
+@media(max-width:767px) {
+ .videoStage .video { min-height:280px; aspect-ratio:4/3; }
+ .videoStage .video[controls] { aspect-ratio:16/9; min-height:0; }
+ .videoCopy { padding:26px 20px; }
+ .videoActions { padding:18px 20px; }
+ .videoActions button { font-size:12px; }
+}
+
+/* Share the frontpage container width; only the campaign fills the viewport. */
+.page { width:100%; margin-inline:0; }
+.page > :not(.campaign) { width:min(var(--max), calc(100% - var(--site-gutter) * 2)); margin-inline:auto; box-sizing:border-box; }
+.page > .campaign { width:100%; margin-inline:0; }
+
+/* Keep full viewport width with a hero 20% shorter than the previous 2:1 frame. */
+.page .campaign { aspect-ratio:5/2; }
+.page .campaign img { object-fit:cover; }

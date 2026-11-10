@@ -24,7 +24,7 @@ test("desktop hover opens the full-width menu, switches all five topics and clos
   await expect(page.getByRole("region", { name: "Karaoke", exact: true })).toContainText("Trolley");
   await expect(page.getByRole("region", { name: "Karaoke", exact: true })).toContainText("Category to confirm");
   for (const [topic, children] of [
-    ["DS", ["Category to confirm", "Disco Lighting", "DEEJAY Mini Verse", "Pocket", "Lighting"]],
+    ["DJ", ["Category to confirm", "Disco Lighting", "DEEJAY Mini Verse", "Pocket", "Lighting"]],
     ["Musical Instruments", ["Guitar", "Keyboard", "Pocket"]],
     ["Interactive Board", ["My Stage", "GrooveBrix", "DEEJAY Mini Verse"]],
     ["Apps", ["Page pending."]],
@@ -57,12 +57,12 @@ test("desktop click toggle, keyboard arrows, Escape, focus exit and interruption
   await page.keyboard.press("ArrowDown");
   await expect(page.getByRole("button", { name: "Karaoke", exact: true })).toBeFocused();
   await page.keyboard.press("ArrowDown");
-  await expect(page.getByRole("button", { name: "DS", exact: true })).toBeFocused();
-  await expect(page.getByRole("region", { name: "DS", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "DJ", exact: true })).toBeFocused();
+  await expect(page.getByRole("region", { name: "DJ", exact: true })).toBeVisible();
   await page.keyboard.press("ArrowRight");
-  await expect(page.getByRole("region", { name: "DS", exact: true })).toBeFocused();
+  await expect(page.getByRole("region", { name: "DJ", exact: true })).toBeFocused();
   await page.keyboard.press("ArrowLeft");
-  await expect(page.getByRole("button", { name: "DS", exact: true })).toBeFocused();
+  await expect(page.getByRole("button", { name: "DJ", exact: true })).toBeFocused();
   await page.keyboard.press("End");
   await expect(page.getByRole("button", { name: "Apps", exact: true })).toBeFocused();
   await page.keyboard.press("Home");
@@ -122,7 +122,7 @@ test("mobile accordion retains the modal focus trap, pending labels and valid ca
   const products = dialog.getByRole("button", { name: "Products", exact: true });
   await products.click();
   await expect(products).toHaveAttribute("aria-expanded", "true");
-  await dialog.getByRole("button", { name: "DS", exact: true }).click();
+  await dialog.getByRole("button", { name: "DJ", exact: true }).click();
   const dsContent = dialog.locator('[id$="-ds"]');
   await expect(dsContent.getByText("Category to confirm", { exact: false })).toBeVisible();
   await expect(dialog.getByRole("link", { name: "Pocket", exact: true })).toHaveCount(0);

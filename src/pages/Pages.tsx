@@ -181,7 +181,7 @@ export function ProductDetail() {
             )}
           </div>
           <div>
-            <span className="eyebrow muted">{p.slug === "xd301" ? "DS / DJ MIXER / PORTABLE DJ STATION" : p.category.name}</span>
+            <span className="eyebrow muted">{p.slug === "xd301" ? "DJ / DJ MIXER / PORTABLE DJ STATION" : p.category.name}</span>
             <h1>{p.name}</h1>
             <p className="intro">{p.summary}</p>
             {p.demo && (

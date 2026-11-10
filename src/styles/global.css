@@ -1107,7 +1107,7 @@ body { background:#fff; }
 #main .light { background:#fff; color:#252628; }
 #main .dark { background:#f4f4f2; color:#252628; }
 .product-image,.detail-image { background:#f2f2f0; }
-.footer { background:#eeefed; border-color:#dedfdd; }
+.footer { background:#f6f7f5; border-color:#dedfdd; }
 .modal,.consent { background:#fff; }
 .field input,.field select,.field textarea { background:#fff; }
 
@@ -1134,7 +1134,7 @@ body { background:#fff; }
 /* Intro artwork occupies half the viewport width, centered on black. */
 .intro-screen video { position:absolute; left:50%; top:50%; width:50vw; height:auto; max-height:80svh; object-fit:contain; transform:translate(-50%,-50%); }
 
-/* Supplied display face, limited to page and major section headings. */
+/* Retain the supplied face as an asset; headings now match body typography. */
 @font-face {
   font-family: "Bestigia";
   src: url("/fonts/Bestigia-Regular.ttf") format("truetype");
@@ -1143,8 +1143,8 @@ body { background:#fff; }
   font-display: swap;
 }
 #main h1, #main h2 {
-  font-family: "Bestigia", "Parkinsans", Arial, sans-serif;
-  font-weight: 400;
+  font-family: "Parkinsans", Arial, sans-serif;
+  font-weight: 600;
   font-synthesis: none;
 }
 /* Keep decorative-motion control clear of the persistent sound dock. */
@@ -1156,7 +1156,7 @@ body { background:#fff; }
 .intro-enter > span { font-size:8.4px; }
 .intro-enter small { font-size:6.3px; }
 
-/* Consistent tracking across all Bestigia page and section headings. */
+/* Keep established heading size, weight and tracking. */
 #main h1, #main h2 { letter-spacing:.01em; }
 
 /* Bound the intro's moving raster to one viewport instead of the entire page.
@@ -1169,7 +1169,7 @@ body { background:#fff; }
   --header-height:104px;
   height:var(--header-height);
   isolation:isolate;
-  background:#d9d9d9;
+  background:#f8f8f7;
   color:#123348;
   border:0;
   backdrop-filter:none;
@@ -1241,3 +1241,36 @@ body { background:#fff; }
 
 /* Keep the matching logo frame visible while mobile autoplay loads or is blocked. */
 .intro-screen .intro-poster { position:absolute; left:50%; top:50%; width:50vw; height:auto; max-height:80svh; object-fit:contain; transform:translate(-50%,-50%); pointer-events:none; }
+/* Preserve the catalogue landmark without the removed marketing heading. */
+.page h1.sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+
+/* Keep All collection filters close to their family navigator. */
+.page.catalogue-page { padding-top:28px; }
+.catalogue-page .filters { margin-top:0; }
+.catalogue-page .demo-notice { margin-top:0; }
+@media(max-width:767px) { .page.catalogue-page { padding-top:20px; } }
+
+/* Tighten only the shared See it, Hear it, Feel it title. */
+#main .sound-video-heading { letter-spacing: -.025em; }
+
+/* Cinema-sized playback, bounded by both viewport axes. Other dialogs unchanged. */
+.modal:has(.video-player) {
+  width:min(94vw,1400px,calc((100dvh - 110px) * 16 / 9));
+  max-width:none;
+  max-height:96dvh;
+  border-radius:12px;
+  background:#0c1014;
+  color:#fff;
+}
+.modal:has(.video-player) .modal-inner { padding:12px; }
+.modal:has(.video-player) .modal-heading { margin-bottom:10px; min-height:44px; padding-left:8px; }
+.modal:has(.video-player) .modal-heading h2 { font-size:20px; }
+.modal:has(.video-player) .icon-button { color:#fff; min-width:44px; min-height:44px; }
+.modal .video-player { display:block; object-fit:contain; background:#000; max-height:calc(100dvh - 110px); }
+@media(max-width:767px) {
+  .modal:has(.video-player) { width:min(96vw,calc((100dvh - 94px) * 16 / 9)); }
+  .modal:has(.video-player) .modal-inner { padding:8px; }
+  .modal:has(.video-player) .modal-heading { margin-bottom:8px; }
+}
+/* A uniform cinema backdrop prevents blurred poster edges showing as shadow lines. */
+.modal:has(.video-player)::backdrop { background:#080b10; backdrop-filter:none; -webkit-backdrop-filter:none; }

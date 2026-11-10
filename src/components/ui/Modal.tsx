@@ -30,7 +30,8 @@ export function Modal({
       aria-labelledby="modal-title"
       onKeyDownCapture={(e) => {
         if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); onClose(); }
-        if (e.key === "Tab") {
+        // Native dialog focus handling includes video shadow-DOM controls.
+        if (e.key === "Tab" && !e.currentTarget.querySelector("video[controls]")) {
           const focusable = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex="0"]')).filter(el => el.getClientRects().length > 0);
           const first = focusable[0], last = focusable[focusable.length - 1];
           if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }

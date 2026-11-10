@@ -29,14 +29,14 @@ export const demoContent: Content = {
     socialLinks: [],
   },
   home: {
-    headline: "Bring Your Sound to Life.",
+    headline: "Bring Your Sound to Life",
     description:
       "For the spontaneous singalongs. The all-night celebrations. And every little moment in between.",
     featuredProducts: ["demo-party", "demo-karaoke", "demo-play"],
     featuredVideos: [],
-    productsHeading: "Find your next sound.",
-    videosHeading: "See it. Hear it. Feel it.",
-    cta: "Make every moment sound better.",
+    productsHeading: "Find your next sound",
+    videosHeading: "See it, Hear it, Feel it",
+    cta: "Make every moment sound better",
   },
   products: [
     xd301,
@@ -176,7 +176,7 @@ export const demoContent: Content = {
     },
     {
       id: "v2",
-      title: "Good people. Great sound.",
+      title: "Good people, Great sound",
       category: "Life with sound",
       thumbnail: photo(
         "photo-1528605248644-14dd04022da1",
@@ -185,7 +185,7 @@ export const demoContent: Content = {
     },
     {
       id: "v3",
-      title: "Small ideas. New possibilities.",
+      title: "Small ideas, New possibilities",
       category: "Creative play",
       thumbnail: photo(
         "photo-1598488035139-bdbb2231ce04",
@@ -197,7 +197,7 @@ export const demoContent: Content = {
     {
       id: "n1",
       slug: "make-room-for-music",
-      title: "Make room for more music.",
+      title: "Make room for more music",
       category: "Inspiration",
       date: "2026-10-28",
       cover: photo(
@@ -214,7 +214,7 @@ export const demoContent: Content = {
     {
       id: "n2",
       slug: "find-your-party-sound",
-      title: "Every gathering has a soundtrack.",
+      title: "Every gathering has a soundtrack",
       category: "Sound stories",
       date: "2026-10-15",
       cover: photo(
@@ -230,7 +230,7 @@ export const demoContent: Content = {
     {
       id: "n3",
       slug: "a-little-creative-play",
-      title: "Let curiosity take the lead.",
+      title: "Let curiosity take the lead",
       category: "Creative living",
       date: "2026-10-02",
       cover: photo(
@@ -246,9 +246,9 @@ export const demoContent: Content = {
     },
   ],
   about: {
-    headline: "Life sounds better together.",
+    headline: "Life sounds better together",
     body: block(
-      "iDance brings music into the moments we share — from home karaoke and celebrations to family fun and creative play. This preview introduces the brand direction. Approved brand history, company information and product details will be added before launch.",
+      "Founded in 2008 and headquartered in Hong Kong, iDance brings together party audio, musical toys and entry-level musical instruments. From karaoke and celebrations to creative play, we make music part of the moments people share.",
     ),
   },
 };

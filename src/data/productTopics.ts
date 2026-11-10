@@ -23,7 +23,10 @@ export const productTopics: ProductTopic[] = [
   { id: "interactive-board", label: "Interactive Board", children: [
     { label: "My Stage" }, { label: "GrooveBrix" }, { label: "DEEJAY Mini Verse" },
   ] },
-  { id: "apps", label: "Apps", children: [] },
+  { id: "apps", label: "Apps", children: [
+    { label: "Super Rocker" }, { label: "PLAYnJAM" }, { label: "X808" },
+    { label: "iKey Station" }, { label: "LIVEJAM" }, { label: "JAM HERO" },
+  ] },
 ];
 
 export function slugifyTopic(label: string) {
@@ -31,11 +34,11 @@ export function slugifyTopic(label: string) {
 }
 
 export function topicHref(topicId: string) {
-  return `/products/category/${encodeURIComponent(topicId)}`;
+  return `/products?topic=${encodeURIComponent(topicId)}`;
 }
 
 export function subcategoryHref(topicId: string, label: string) {
-  return `${topicHref(topicId)}/${slugifyTopic(label)}`;
+  return `/products/category/${encodeURIComponent(topicId)}/${slugifyTopic(label)}`;
 }
 
 const normalize = (value: string) => value.trim().toLowerCase().replace(/[\s_-]+/g, " ");

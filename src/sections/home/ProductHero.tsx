@@ -20,54 +20,110 @@ export function ProductHero() {
   return <HeroMedia key={source + poster} source={source} poster={poster} label={label} demo={demo} />;
 }
 
-function HeroMedia({ source, poster, label, demo }: { source: string; poster: string; label: string; demo: boolean }) {
+function HeroMedia({ source: originalSource, poster: originalPoster, label: originalLabel, demo }: { source: string; poster: string; label: string; demo: boolean }) {
+  const [activeClip, setActiveClip] = useState(0);
+  const mountedAt = useRef(performance.now());
+  const clips = [
+    { source: "/media/xd301-home-silent.mp4", poster: "/media/xd301-colour-hero.png", label: "iDance XD301 portable DJ station", name: "XD301" },
+    { source: originalSource, poster: originalPoster, label: originalLabel, name: "DJX101E" },
+  ];
+  const { source, label } = clips[activeClip];
+  const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [blocked, setBlocked] = useState(false);
   const userPaused = useRef(false);
   const explicitPlay = useRef(false);
   const syncPlayback = useRef(() => {});
   useEffect(() => {
     const el = video.current;
     if (!el) return;
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let onscreen = false;
+    let cancelled = false;
+    setFailed(false);
+    setBlocked(false);
+    const rect = root.current?.getBoundingClientRect();
+    let onscreen = !!rect && rect.bottom > 0 && rect.top < window.innerHeight;
     const apply = () => {
-      if (!onscreen || document.hidden || (preference.matches && !explicitPlay.current) || userPaused.current) {
+      const currentRect = root.current?.getBoundingClientRect();
+      onscreen = !!currentRect && currentRect.bottom > 0 && currentRect.top < window.innerHeight;
+      if (!onscreen || document.hidden || !!document.querySelector("[data-intro-phase]") || userPaused.current) {
         el.pause();
-      } else {
-        el.muted = true;
-        void el.play().catch(() => setPlaying(false));
+        return;
       }
+      el.muted = true;
+      el.defaultMuted = true;
+      el.playsInline = true;
+      void el.play().catch((error: DOMException) => {
+        if (!cancelled && error.name !== "AbortError") { setPlaying(false); setBlocked(true); }
+      });
     };
     syncPlayback.current = apply;
-    const observer = new IntersectionObserver(([entry]) => {
-      onscreen = entry.isIntersecting;
-      apply();
-    });
-    observer.observe(el);
-    const preferenceChanged = () => { explicitPlay.current = false; apply(); };
-    preference.addEventListener("change", preferenceChanged);
+    const observer = new IntersectionObserver(([entry]) => { onscreen = entry.isIntersecting; apply(); });
+    observer.observe(root.current || el);
+    window.addEventListener("idance:entered", apply);
+    window.addEventListener("pageshow", apply);
     document.addEventListener("visibilitychange", apply);
+    el.addEventListener("loadeddata", apply);
+    el.addEventListener("canplay", apply);
+    // Some browsers report visibility before the entrance animation settles.
+    const retry = window.setInterval(() => { if (el.paused && !userPaused.current) apply(); }, 1500);
+    apply();
     return () => {
+      cancelled = true;
+      window.clearInterval(retry);
       observer.disconnect();
-      preference.removeEventListener("change", preferenceChanged);
+      window.removeEventListener("idance:entered", apply);
+      window.removeEventListener("pageshow", apply);
       document.removeEventListener("visibilitychange", apply);
+      el.removeEventListener("loadeddata", apply);
+      el.removeEventListener("canplay", apply);
       syncPlayback.current = () => {};
       el.pause();
     };
-  }, []);
+  }, [source]);
+  const play = () => {
+    const el = video.current;
+    if (!el) return;
+    userPaused.current = false;
+    explicitPlay.current = true;
+    setBlocked(false);
+    if (failed) { setFailed(false); el.load(); }
+    el.muted = true;
+    el.defaultMuted = true;
+    el.playsInline = true;
+    // Call directly in the click gesture, rather than waiting for an observer.
+    void el.play().catch((error: DOMException) => { if (error.name !== "AbortError") setBlocked(true); });
+  };
   const toggle = () => {
     const el = video.current;
     if (!el) return;
-    userPaused.current = !el.paused;
-    explicitPlay.current = el.paused;
-    syncPlayback.current();
+    if (!el.paused) { userPaused.current = true; el.pause(); }
+    else play();
   };
-  return <section className={styles.cinematicHero} data-hero aria-label={demo ? "iDance product video" : label}>
-    <video ref={video} className={styles.backgroundVideo} data-square-pixels={source === "/media/DJX101EV2-10MB.mp4" || undefined} src={source} poster={poster} muted loop playsInline preload="metadata" aria-label={label} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onError={() => { setFailed(true); setPlaying(false); }} style={failed ? {visibility:"hidden"} : undefined} />
-    {failed && <img className={styles.backgroundVideo} src={poster} alt={label} onError={e => { if (!e.currentTarget.src.endsWith("/assets/fallback.svg")) e.currentTarget.src = "/assets/fallback.svg"; }} />}
-    {!failed && <button className={styles.videoMotion} onClick={toggle} aria-label={playing ? "Pause background video" : "Play background video"} title={playing ? "Pause background video" : "Play background video"}>{playing ? <Pause size={16}/> : <Play size={16}/>}</button>}
+  const selectClip = (index: number) => {
+    userPaused.current = false;
+    explicitPlay.current = true;
+    if (index === activeClip) { play(); return; }
+    setPlaying(false);
+    setFailed(false);
+    setBlocked(false);
+    setActiveClip(index);
+  };
+  return <section ref={root} className={styles.cinematicHero} data-hero data-mounted-ms={Math.round(mountedAt.current)} aria-label={demo ? "iDance product video" : label}>
+    <video ref={video} className={styles.backgroundVideo} data-square-pixels={source === "/media/DJX101EV2-10MB.mp4" || undefined} src={source} muted playsInline autoPlay preload="auto" data-hero-clip={activeClip} aria-label={label}
+      onEnded={() => setActiveClip(index => (index + 1) % clips.length)}
+      onLoadedData={event => { event.currentTarget.dataset.loadedMs = String(Math.round(performance.now())); }}
+      onPlaying={event => { event.currentTarget.dataset.playingMs ||= String(Math.round(performance.now())); setPlaying(true); setBlocked(false); setFailed(false); }} onPause={() => setPlaying(false)} onError={() => { setFailed(true); setPlaying(false); }} style={failed ? {visibility:"hidden"} : undefined} />
+
+    {!playing && !userPaused.current && <div className={styles.playFallback}>
+      <button onClick={play}><Play size={19} aria-hidden="true"/>{failed ? "Retry video" : "Play video"}</button>
+      {(blocked || failed) && <span role="status">{failed ? "Video could not load. Retry or choose another video." : "Tap play to start this video."}</span>}
+    </div>}
+    <div className={styles.videoToolbar}>
+      <button className={styles.playbackButton} onClick={toggle} aria-label={playing ? "Pause background video" : "Play background video"} title={playing ? "Pause" : "Play"}>{playing ? <Pause size={15} aria-hidden="true"/> : <Play size={15} aria-hidden="true"/>}</button>
+      <div className={styles.videoChoices} role="group" aria-label="Choose homepage video">{clips.map((clip,index) => <button key={clip.source} onClick={() => selectClip(index)} aria-label={`Play ${clip.name} video`} title={clip.name} aria-pressed={activeClip === index}><span className={styles.videoDot} aria-hidden="true"/></button>)}</div>
+    </div>
   </section>;
 }
 

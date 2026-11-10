@@ -1,10 +1,13 @@
+import { useSiteEntered } from "./useSiteEntered";
 import type { RefObject } from "react";
 import { conditions, gsap, safelyAnimate, useGSAP, visiblePlayback } from "../lib/motion/gsap";
 import { arrowInteraction, reveal, watchMotionLayout } from "../lib/motion/choreography";
 import styles from "../sections/home/Home.module.css";
 
 export function useHomeMotion(root: RefObject<HTMLDivElement | null>) {
+  const entered = useSiteEntered();
   useGSAP(() => {
+    if (!entered) return;
     const container = root.current;
     if (!container) return;
     const mm = gsap.matchMedia(root);
@@ -14,6 +17,17 @@ export function useHomeMotion(root: RefObject<HTMLDivElement | null>) {
       const disposers: Array<() => void> = [];
       const revert = safelyAnimate(() => {
         const select = <T extends HTMLElement = HTMLElement>(selector: string) => Array.from(container.querySelectorAll<T>(selector));
+        const scrollReveal = (trigger: HTMLElement, targets: gsap.TweenTarget, distance: number) => {
+          const animation = gsap.fromTo(targets, { y: distance, opacity: .2 }, {
+            y: 0, opacity: 1, stagger: .12, ease: "none", force3D: true,
+            scrollTrigger: { trigger, start: "top 92%", end: "top 46%", scrub: .35, invalidateOnRefresh: true,
+              onUpdate: self => { trigger.dataset.revealProgress = self.progress.toFixed(3); },
+            },
+          });
+          const finish = () => { animation.scrollTrigger?.kill(false); animation.progress(1); };
+          trigger.addEventListener("focusin", finish);
+          disposers.push(() => { trigger.removeEventListener("focusin", finish); delete trigger.dataset.revealProgress; });
+        };
         // Keep the entire desktop video frame untouched: no zoom, crop or scrub.
         // Hero media swaps at the mobile breakpoint, so all choreography below is
         // attached to stable sections rather than to removed hero-copy wrappers.
@@ -65,13 +79,11 @@ export function useHomeMotion(root: RefObject<HTMLDivElement | null>) {
           }
         }
 
-        select(".video-grid").forEach(grid => {
-          const cards = grid.querySelectorAll(".video-card");
-          if (cards.length) disposers.push(reveal(grid, cards, {
-            y: mobile ? 38 : 84, scale: 0.94, rotation: mobile ? 0 : -1.5, stagger: mobile ? 0.09 : 0.17,
-          }, mobile));
+        select("[data-home-video-rail]").forEach(grid => {
+          const cards = grid.querySelectorAll("[data-home-video-card]");
+          if (cards.length) scrollReveal(grid, cards, mobile ? 44 : 80);
         });
-        select(".video-card").forEach(card => disposers.push(arrowInteraction(card)));
+
         select("#news article").forEach((row, index) => {
           disposers.push(reveal(row, row, { x: mobile ? 22 : 64, y: 0, delay: mobile ? 0 : index * 0.05 }, mobile));
         });
@@ -81,9 +93,7 @@ export function useHomeMotion(root: RefObject<HTMLDivElement | null>) {
         const cta = container.querySelector<HTMLElement>("[data-brand-cta]");
         if (cta) {
           const targets = cta.querySelectorAll("[data-cta-reveal]");
-          if (targets.length) disposers.push(reveal(cta, targets, {
-            y: mobile ? 38 : 86, scale: 0.94, duration: mobile ? 0.8 : 1.3, stagger: 0.14,
-          }, mobile));
+          if (targets.length) scrollReveal(cta, targets, mobile ? 48 : 88);
           cta.querySelectorAll<HTMLElement>("[data-cta-link]").forEach(link => disposers.push(arrowInteraction(link)));
         }
 
@@ -113,7 +123,7 @@ export function useHomeMotion(root: RefObject<HTMLDivElement | null>) {
     });
     const stopWatching = watchMotionLayout(container);
     return () => { stopWatching(); mm.revert(); };
-  }, { scope: root });
+  }, { scope: root, dependencies: [entered], revertOnUpdate: true });
 }
 
 // Retained for collection consumers with dedicated reveal wrappers.

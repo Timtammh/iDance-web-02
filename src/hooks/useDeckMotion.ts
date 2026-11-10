@@ -1,10 +1,13 @@
+import { useSiteEntered } from "./useSiteEntered";
 import type { RefObject } from "react";
 import { conditions, gsap, safelyAnimate, useGSAP } from "../lib/motion/gsap";
 import { cardInteraction, reveal } from "../lib/motion/choreography";
 import styles from "../sections/home/ProductDeck.module.css";
 
 export function useDeckMotion(root: RefObject<HTMLElement | null>, collection: string) {
+  const entered = useSiteEntered();
   useGSAP(() => {
+    if (!entered) return;
     const mm = gsap.matchMedia(root);
     mm.add(conditions, ({ conditions: media }) => {
       if (media?.reduce || !root.current) return;
@@ -43,11 +46,11 @@ export function useDeckMotion(root: RefObject<HTMLElement | null>, collection: s
         }, !media?.desktop));
         if (media?.fine) cards.forEach(card => {
           const surface = card.querySelector<HTMLElement>(`.${styles.disc}`);
-          if (surface) disposers.push(cardInteraction(card, surface, surface.querySelector("img"), card.querySelector("svg")));
+          if (surface) disposers.push(cardInteraction(card, surface, surface.querySelector("img"), card.querySelector("svg"), true));
         });
       });
       return () => { disposers.forEach(dispose => dispose()); revert(); };
     });
     return () => mm.revert();
-  }, { scope: root, dependencies: [collection], revertOnUpdate: true });
+  }, { scope: root, dependencies: [collection, entered], revertOnUpdate: true });
 }

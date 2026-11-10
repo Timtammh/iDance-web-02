@@ -127,3 +127,20 @@
    Display its full pixel frame at the intended 16:9 ratio, without cropping.
    Keep contain for arbitrary CMS videos whose aspect ratio may differ. */
 .cinematicHero video.backgroundVideo[data-square-pixels="true"] { object-fit:fill; }
+
+/* Keep playback and clip selection visible, including blocked/error states. */
+.videoToolbar { position:absolute; inset:auto 20px 76px; z-index:3; display:flex; align-items:center; gap:3px; width:fit-content; padding:3px 7px 3px 3px; border:1px solid #ffffff40; border-radius:999px; background:#12141d99; color:#fff; backdrop-filter:blur(8px); }
+.videoToolbar button { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0; color:inherit; background:transparent; border:0; border-radius:50%; cursor:pointer; }
+.videoChoices { display:flex; gap:0; }
+.videoChoices button { width:28px; }
+.videoDot { display:block; width:6px; height:6px; border-radius:50%; background:#ffffff65; transition:background 160ms ease,transform 160ms ease; }
+.videoChoices button[aria-pressed="true"] .videoDot { background:#fff; transform:scale(1.35); }
+.videoToolbar button:hover { background:#ffffff20; }
+.videoToolbar button:focus-visible,.playFallback button:focus-visible { outline:2px solid #63d5fb; outline-offset:3px; }
+.playFallback { position:absolute; inset:0; z-index:2; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; pointer-events:none; background:#0002; }
+.playFallback button { display:inline-flex; align-items:center; gap:10px; min-height:48px; padding:14px 24px; border:1px solid #fff9; border-radius:999px; background:#111c; color:#fff; font:inherit; font-size:14px; cursor:pointer; pointer-events:auto; }
+.playFallback > span { max-width:90%; padding:8px 12px; border-radius:6px; color:#fff; background:#111d; font-size:12px; text-align:center; }
+/* Override the global decorative-section child positioning rule. */
+.cinematicHero .videoToolbar { position:absolute !important; z-index:3 !important; }
+.cinematicHero .playFallback { position:absolute !important; z-index:2 !important; }
+.cinematicHero .videoToolbar { bottom:76px; }

@@ -1,6 +1,10 @@
+import { useAboutMotion } from "../hooks/useAboutMotion";
+import aboutStyles from "./About.module.css";
+import { ProductFamilyNavigation } from "../components/layout/ProductFamilyNavigation";
+import { getTopicProducts, productTopics } from "../data/productTopics";
 import { XD301Product } from "./XD301Product";
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { PortableText } from "@portabletext/react";
 import { ArrowUpRight, Download, Check } from "lucide-react";
 import { useContent } from "../hooks/useContent";
@@ -16,9 +20,10 @@ export function Products() {
   const data = useContent();
   const [params, setParams] = useSearchParams();
   const category = params.get("category") || "";
+  const topic = productTopics.find(item => item.id === params.get("topic"));
   const q = params.get("q") || "";
   usePage("Explore Products");
-  const products = data.products.filter(
+  const products = (topic ? getTopicProducts(data, topic) : data.products).filter(
     (p) =>
       (!category || p.category.slug === category) &&
       p.name.toLowerCase().includes(q.toLowerCase()),
@@ -35,18 +40,16 @@ export function Products() {
   }, [products]);
   function update(key: string, value: string) {
     const next = new URLSearchParams(params);
+    if (key === "category") next.delete("topic");
     if (value) next.set(key, value);
     else next.delete(key);
     setParams(next, { replace: key === "q" });
   }
+  if (topic && products[0]) return <Navigate to={`/products/${encodeURIComponent(products[0].slug)}?topic=${encodeURIComponent(topic.id)}&collection=all`} replace />;
   return (
-    <section className="page light">
+    <> {topic && <ProductFamilyNavigation topicId={topic.id} />}<section className="page light catalogue-page">
       <div className="container">
-        <span className="eyebrow muted">DISCOVER THE COLLECTION</span>
-        <h1>Sound for your world.</h1>
-        <p className="intro">
-          Find your next singalong, celebration or spark of creativity.
-        </p>
+        <h1 className="sr-only">{topic ? `${topic.label} products` : "All products"}</h1>
         {products.some(product => product.demo) && (
           <p className="demo-notice">Items marked as demo are placeholder concepts. Other listings use supplied product information.</p>
         )}
@@ -92,7 +95,7 @@ export function Products() {
         </div>
         {!products.length && (
           <div className="empty">
-            <h2>No sound found. Yet.</h2>
+            <h2>No sound found, Yet</h2>
             <p>Try a different name or category.</p>
             <button
               className="button dark-button"
@@ -103,7 +106,7 @@ export function Products() {
           </div>
         )}
       </div>
-    </section>
+    </section></>
   );
 }
 export function ProductDetail() {
@@ -232,7 +235,7 @@ export function ProductDetail() {
         </div>
         {related.length > 0 && (
           <>
-            <h2>More to discover.</h2>
+            <h2>More to discover</h2>
             <div className="product-grid">
               {related.map((r) => (
                 <ProductCard product={r} key={r.id} />
@@ -245,24 +248,41 @@ export function ProductDetail() {
   );
 }
 export function About() {
-  const { about, demo } = useContent();
+  const { about } = useContent();
+  const aboutRoot = useRef<HTMLElement>(null);
+  useAboutMotion(aboutRoot);
   usePage("Our Story");
   return (
-    <section className="page dark">
-      <div className="container narrow">
-        <span className="eyebrow">OUR WORLD OF SOUND</span>
-        <h1>{about.headline}</h1>
-        <div className="prose">
-          <PortableText value={about.body} />
+    <section ref={aboutRoot} className={`page dark ${aboutStyles.page}`}>
+      <div className="container">
+        <header className={aboutStyles.intro} data-about-reveal>
+          <span className="eyebrow">OUR WORLD OF SOUND</span>
+          <h1>{about.headline}</h1>
+          <div className="prose"><PortableText value={about.body} /></div>
+        </header>
+        <dl className={aboutStyles.facts} data-about-reveal>
+          <div><dt>Founded</dt><dd>2008</dd></div>
+          <div><dt>Headquarters</dt><dd>Hong Kong</dd></div>
+          <div><dt>Our approach</dt><dd>Design, Build, Distribute</dd></div>
+        </dl>
+        <div className={aboutStyles.stories}>
+          <section data-about-reveal>
+            <span className={aboutStyles.number} aria-hidden="true">01</span>
+            <div><h2>More ways to make music</h2><p>Our range brings together speakers, karaoke, microphones, party lighting, musical instruments and DJ products. Sound, light and interactive play create opportunities to sing, experiment and enjoy music together.</p></div>
+          </section>
+          <section data-about-reveal>
+            <span className={aboutStyles.number} aria-hidden="true">02</span>
+            <div><h2>Designed in Hong Kong, Shared worldwide</h2><p>Our Hong Kong sales, design and creative team works alongside iDance Europe and iDance UK. With China-origin supply and warehouse support in Belgium, we serve distributors and retailers across international markets.</p></div>
+          </section>
+          <section data-about-reveal>
+            <span className={aboutStyles.number} aria-hidden="true">03</span>
+            <div><h2>Supporting our retail partners</h2><p>We support product launches and retail presentation with product photography, lifestyle imagery, localized packaging and in-store displays. Our digital music experiences extend the possibilities for karaoke, keyboards, drums, mixing and creative play.</p></div>
+          </section>
         </div>
-        {demo && (
-          <p className="demo-notice">
-            Preview copy — approved brand history and company details pending.
-          </p>
-        )}
-        <Link className="button" to="/products">
-          Find your sound <ArrowUpRight size={18} />
-        </Link>
+        <div className={aboutStyles.actions} data-about-reveal>
+          <Link className="button" to="/products">Find your sound <ArrowUpRight size={18} /></Link>
+          <Link className={aboutStyles.contact} to="/contact">Talk to our team <ArrowUpRight size={18} /></Link>
+        </div>
       </div>
     </section>
   );
@@ -274,7 +294,7 @@ export function TV() {
     <section className="page dark">
       <div className="container">
         <span className="eyebrow">EXPERIENCE iDANCE</span>
-        <h1>See it. Hear it. Feel it.</h1>
+        <h1 className="sound-video-heading">See it, Hear it, Feel it</h1>
         <p className="intro">
           A closer look at a world brought to life by sound.
         </p>
@@ -291,7 +311,7 @@ export function News() {
     <section className="page light">
       <div className="container">
         <span className="eyebrow muted">FROM OUR WORLD</span>
-        <h1>Stories worth sharing.</h1>
+        <h1>Stories worth sharing</h1>
         <div className="news-grid">
           {news.map((n) => (
             <NewsCard key={n.id} post={n} />
@@ -346,7 +366,7 @@ export function Contact() {
       <div className="container contact-grid">
         <div>
           <span className="eyebrow muted">LET’S TALK SOUND</span>
-          <h1>Start a conversation.</h1>
+          <h1>Start a conversation</h1>
           <p className="intro">
             Have a product question or an idea to share? We’d love to connect.
           </p>
@@ -413,7 +433,7 @@ export function Privacy() {
   return (
     <section className="page light">
       <div className="container narrow">
-        <h1>Privacy information.</h1>
+        <h1>Privacy information</h1>
         <p className="intro">
           The formal privacy and cookie policies are pending.
         </p>
@@ -435,7 +455,7 @@ export function NotFound() {
     <section className="page light">
       <div className="container narrow">
         <span className="eyebrow muted">404 / LOST THE RHYTHM?</span>
-        <h1>Let’s find your way back.</h1>
+        <h1>Let’s find your way back</h1>
         <p>The page or product you’re looking for isn’t here.</p>
         <Link className="button dark-button" to="/">
           Back to iDance <ArrowUpRight size={18} />

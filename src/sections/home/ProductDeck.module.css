@@ -258,3 +258,10 @@
 
 @media(max-width:767px) { .levelLeds { bottom:7px; gap:4px; } .levelLeds i { width:8px;height:2px; } .deckGlow::after { background-size:60% 100%; } }
 @media(prefers-reduced-motion:reduce) { .cueEdge,.deck[data-cue="true"] .product,.deck[data-cue="true"] .levelLeds i { animation:none!important; } }
+
+/* Keep the mixer card's dark bezel visible during its subtle hover lift. */
+@media (hover:hover) and (pointer:fine) {
+  .product:hover .disc { transform:translateY(-1px); border-color:#0b1114; }
+  .product:hover .disc img { transform:scale(1.008); }
+}
+@media(prefers-reduced-motion:reduce) { .product:hover .disc,.product:hover .disc img { transform:none; } }

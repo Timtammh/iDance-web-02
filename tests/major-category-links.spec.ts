@@ -1,14 +1,17 @@
 import { test, expect } from "@playwright/test";
 
-test("left-column category names navigate to all five major pages", async ({ page }) => {
+test("major headings are text and old landing pages redirect", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/products/xd301");
   await page.getByRole("button", { name: "Stop intro and enter iDance homepage" }).click();
-  for (const name of ["Karaoke", "DJ", "Musical Instruments", "Interactive Board", "Apps"]) {
-    await page.getByRole("button", { name: "Products", exact: true }).click();
-    await page.locator('[aria-label="Product topics"]').getByRole("link", { name, exact: true }).click();
-    await expect(page.getByRole("heading", { name, exact: true, level: 1 })).toBeVisible();
-    await expect(page.locator('[data-category-hero]')).toBeVisible();
+  await page.getByRole("button", { name: "Products", exact: true }).click();
+  const menu = page.locator('[aria-label="Product categories"]');
+  await expect(menu.locator("h3")).toHaveCount(5);
+  await expect(menu.locator("h3 a")).toHaveCount(0);
+  for (const topic of ["karaoke", "ds", "musical-instruments", "interactive-board", "apps"]) {
+    await page.goto(`/products/category/${topic}`);
+    await expect(page).toHaveURL(new RegExp(`products\\?topic=${topic}$`));
+    await expect(page.locator('[data-category-page="major"]')).toHaveCount(0);
   }
 });
 

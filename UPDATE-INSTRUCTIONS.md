@@ -1,4 +1,4 @@
-# Latest iDance source: 10 November 2026
+# Latest iDance source: 10 November 2026, preview version 60
 
 Full source snapshot of the current preview, including all local media and font assets, tests, package lockfiles, and Sanity Studio source. This is not a Git repository. No GitHub push or deployment was performed.
 
@@ -27,6 +27,6 @@ npm run build
 6. Once changes are reviewed, stage the intended files, inspect `git diff --cached --stat`, commit with a descriptive message, then `git push origin main` only if you are on the intended main branch. Do not use force push. If rejected because remote changed, stop and reconcile rather than overwriting it.
 
 ## Verification
-Typecheck and production build passed on 10 November 2026 in cloud Linux. ESLint has zero errors and one existing ProductDeck useEffect dependency warning. Browser/end-to-end tests were not rerun for this packaging task. Studio source is included but its independent build was not run. No claim is made about your local Mac build or current remote branch state.
+Typecheck and production build passed on 10 November 2026 in cloud Linux. ESLint has zero errors and one existing ProductDeck useEffect dependency warning. Browser/end-to-end tests were not rerun for this packaging task. Studio source is included but its independent build was not run. No claim is made about your local Mac build. GitHub main was checked as e76097d4871734e4ead8bd39c075378047e4cbec (Update product pages and mobile intro). All files in that remote tree are retained; no deletions are required. Compare any newer remote or local changes before merging.
 
-The snapshot includes the current menu/category link and layout updates. The zip contains no dependencies, compiled output, .git, local secrets, test output, or hosting-specific .openai metadata. All current project media is retained; an unused-looking asset is not treated as permission to delete it.
+This snapshot matches successfully published preview version 60, source 389e61798f92c27c385b6528e6907db4177f3413. It includes the latest GSAP entrance/motion fixes, category and menu refinements, About page motion, XD301 product/showcase work, and local media. Build, typecheck, and lint were rerun successfully for this export (one existing lint warning). The zip contains no dependencies, compiled output, .git, local secrets, test output, or hosting-specific .openai metadata. All current project media is retained; an unused-looking asset is not treated as permission to delete it.

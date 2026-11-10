@@ -39,6 +39,8 @@ for (const overrides of [true, false]) {
     await expect(spotlight.locator("img")).toHaveAttribute("src", /cdn.sanity.io/);
     await expect(page.locator("#news")).not.toContainText("PLACEHOLDER");
     await expect(page.locator("#news")).not.toContainText("DEMO");
+    await expect(page.locator("[data-hero] video")).toHaveAttribute("src", "/media/XD301_EN_10MB.mp4");
+    await page.locator("[data-hero] video").dispatchEvent("ended");
     if (overrides) {
       await expect(page.locator("[data-hero] video")).toHaveAttribute("src", "/media/editorial-video.mp4");
       await expect(page.locator("[data-hero] img")).toHaveAttribute("alt", "Published hero film");

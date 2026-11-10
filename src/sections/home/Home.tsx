@@ -65,7 +65,7 @@ export function Home() {
           <div className="section-heading">
             <div>
               <span className="eyebrow">A SOUND FOR EVERY SIDE OF YOU</span>
-              <h2>Find your sound.</h2>
+              <h2>Find your sound</h2>
             </div>
             <p>
               Big nights. Small moments.
@@ -107,7 +107,7 @@ export function Home() {
             <div className={styles.featuredCopy}>
               <span className="eyebrow muted">{spotlight?.eyebrow || "MEET THE XD301"}</span>
               <h2>
-                {data.demo ? <>Your mix.<br />Your moment.</> : spotlight?.title || featured.name}
+                {data.demo ? <>Your mix,<br />Your moment</> : spotlight?.title || featured.name}
               </h2>
               <p>
                 {data.demo ? "Mix, scratch and play with the iDance XD301 portable DJ station." : spotlight?.description || featured.summary}
@@ -131,19 +131,19 @@ export function Home() {
         <SoundDivider />
       </section>
       )}
-      <section className={`section dark ${styles.experience} ${styles.withParticleBackdrop}`}>
-        <Light variant="spotlight" color="#9c85dd" intensity={0.5} animated />
+      <section className={`section light ${styles.experience} ${styles.homeTV}`}>
         <div className="container" data-reveal>
           <div className="section-heading">
             <div>
               <span className="eyebrow">EXPERIENCE iDANCE</span>
-              <h2>{data.home.videosHeading}</h2>
+              <h2 className="sound-video-heading">{data.home.videosHeading}</h2>
             </div>
             <Link className="text-link" to="/tv">
               Explore iDance TV <ArrowUpRight size={18} />
             </Link>
           </div>
           <VideoGrid
+            variant="home"
             videos={(data.home.featuredVideos?.length
               ? data.videos.filter((v) =>
                   data.home.featuredVideos.includes(v.id),
@@ -168,13 +168,12 @@ export function Home() {
       <section className={`${styles.brandCta} ${styles.withParticleBackdrop}`} data-brand-cta>
         <span className="eyebrow" data-cta-reveal>GOOD MOMENTS START WITH SOUND</span>
         <h2 data-cta-reveal>{data.home.cta}</h2>
-        <div className="button-row">
-          <Link className="button" to="/products" data-cta-reveal data-cta-link="products">
+        <div className="button-row" data-cta-reveal>
+          <Link className="button" to="/products" data-cta-link="products">
             Explore products <ArrowRight size={18} />
           </Link>
           <Link
             className="text-link"
-            data-cta-reveal
             data-cta-link="contact"
             to="/contact"
             onClick={() => track("contact_click", { source: "home_cta" })}

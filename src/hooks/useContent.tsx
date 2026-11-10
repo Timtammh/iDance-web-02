@@ -28,7 +28,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   if (error)
     return (
       <main className="state">
-        <h1>We couldn’t load the content.</h1>
+        <h1>We couldn’t load the content</h1>
         <p>{error}</p>
         <button
           className="button"

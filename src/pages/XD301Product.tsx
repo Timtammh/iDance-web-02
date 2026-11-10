@@ -1,9 +1,11 @@
+import { createPortal } from "react-dom";
 import { useRef, useState, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Store, FileText, SlidersHorizontal, Download, CircleHelp } from "lucide-react";
+import { ArrowUp, ArrowUpRight, Store, FileText, SlidersHorizontal, Download, CircleHelp } from "lucide-react";
 import type { Product } from "../types/content";
 import { track } from "../lib/analytics";
 import styles from "./XD301Product.module.css";
+import { ProductFamilyNavigation } from "../components/layout/ProductFamilyNavigation";
 import { XD301FeatureStory } from "./XD301FeatureStory";
 
 function FeatureIcon({ feature }: { feature: string }) {
@@ -43,6 +45,7 @@ export function XD301Product({ product }: { product: Product }) {
   }
   const image = product.images[selected] || product.images[0];
   return <article className={styles.page}>
+    <ProductFamilyNavigation product={product} />
     <div className={styles.campaign}>
       <img src={product.campaignImage?.url || product.images[0]?.url} alt={product.campaignImage?.alt || "XD301 portable DJ station"} width={1774} height={887} fetchPriority="high" />
       <div className={styles.campaignCopy}><h1>{product.name}</h1><p>Portable DJ Station</p><a className={styles.heroBuy} href="#WhereToBuy" onClick={event => { event.preventDefault(); const target = document.getElementById("WhereToBuy") as HTMLDetailsElement | null; if (!target) return; target.open = true; target.querySelector<HTMLElement>("summary")?.focus({ preventScroll:true }); target.scrollIntoView({ behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block:"start" }); }}>Where to Buy<ArrowUpRight size={16} aria-hidden="true"/></a></div>
@@ -51,13 +54,13 @@ export function XD301Product({ product }: { product: Product }) {
       <strong>{product.name}</strong><a href="#Features">Features</a><a href="#Video">Video</a><a href="#ThreeSixty">3D / 360°</a><a href="#Specifications">Specifications</a><a href="#Support">Support</a>
     </nav>
     <section tabIndex={-1} id="Features" className={`${styles.section} ${styles.features}`} aria-labelledby="features-heading">
-      <span className="eyebrow">MAKE THE MIX YOURS</span><h2 id="features-heading">Mix. Scratch. Play.</h2><p className={styles.lead}>{product.summary}</p>
+      <span className="eyebrow">MAKE THE MIX YOURS</span><h2 id="features-heading">Mix, Scratch, Play</h2><p className={styles.lead}>{product.summary}</p>
       <ul className={styles.featureGrid}>{product.features.map(feature => <li key={feature}><FeatureIcon feature={feature}/><h3>{feature}</h3></li>)}</ul>
     </section>
     <section tabIndex={-1} id="Video" className={`${styles.section} ${styles.videoStage}`} aria-labelledby="video-heading">
       <video ref={videoRef} className={styles.video} autoPlay={!reduceMotion} muted={!watching} loop={!watching} controls={watching} playsInline preload="metadata" poster={product.campaignImage?.url || product.images[0]?.url} onPlay={() => setPaused(false)} onPause={() => setPaused(true)} aria-label="XD301 product demonstration"><source src={product.productVideo} type="video/mp4"/>Your browser does not support this video.</video>
-      {!watching && <><div className={styles.videoCopy}><span className="eyebrow">SEE IT IN ACTION</span><h2 id="video-heading">Meet XD301.</h2></div><div className={styles.videoActions}><button type="button" onClick={watchVideo}><span aria-hidden="true">▶</span> Watch Video</button><button type="button" aria-label={paused ? "Play video preview" : "Pause video preview"} onClick={() => { const video = videoRef.current; if (!video) return; if (video.paused) void video.play().catch(() => {}); else video.pause(); }}>{paused ? "Play preview" : "Pause preview"}</button></div></>}
-      {watching && <h2 id="video-heading" className={styles.visuallyHidden}>Meet XD301.</h2>}
+      {!watching && <><div className={styles.videoActions}><button type="button" onClick={watchVideo}><span aria-hidden="true">▶</span> Watch Video</button><button type="button" aria-label={paused ? "Play video preview" : "Pause video preview"} onClick={() => { const video = videoRef.current; if (!video) return; if (video.paused) void video.play().catch(() => {}); else video.pause(); }}>{paused ? "Play preview" : "Pause preview"}</button></div></>}
+      <h2 id="video-heading" className={styles.visuallyHidden}>XD301 product demonstration</h2>
     </section>
     <XD301FeatureStory/>
     <section tabIndex={-1} id="ThreeSixty" className={`${styles.section} ${styles.threeSixty}`} aria-labelledby="three-sixty-heading">
@@ -89,7 +92,8 @@ export function XD301Product({ product }: { product: Product }) {
         </div>
       </div>
     </section>
-    <section className={styles.productScene} aria-label="XD301 product showcase"><img src="/media/xd301-specifications-scene.png" alt="XD301 DJ station centred on a dark surface with pink and blue accent lighting" width={1774} height={887} loading="lazy"/></section>
-    <section tabIndex={-1} id="Support" className={`${styles.section} ${styles.support}`} aria-labelledby="support-heading"><div><span className="eyebrow">LET’S TALK SOUND</span><h2 id="support-heading">More about XD301.</h2><p>Questions about the XD301? Get in touch.</p></div><Link className="button dark-button" to="/contact?product=xd301" onClick={() => track("contact_click",{source:"product"})}>Enquire about this product<ArrowUpRight size={18}/></Link></section>
+    <section className={styles.productScene} aria-label="XD301 product showcase"><img src="/media/xd301-showcase-accessories.png" alt="XD301 DJ station on a dark surface with two speakers, headphones, a game controller and a miniature skateboard" width={1774} height={887} loading="lazy"/></section>
+    <section tabIndex={-1} id="Support" className={`${styles.section} ${styles.support}`} aria-labelledby="support-heading"><div><span className="eyebrow">LET’S TALK SOUND</span><h2 id="support-heading">More about XD301</h2><p>Questions about the XD301? Get in touch.</p></div><Link className="button dark-button" to="/contact?product=xd301" onClick={() => track("contact_click",{source:"product"})}>Enquire about this product<ArrowUpRight size={18}/></Link></section>
+    {createPortal(<button type="button" className={styles.backToTop} aria-label="Back to top of product page" title="Back to top" onClick={() => { window.scrollTo({ top:0, behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); }}><ArrowUp size={18} aria-hidden="true" /></button>, document.body)}
   </article>;
 }

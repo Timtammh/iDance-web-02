@@ -61,6 +61,8 @@ export function IntroGate({ children }: { children: ReactNode }) {
     gsap.set(site.current, { clearProps: "transform" });
     site.current?.focus({ preventScroll: true });
     ScrollTrigger.refresh();
+    if (site.current) site.current.dataset.enteredMs = String(Math.round(performance.now()));
+    window.dispatchEvent(new Event("idance:entered"));
   }, [phase]);
 
   return <>
@@ -74,6 +76,6 @@ export function IntroGate({ children }: { children: ReactNode }) {
         <span>{phase === "entering" ? "Welcome to iDance" : "Click or tap to enter"} <span aria-hidden="true">↑</span><small>{blocked ? "Ready when you are · Enter or Esc" : "Skip intro · Enter or Esc"}</small></span>
       </button>
     </div>}
-    {phase !== "intro" && <div ref={site} className={`intro-site ${phase === "entering" ? "intro-site-entering" : ""}`} tabIndex={-1} inert={phase === "entering"} aria-label="iDance website">{children}</div>}
+    <div hidden={phase === "intro"} data-site-phase={phase} ref={site} className={`intro-site ${phase === "entering" ? "intro-site-entering" : ""}`} tabIndex={-1} inert={phase !== "entered"} aria-label="iDance website">{children}</div>
   </>;
 }

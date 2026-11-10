@@ -61,12 +61,13 @@ export function cardInteraction(
   surface: HTMLElement,
   image: Element | null,
   icon: Element | null,
+  subtle = false,
 ) {
   gsap.set(surface, { transformPerspective: 900, transformOrigin: "50% 55%", transition: "none" });
   if (image) gsap.set(image, { transition: "none" });
   const hover = gsap.timeline({ paused: true, defaults: { duration: 0.45, ease: "power3.out" } })
-    .to(surface, { y: -9, scale: 1.015 }, 0);
-  if (image) hover.to(image, { scale: 1.09 }, 0);
+    .to(surface, { y: subtle ? -2 : -9, scale: subtle ? 1.003 : 1.015 }, 0);
+  if (image) hover.to(image, { scale: subtle ? 1.008 : 1.09 }, 0);
   if (icon) hover.to(icon, { x: 5, y: -5 }, 0);
   const tiltX = gsap.quickTo(surface, "rotationX", { duration: 0.5, ease: "power3.out" });
   const tiltY = gsap.quickTo(surface, "rotationY", { duration: 0.5, ease: "power3.out" });

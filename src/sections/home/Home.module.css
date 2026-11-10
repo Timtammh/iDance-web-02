@@ -609,3 +609,9 @@
 @media(max-width:767px) {
   .featured .featuredCopy :global(.button) { font-size:9.6px; padding:12.8px; }
 }
+
+:global(#main) .home > .homeTV { background:#fff; color:#24282b; }
+
+/* Keep each lifestyle caption and title together; eyebrow is a global class. */
+.useCard > div > :global(.eyebrow) { margin-bottom:0; }
+.useCard h3 { margin-top:6px; }

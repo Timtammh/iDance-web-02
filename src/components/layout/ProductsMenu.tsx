@@ -28,12 +28,12 @@ function MenuColumns({ onNavigate }: { onNavigate: () => void }) {
     {productTopics.map(topic => <section className={styles.column} key={topic.id} aria-label={topic.label}>
       <h3 className={styles.heading}>{topic.id === "ds" ? "DEEJAY | DJ" : topic.label}</h3>
       <div className={`${styles.card} ${topic.id === "apps" ? styles.apps : ""}`}>
-        {topic.id !== "apps" && <Link className={styles.collectionLink} to={topicHref(topic.id)} onClick={onNavigate}>All {topic.label}</Link>}
         <ul className={styles.entries}>
           {topic.children.filter(entry => !entry.unconfirmed).map((entry, index) => <li key={entry.label}>
             <Link className={index === 0 && topic.id !== "apps" ? styles.featured : undefined} to={subcategoryHref(topic.id, entry.label)} onClick={onNavigate}>{topic.id === "ds" && entry.label === "DJ Mixer" ? "Mixer" : entry.label}</Link>
           </li>)}
         </ul>
+        <Link className={styles.collectionLink} to={topicHref(topic.id)} onClick={onNavigate}>All</Link>
       </div>
     </section>)}
   </div>;

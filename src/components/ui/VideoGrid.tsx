@@ -35,13 +35,27 @@ export function VideoGrid({ videos, variant = "library" }: { videos: Video[]; va
     { id: "film-djx101e", title: "DJX101E", category: "Karaoke party system", url: "/media/DJX101EV2-10MB.mp4", thumbnail: { url: "/media/djx101ev2-poster.jpg", alt: "DJX101E karaoke party system" } },
     ...videos.filter(v => videoEmbed(v.url)),
   ];
-  const upcoming = videos.filter(v => !videoEmbed(v.url));
+  const groups = ["News", "DEEJAY", "Instruments", "Karaoke", "Pocket", "Interactive"];
+  const filmCategory = (v: Video) => {
+    if (v.id === "film-xd301") return "DEEJAY";
+    if (v.id === "film-djx101e") return "Karaoke";
+    const category = v.category.toLowerCase();
+    if (/news/.test(category)) return "News";
+    if (/deejay|dj|mix/.test(category)) return "DEEJAY";
+    if (/instrument|keyboard|guitar|drum/.test(category)) return "Instruments";
+    if (/karaoke/.test(category)) return "Karaoke";
+    if (/pocket/.test(category)) return "Pocket";
+    if (/interactive/.test(category)) return "Interactive";
+    return undefined;
+  };
+  const rows = variant === "home" ? [{ title: "Watch now", films: available, playable: true }] : groups.map(title => ({ title, films: available.filter(v => filmCategory(v) === title), playable: true }));
   const localVideo = (v: Video) => v.url?.startsWith("/media/") && v.url.endsWith(".mp4");
   return (
     <div className={`${styles.library} ${variant === "home" ? styles.home : ""}`}>
-      {[{ title: "Watch now", films: available, playable: true }, { title: "Coming soon", films: upcoming, playable: false }].filter(row => row.films.length && (variant !== "home" || row.playable)).map(row => (
+      {rows.map(row => (
         <section className={styles.collection} key={row.title} aria-label={row.title}>
-          <div className={styles.rowTitle}><h2>{row.title}</h2><span>{row.films.length} {row.playable ? "films" : "previews"}</span></div>
+          <div className={styles.rowTitle}><h2>{row.title}</h2><span>{row.films.length} {row.playable ? (row.films.length === 1 ? "film" : "films") : "previews"}</span></div>
+          {!row.films.length && <p className={styles.empty}>No videos available yet</p>}
           <div className={styles.rail} data-home-video-rail={variant === "home" || undefined} tabIndex={0} role="region" aria-label={`${row.title} films, scroll horizontally to browse`}>
             {row.films.map(v => <button className={styles.poster} data-home-video-card={variant === "home" || undefined} key={v.id} disabled={!row.playable} aria-label={row.playable ? `Play ${v.title}` : `${v.title}, coming soon`} onClick={e => { e.currentTarget.focus(); setActive(v); track("video_open", { video_id: v.id }); }}>
               <PictureView picture={v.thumbnail} />

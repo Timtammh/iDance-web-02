@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowUpRight, Grid2X2, Disc3, Music2, Radio, Lightbulb } from "lucide-react";
+import { ArrowUpRight, Grid2X2, Disc3, Music2, Radio, Lightbulb, SlidersHorizontal, PanelsTopLeft } from "lucide-react";
 import { useContent } from "../../hooks/useContent";
 import { getTopicProducts, productTopics, subcategoryHref, topicHref } from "../../data/productTopics";
 import type { Product } from "../../types/content";
@@ -7,8 +7,11 @@ import styles from "./ProductFamilyNavigation.module.css";
 
 // Presentation labels can differ from catalogue names without changing routes.
 const djNavigation = [
-  { label: "All", entry: undefined, icon: Grid2X2 },
   { label: "Mixer", entry: "DJ Mixer", icon: Disc3 },
+  { label: "DJ Station", entry: "DJ Station", icon: PanelsTopLeft },
+  { label: "Sound Pads", entry: "Sound Pads", icon: Grid2X2 },
+  { label: "Master Mix", entry: "Master Mix", icon: SlidersHorizontal },
+  { label: "Disco Lighting", entry: "Disco Lighting", icon: Lightbulb },
   { label: "DEEJAY Mini Verse", entry: "DEEJAY Mini Verse", icon: Music2 },
   { label: "Pocket", entry: "Pocket", icon: Radio },
   { label: "Lighting", entry: "Lighting", icon: Lightbulb },
@@ -24,7 +27,7 @@ export function ProductFamilyNavigation({ product, topicId = "ds", activeEntry }
   const products = getTopicProducts(data, topic, entry);
   // A product detail supplies its current product; category pages never borrow it.
   const siblings = product && !activeEntry && !products.some(item => item.id === product.id) ? [product, ...products] : products;
-  const navigation = topic.id === "ds" ? [...djNavigation.slice(0, 2), { label: "Disco Lighting", entry: "Disco Lighting", icon: Lightbulb }, ...djNavigation.slice(2)] : [{ label: "All", entry: undefined, icon: Grid2X2 }, ...topic.children.filter(item => !item.unconfirmed).map(item => ({label: item.label, entry: item.label, icon: Music2}))];
+  const navigation = [...(topic.id === "ds" ? djNavigation : topic.children.filter(item => !item.unconfirmed).map(item => ({label: item.label, entry: item.label, icon: Music2}))), { label: "All", entry: undefined, icon: Grid2X2 }];
   return <section className={styles.navigator} aria-labelledby="product-family-title">
     <div className={styles.heading}><span className={styles.eyebrow}>EXPLORE THE COLLECTION</span><h2 id="product-family-title" className={styles.title}>{topic.id === "ds" ? <>DEEJAY <span>|</span> DJ</> : topic.label}</h2></div>
     <nav aria-label={`${topic.label} product categories`} className={styles.categories}>

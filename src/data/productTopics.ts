@@ -10,7 +10,7 @@ export const productTopics: ProductTopic[] = [
     { label: "Party Mic" }, { label: "Trolley" }, { label: "Category to confirm", unconfirmed: true },
   ] },
   { id: "ds", label: "DJ", children: [
-    { label: "DJ Mixer" },
+    { label: "DJ Mixer" }, { label: "DJ Station" }, { label: "Sound Pads" }, { label: "Master Mix" },
     { label: "Category to confirm", unconfirmed: true },
     { label: "Disco Lighting" },
     { label: "DEEJAY Mini Verse" },

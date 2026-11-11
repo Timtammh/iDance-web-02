@@ -23,3 +23,6 @@
 .home .rowTitle h2 { color:#24282b; }
 .home .rowTitle > span { color:#626b70; }
 .home .rail { padding-top:5px; }
+
+.empty { margin:0; padding:20px 0 24px; color:#a9b6bd; font-size:14px; border-top:1px solid #ffffff20; }
+.rail:empty { display:none; }

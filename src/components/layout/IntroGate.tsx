@@ -6,6 +6,7 @@ import introPoster from "../../video/intro-poster.jpg";
 
 export function IntroGate({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<"intro" | "entering" | "entered">("intro");
+  const [isMobile] = useState(() => window.matchMedia("(max-width: 767px)").matches);
   const [blocked, setBlocked] = useState(false);
   const [playing, setPlaying] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
@@ -16,6 +17,11 @@ export function IntroGate({ children }: { children: ReactNode }) {
   const enter = useCallback(() => {
     if (entering.current) return;
     entering.current = true;
+    if (site.current && video.current) {
+      site.current.dataset.introExitTime = String(video.current.currentTime);
+      site.current.dataset.introDuration = String(video.current.duration);
+      site.current.dataset.introEnded = String(video.current.ended);
+    }
     video.current?.pause();
     setPhase("entering");
   }, []);
@@ -35,24 +41,66 @@ export function IntroGate({ children }: { children: ReactNode }) {
     };
     document.addEventListener("keydown", onKey);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduce.matches) { enter(); }
-    else {
-      if (video.current) { video.current.muted = true; video.current.defaultMuted = true; }
-      void video.current?.play().catch(() => { setBlocked(true); enter(); });
+    const mobile = isMobile;
+    // Preserve the already-approved mobile recovery exactly.
+    if (mobile) {
+      if (reduce.matches) enter();
+      else {
+        if (video.current) { video.current.muted = true; video.current.defaultMuted = true; }
+        void video.current?.play().catch(() => { setBlocked(true); enter(); });
+      }
+      let lastTime = video.current?.currentTime || 0;
+      let stalledFor = 0;
+      const safeguard = window.setInterval(() => {
+        const media = video.current;
+        const currentTime = media?.currentTime || 0;
+        stalledFor = currentTime > lastTime + .05 ? 0 : stalledFor + 1000;
+        lastTime = currentTime;
+        if (!media || stalledFor >= 3000 || media.ended) { setBlocked(true); enter(); }
+      }, 1000);
+      const deadline = window.setTimeout(enter, 12000);
+      return () => { window.clearInterval(safeguard); window.clearTimeout(deadline); document.removeEventListener("keydown", onKey); };
     }
-    let lastTime = video.current?.currentTime || 0;
+    let cancelled = false;
+    const media = video.current;
+    const play = () => {
+      if (!media || cancelled || entering.current || document.hidden) return;
+      media.muted = true;
+      media.defaultMuted = true;
+      void media.play().catch((error: DOMException) => {
+        if (cancelled || entering.current || error.name === "AbortError") return;
+        if (site.current) site.current.dataset.introPlaybackError = error.name;
+        setBlocked(true);
+        // A genuine autoplay denial must not leave mobile visitors trapped.
+        if (error.name === "NotAllowedError" || error.name === "NotSupportedError") enter();
+      });
+    };
+    if (reduce.matches) enter();
+    else play();
+    media?.addEventListener("loadeddata", play);
+    const resume = () => { if (!document.hidden) play(); };
+    document.addEventListener("visibilitychange", resume);
+    let lastTime = media?.currentTime || 0;
     let stalledFor = 0;
     const safeguard = window.setInterval(() => {
-      const media = video.current;
-      const currentTime = media?.currentTime || 0;
+      if (cancelled || document.hidden) { stalledFor = 0; return; }
+      if (!media) { enter(); return; }
+      const currentTime = media.currentTime;
       stalledFor = currentTime > lastTime + .05 ? 0 : stalledFor + 1000;
       lastTime = currentTime;
-      // Autoplay denial, buffering and a missing ended event must not trap visitors.
-      if (!media || stalledFor >= 3000 || media.ended) { setBlocked(true); enter(); }
+      if (media.ended) { enter(); return; }
+      // Allow desktop startup/buffering more time; never cut off advancing playback.
+      if (stalledFor >= 12000) { setBlocked(true); enter(); }
+      else if (media.paused && !entering.current) play();
     }, 1000);
-    const deadline = window.setTimeout(enter, 12000);
-    return () => { window.clearInterval(safeguard); window.clearTimeout(deadline); document.removeEventListener("keydown", onKey); };
-  }, [phase, enter]);
+    return () => {
+      cancelled = true;
+      window.clearInterval(safeguard);
+      media?.removeEventListener("loadeddata", play);
+      document.removeEventListener("visibilitychange", resume);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [phase, enter, isMobile]);
 
   useLayoutEffect(() => {
     if (phase !== "entering") return;
@@ -83,7 +131,7 @@ export function IntroGate({ children }: { children: ReactNode }) {
   return <>
     {phase !== "entered" && <div ref={screen} className="intro-screen" data-intro-phase={phase}>
       <img className="intro-poster" src={introPoster} alt="" aria-hidden="true" />
-      <video ref={video} style={{ opacity: playing ? 1 : 0 }} poster={introPoster} muted playsInline preload="auto" onPlaying={() => { setPlaying(true); setBlocked(false); }} onWaiting={() => setPlaying(false)} onEnded={enter} onError={() => { setBlocked(true); setPlaying(false); enter(); }} aria-hidden="true">
+      <video ref={video} src={isMobile ? undefined : introVideo} style={{ opacity: playing ? 1 : 0 }} poster={introPoster} muted playsInline preload="auto" onPlaying={() => { setPlaying(true); setBlocked(false); }} onWaiting={() => { if (isMobile) setPlaying(false); }} onEnded={enter} onError={() => { if (isMobile) { setBlocked(true); setPlaying(false); enter(); return; } const error = video.current?.error; if (!error) return; if (site.current) site.current.dataset.introMediaError = String(error.code); setBlocked(true); enter(); }} aria-hidden="true">
         <source src={introMobileVideo} media="(max-width: 767px)" type="video/mp4" />
         <source src={introVideo} type="video/mp4" />
       </video>

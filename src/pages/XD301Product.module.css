@@ -15,7 +15,7 @@
 .gallery { background:#e7e7e7; border-radius:20px; min-height:300px; height:min(62vw,650px); display:grid; place-items:center; }
 .gallery img { width:90%; height:90%; object-fit:contain; }
 .caption { font-size:11px; color:#666; line-height:1.6; }
-.thumbnails { display:flex; gap:14px; margin-top:22px; justify-content:center; }
+.thumbnails { display:flex; flex-wrap:wrap; gap:14px; margin-top:22px; justify-content:center; }
 .thumbnails button { width:112px; height:84px; padding:8px; border:1px solid #ccc; border-radius:12px; background:#f4f4f4; cursor:pointer; }
 .thumbnails button[aria-pressed=true] { border:2px solid #222; }
 .thumbnails img { width:100%; height:100%; object-fit:contain; }
@@ -201,3 +201,11 @@
 .backToTop:hover { background:#ecf9ff; }
 .backToTop:focus-visible { outline:2px solid #008fc2; outline-offset:3px; }
 @media(max-width:767px) { .backToTop { left:12px; bottom:calc(120px + env(safe-area-inset-bottom)); } }
+
+/* Keep the requested feature introduction on one desktop line. */
+@media(min-width:1024px) { .features .lead { max-width:none; font-size:clamp(14px,1.25vw,20px); white-space:nowrap; } }
+
+/* Compact only the XD301 feature-introduction text group. */
+.features > :global(.eyebrow) { margin-bottom:0; line-height:1.35; }
+.features > h2 { margin:12px 0 18px; line-height:1.08; }
+.features > .lead { margin:0; line-height:1.45; }

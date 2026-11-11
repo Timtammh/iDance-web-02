@@ -6,6 +6,7 @@ import type { Product } from "../types/content";
 import { track } from "../lib/analytics";
 import styles from "./XD301Product.module.css";
 import { ProductFamilyNavigation } from "../components/layout/ProductFamilyNavigation";
+import { ProductAngleViewer } from "../components/ui/ProductAngleViewer";
 import { XD301FeatureStory } from "./XD301FeatureStory";
 
 function FeatureIcon({ feature }: { feature: string }) {
@@ -43,7 +44,8 @@ export function XD301Product({ product }: { product: Product }) {
     video.muted = false;
     void video.play().catch(() => { /* Native controls remain available when playback is blocked. */ });
   }
-  const image = product.images[selected] || product.images[0];
+  const galleryImages = Array.from({ length: 8 }, (_, i) => ({ url: `/media/xd301-angles/frame-${String(i + 1).padStart(2, "0")}.png`, alt: `XD301 demo visual, angle ${i + 1} of 8` }));
+  const image = galleryImages[selected];
   return <article className={styles.page}>
     <ProductFamilyNavigation product={product} />
     <div className={styles.campaign}>
@@ -51,7 +53,7 @@ export function XD301Product({ product }: { product: Product }) {
       <div className={styles.campaignCopy}><h1>{product.name}</h1><p>Portable DJ Station</p><a className={styles.heroBuy} href="#WhereToBuy" onClick={event => { event.preventDefault(); const target = document.getElementById("WhereToBuy") as HTMLDetailsElement | null; if (!target) return; target.open = true; target.querySelector<HTMLElement>("summary")?.focus({ preventScroll:true }); target.scrollIntoView({ behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block:"start" }); }}>Where to Buy<ArrowUpRight size={16} aria-hidden="true"/></a></div>
     </div>
     <nav className={styles.sectionNav} aria-label="XD301 page sections" onClick={scrollToSection}>
-      <strong>{product.name}</strong><a href="#Features">Features</a><a href="#Video">Video</a><a href="#ThreeSixty">3D / 360°</a><a href="#Specifications">Specifications</a><a href="#Support">Support</a>
+      <strong>{product.name}</strong><a href="#Features">Features</a><a href="#Video">Video</a><a href="#ThreeSixty">360°</a><a href="#Specifications">Specifications</a><a href="#Support">Support</a>
     </nav>
     <section tabIndex={-1} id="Features" className={`${styles.section} ${styles.features}`} aria-labelledby="features-heading">
       <span className="eyebrow">MAKE THE MIX YOURS</span><h2 id="features-heading">Mix, Scratch, Play</h2><p className={styles.lead}>{product.summary}</p>
@@ -64,20 +66,20 @@ export function XD301Product({ product }: { product: Product }) {
     </section>
     <XD301FeatureStory/>
     <section tabIndex={-1} id="ThreeSixty" className={`${styles.section} ${styles.threeSixty}`} aria-labelledby="three-sixty-heading">
-      <span className="eyebrow">EVERY ANGLE</span><h2 id="three-sixty-heading">3D / 360°</h2>
-      <div className={styles.viewerPlaceholder}><span aria-hidden="true">360°</span><p>3D / 360° view coming soon.</p></div>
+      <span className="eyebrow">EVERY ANGLE</span><h2 id="three-sixty-heading">360°</h2>
+      <ProductAngleViewer/>
     </section>
     <section tabIndex={-1} id="Specifications" className={styles.section} aria-labelledby="specifications-heading">
       <div className={styles.specLayout}>
         <div id="ProductImage" className={styles.specImages}>
           <h2 id="specifications-heading">Specifications</h2>
           <div className={styles.gallery}><img src={image?.url} alt={image?.alt} width={1536} height={1024} loading="lazy"/></div>
-          <div className={styles.thumbnails} aria-label="Choose product image">{product.images.map((item,index) => <button key={item.url} aria-label={`View image ${index+1}`} aria-pressed={selected === index} onClick={() => setSelected(index)}><img src={item.url} alt="" width={112} height={84} loading="lazy"/></button>)}</div>
-          <p className={styles.caption}>{selected === 0 ? "Product visualisation. See the original product image for printed details." : "Original supplied product image."}</p>
+          <div className={styles.thumbnails} aria-label="Choose product image">{galleryImages.map((item,index) => <button key={item.url} aria-label={`View image ${index+1}`} aria-pressed={selected === index} onClick={() => setSelected(index)}><img src={item.url} alt="" width={112} height={84} loading="lazy"/></button>)}</div>
+          <p className={styles.caption}>Multi-angle demo visuals. Final 3D images to follow.</p>
         </div>
         <div className={styles.specContent}>
           <details open><summary><span><FileText size={20} aria-hidden="true"/>Product details</span></summary><dl className={styles.specifications}>
-            <div><dt>Category</dt><dd><Link to="/products/category/ds/dj-mixer">DJ / DJ Mixer</Link></dd></div>
+            <div><dt>Category</dt><dd>DJ / DJ Mixer</dd></div>
             <div><dt>Item number</dt><dd>{product.itemNumber || "Details coming soon"}</dd></div>
             <div><dt>Item name</dt><dd>{product.name} Portable DJ Station</dd></div>
             <div><dt>Description</dt><dd>{product.summary}</dd></div>

@@ -1,6 +1,7 @@
 .page { padding-bottom: 110px; }
-.intro { max-width: 850px; }
-.intro h1 { max-width: 780px; }
+.intro { max-width: none; }
+.page .intro h1 { max-width: none; }
+@media(min-width:768px) { .page .intro h1 { font-size:clamp(32px,4.8vw,70px); white-space:nowrap; } }
 .intro :global(.prose) { max-width: 760px; }
 .facts { display: grid; grid-template-columns: .75fr 1fr 1.5fr; gap: 32px; padding: 32px 0; margin: 52px 0 14px; border-block: 1px solid #cdd1d0; }
 .facts dt { color: #596461; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }

@@ -129,3 +129,6 @@
 /* Selected category uses the iDance logo blue with white artwork and label. */
 .categoryTile[data-active="true"],.categoryTile[data-active="true"]:hover { background:#00aeef; color:#fff; box-shadow:none; }
 .categoryTile[data-active="true"] > svg:first-child { color:#fff; }
+
+/* DJ Station photos are 20% larger, centred in the unchanged roomy tiles. */
+.djStationProducts .productTile > .photoSlot { transform:scale(1.2); transform-origin:center; }

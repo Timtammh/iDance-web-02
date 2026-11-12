@@ -82,3 +82,52 @@
 .panel .headingRow .heading::after,.mobileProducts .headingRow .heading::after { display:none; }
 .panel .headingRow .collectionLink,.mobileProducts .headingRow .collectionLink { display:inline-flex; flex:0 0 auto; min-height:44px; margin:0; padding:8px 0; font-size:10.4px; font-weight:400; line-height:1.5; color:#73777b; }
 .mobileProducts .headingRow .collectionLink { font-size:12px; border-bottom:0; }
+
+/* Six topics in the supplied order, including K-POP. */
+.panel .columns { grid-template-columns:.9fr 1.1fr 1.5fr 1.35fr .7fr .65fr; }
+.panel .column { padding-inline:14px; }
+.panel .headingRow { gap:8px; }
+.panel .headingRow .heading { font-size:clamp(11px,1.02vw,16px); }
+@media(min-width:768px) and (max-width:1024px) {
+ .panel .columns { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:24px; }
+ .panel .column:nth-child(4) { border-left:0; padding-left:0; }
+}
+
+/* Give the full product menu more room without leaving the viewport. */
+.panel {
+ width:min(1600px,calc(100vw - 32px));
+ padding:40px clamp(24px,3vw,56px) 28px;
+ max-height:calc(100dvh - var(--header-height,84px) - 16px);
+ overflow-x:hidden;
+ scrollbar-gutter:stable;
+}
+.panel .columns { grid-template-columns:repeat(6,minmax(0,1fr)); }
+.panel .column { padding-inline:clamp(14px,1.5vw,28px); }
+.panel .headingRow { align-items:flex-start; flex-wrap:nowrap; column-gap:10px; row-gap:0; min-height:72px; margin-bottom:20px; }
+.panel .headingRow .heading { flex:0 1 auto; min-height:0; padding:8px 0 18px; font-size:clamp(13px,1.05vw,18px); line-height:1.5; }
+.panel .headingRow .collectionLink { font-size:12px; }
+.panel .entries { gap:8px; }
+.panel .entries a,.panel .apps .entries a { min-height:50px; padding:12px 0; font-size:clamp(13px,1vw,16px); line-height:1.65; overflow-wrap:anywhere; }
+.panel .allProducts { margin-top:24px; min-height:48px; font-size:12px; }
+@media(min-width:768px) and (max-width:1280px) {
+ .panel { padding:32px 28px 24px; }
+ .panel .columns { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:36px; }
+ .panel .column:nth-child(4) { border-left:0; padding-left:0; }
+ .panel .column:nth-child(3) { padding-right:0; }
+ .panel .headingRow { min-height:64px; }
+}
+.mobileProducts .columns { gap:28px; padding-top:24px; }
+.mobileProducts .column + .column { padding-top:24px; }
+.mobileProducts .headingRow { margin-bottom:20px; }
+.mobileProducts .entries { gap:8px; }
+.mobileProducts .entries a { min-height:52px; padding-block:14px; line-height:1.65; }
+
+/* Equal topic columns and inner spacing, including K-POP. */
+.panel .column,.panel .column:first-child,.panel .column:last-child { padding-inline:clamp(14px,1.5vw,28px); }
+
+/* Keep the two long topic headings on one line without narrowing other topics. */
+.panel .column:nth-child(3) .headingRow,.panel .column:nth-child(4) .headingRow { column-gap:6px; }
+.panel .column:nth-child(3) .heading,.panel .column:nth-child(4) .heading { white-space:nowrap; font-size:clamp(11px,.85vw,14px); letter-spacing:-.02em; }
+@media(min-width:768px) and (max-width:1280px) {
+ .panel .column:nth-child(3) .heading,.panel .column:nth-child(4) .heading { font-size:13px; }
+}

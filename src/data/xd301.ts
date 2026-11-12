@@ -2,9 +2,9 @@ import type { Category, Product } from "../types/content";
 
 // Verified against the supplied XD301(BK) giftbox artwork, revision16-07-2026.
 // Uses the existing Sanity product/category shape; no invented commercial data.
-export const djMixerCategory: Category = { id: "dj-mixer", slug: "dj-mixer", name: "DJ Mixer" };
+export const djStationCategory: Category = { id: "dj-station", slug: "dj-station", name: "DJ Station" };
 export const xd301: Product = {
-  id: "xd301", name: "XD301", slug: "xd301", category: djMixerCategory,
+  id: "xd301", name: "XD301", slug: "xd301", category: djStationCategory,
   summary: "Your mix. Your moment. Mix, scratch and play with the iDance XD301 portable DJ station.",
   productVideo: "/media/XD301_EN_10MB.mp4", itemNumber: "XD301(BK)", colour: "Black",
   campaignImage: { url: "/media/xd301-colour-hero.png", alt: "Supplied XD301 close-up campaign image with pink and blue lighting on a dark textured background" },

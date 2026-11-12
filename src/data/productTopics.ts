@@ -1,27 +1,42 @@
 import type { Content, Product } from "../types/content";
 
 export type MenuEntry = { label: string; displayLabel?: string; unconfirmed?: boolean };
-export type ProductTopic = { id: string; label: string; children: MenuEntry[] };
+export type ProductTopic = { id: string; label: string; catalogueLabels?: string[]; children: MenuEntry[] };
 
-// These labels describe the confirmed navigation, not additional products.
-// Unreadable handwritten labels remain nonclickable until they are confirmed.
+// Navigation labels follow the supplied taxonomy; display labels preserve its casing.
 export const productTopics: ProductTopic[] = [
   { id: "karaoke", label: "Karaoke", children: [
-    { label: "Party Mic" }, { label: "Trolley" }, { label: "Category to confirm", unconfirmed: true },
+    { label: "Party Mic", displayLabel: "PARTY MIC" },
+    { label: "Party Ball", displayLabel: "PARTY BALL" },
+    { label: "Portable", displayLabel: "PORTABLE" },
+    { label: "Trolley", displayLabel: "TROLLEY" },
+    { label: "Boombox", displayLabel: "BOOMBOX" },
+    { label: "Pedestal", displayLabel: "PEDESTAL" },
+    { label: "High Power", displayLabel: "HIGH POWER" },
+    { label: "Video Projector", displayLabel: "VIDEO PROJECTOR" },
   ] },
   { id: "ds", label: "DJ", children: [
-    { label: "DJ Station" }, { label: "Sound Pads" }, { label: "Master Mix" },
-    { label: "DJ Mixer", displayLabel: "Pocket Mixer" },
-    { label: "Category to confirm", unconfirmed: true },
-    { label: "DEEJAY Mini Verse" },
-    { label: "Disco Lighting" },
+    { label: "DJ Station", displayLabel: "DJ STATION" },
+    { label: "Sound Pads", displayLabel: "SOUNDPADS" },
+    { label: "Master Mix", displayLabel: "MASTER MIX" },
+    { label: "iPAD CONTROLLER" },
+    { label: "Turntable", displayLabel: "TURNTABLE" },
+    { label: "DEEJAY Mini Verse", displayLabel: "DEEJAY mini VERSE" },
+    { label: "Disco Lighting", displayLabel: "DISCO LIGHTING" },
   ] },
   { id: "musical-instruments", label: "Musical Instruments", children: [
-    { label: "Guitar" }, { label: "Keyboard" }, { label: "Pocket" }, { label: "Drums" },
+    { label: "Guitar", displayLabel: "GUITAR" },
+    { label: "Keyboard", displayLabel: "KEYBOARD" },
+    { label: "Pocket", displayLabel: "POCKET" },
+    { label: "Drums", displayLabel: "DRUMS" },
   ] },
   { id: "interactive-board", label: "Interactive Board", children: [
-    { label: "My Stage" }, { label: "GrooveBrix" }, { label: "DEEJAY Mini Verse" },
+    { label: "My Stage", displayLabel: "mySTAGE" },
+    { label: "GrooveBrix" },
+    { label: "DEEJAY Mini Verse", displayLabel: "DEEJAY mini VERSE" },
+    { label: "PLAYCUBE" },
   ] },
+  { id: "k-pop", label: "K-POP", children: [] },
   { id: "apps", label: "Apps", children: [
     { label: "iKey Station" }, { label: "JAM HERO" }, { label: "LIVEJAM" },
     { label: "PLAYnJAM" }, { label: "Super Rocker" }, { label: "X808" },
@@ -50,7 +65,7 @@ type Catalogue = Pick<Content, "categories" | "products">;
  */
 export function getTopicProducts(data: Catalogue, topic: ProductTopic, entry?: MenuEntry): Product[] {
   if (entry && (entry.unconfirmed || !topic.children.some(child => !child.unconfirmed && child.label === entry.label))) return [];
-  const labels = entry ? [entry.label] : [topic.label, ...topic.children.filter(child => !child.unconfirmed).map(child => child.label)];
+  const labels = entry ? [entry.label] : [topic.label, ...(topic.catalogueLabels ?? []), ...topic.children.filter(child => !child.unconfirmed).map(child => child.label)];
   const categoryIds = new Set<string>();
   for (const label of labels) {
     const name = normalize(label);

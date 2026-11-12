@@ -1279,3 +1279,9 @@ body { background:#fff; }
 }
 /* A uniform cinema backdrop prevents blurred poster edges showing as shadow lines. */
 .modal:has(.video-player)::backdrop { background:#080b10; backdrop-filter:none; -webkit-backdrop-filter:none; }
+
+/* The mobile product navigation gets more of the available screen. */
+@media(max-width:767px) {
+ .modal:has(.mobile-nav) { width:calc(100% - 16px); max-height:calc(100dvh - 24px); }
+ .modal:has(.mobile-nav) .modal-inner { padding:26px 20px; }
+}

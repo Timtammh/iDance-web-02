@@ -1,6 +1,7 @@
+import { pendingProductLists, pendingProducts, type PendingProduct } from "../data/pendingProductLists";
 import { ProductFamilyNavigation } from "../components/layout/ProductFamilyNavigation";
 import { useEffect, useRef } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { PictureView } from "../components/ui/ContentCards";
 import { useContent } from "../hooks/useContent";
@@ -84,14 +85,33 @@ export function Subcategory() {
   const data = useContent();
   const topic = productTopics.find(candidate => candidate.id === topicId);
   const entry = topic?.children.find(candidate => !candidate.unconfirmed && slugifyTopic(candidate.label) === subcategoryId);
-  usePage(entry && topic ? `${entry.label} | ${topic.label}` : "Category not found", entry && topic ? `Explore ${entry.label} in the iDance ${topic.label} collection.` : undefined);
+  usePage(entry && topic ? `${entry.displayLabel ?? entry.label} | ${topic.label}` : "Category not found", entry && topic ? `Explore ${entry.label} in the iDance ${topic.label} collection.` : undefined);
   if (!topic || !entry) return <MissingCategory />;
   const products = getTopicProducts(data, topic, entry);
-  if (products[0]) return <Navigate to={`/products/${encodeURIComponent(products[0].slug)}`} replace />;
+  const pendingNames = pendingProductLists[`${topic.id}/${subcategoryId}`];
+  const firstPending = pendingNames?.length ? pendingProducts.find(product => product.name === pendingNames[0]) : undefined;
+  const firstSlug = products[0]?.slug ?? firstPending?.slug;
+  if (firstSlug) return <Navigate to={`/products/${encodeURIComponent(firstSlug)}?topic=${encodeURIComponent(topic.id)}&category=${encodeURIComponent(subcategoryId!)}`} replace />;
   return <><ProductFamilyNavigation topicId={topic.id} activeEntry={entry.label} /><section className={`page light ${styles.page}`} data-category-page="subcategory" data-product-topic={topic.id} data-subcategory={subcategoryId}>
     <div className={`container ${styles.container}`}>
-      <h1 className="sr-only">{entry.label}</h1>
+      <h1 className="sr-only">{entry.displayLabel ?? entry.label}</h1>
       {products.length > 0 ? <ProductGrid products={products} listId={`category-${topic.id}-${subcategoryId}`} /> : <ComingSoon />}
     </div>
   </section></>;
+}
+
+export function PendingProductDetail({ product }: { product: PendingProduct }) {
+  const [params] = useSearchParams();
+  const contextualProduct = pendingProducts.find(item => item.name === product.name && item.topicId === params.get("topic") && (!params.get("category") || item.subcategoryId === params.get("category"))) ?? product;
+  const topic = productTopics.find(item => item.id === contextualProduct.topicId)!;
+  const entry = topic.children.find(item => slugifyTopic(item.label) === contextualProduct.subcategoryId)!;
+  return <>
+    <ProductFamilyNavigation topicId={topic.id} activeEntry={entry?.label} activeProductName={product.name} hideEmptyState />
+    <section className={`page light ${styles.page}`} aria-label={`${product.name} product details`}>
+      <div className={`container ${styles.container}`}>
+        <h1 className="sr-only">{product.name}</h1>
+        <ComingSoon />
+      </div>
+    </section>
+  </>;
 }

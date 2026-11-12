@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import type { Content } from "../../types/content";
 import styles from "./ProductsMenu.module.css";
+import { pendingProductLists, pendingProductHref } from "../../data/pendingProductLists";
 
 import { productTopics, topicHref, subcategoryHref, type MenuEntry } from "../../data/productTopics";
 export { productTopics } from "../../data/productTopics";
@@ -26,13 +27,13 @@ type Catalogue = Pick<Content, "categories" | "products">;
 function MenuColumns({ onNavigate }: { onNavigate: () => void }) {
   return <div className={styles.columns}>
     {productTopics.map(topic => <section className={styles.column} key={topic.id} aria-label={topic.label}>
-      <div className={styles.headingRow}><h3 className={styles.heading}>{topic.id === "ds" ? "DEEJAY | DJ" : topic.label}</h3>
+      <div className={styles.headingRow}><h3 className={styles.heading}>{topic.id === "ds" ? "DEEJAY | DJ" : topic.label.toUpperCase()}</h3>
         <Link className={styles.collectionLink} to={topicHref(topic.id)} onClick={onNavigate}>All</Link>
       </div>
       <div className={`${styles.card} ${topic.id === "apps" ? styles.apps : ""}`}>
         <ul className={styles.entries}>
-          {topic.children.filter(entry => !entry.unconfirmed).map((entry, index) => <li key={entry.label}>
-            <Link className={index === 0 && topic.id !== "apps" ? styles.featured : undefined} to={subcategoryHref(topic.id, entry.label)} onClick={onNavigate}>{entry.displayLabel ?? entry.label}</Link>
+          {(topic.id === "k-pop" ? (pendingProductLists["k-pop/all"] ?? []).map(label => ({ label } as MenuEntry)) : topic.children.filter(entry => !entry.unconfirmed)).map((entry, index) => <li key={entry.label}>
+            <Link className={index === 0 && topic.id !== "apps" ? styles.featured : undefined} to={topic.id === "k-pop" ? `${pendingProductHref(entry.label)}?topic=k-pop` : subcategoryHref(topic.id, entry.label)} onClick={onNavigate}>{entry.displayLabel ?? entry.label}</Link>
           </li>)}
         </ul>
       </div>

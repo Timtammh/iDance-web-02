@@ -69,6 +69,9 @@ export function XD301Product({ product }: { product: Product }) {
       <span className="eyebrow">EVERY ANGLE</span><h2 id="three-sixty-heading">360°</h2>
       <ProductAngleViewer/>
     </section>
+    <section className={styles.controlsOverview} aria-label="XD301 controls overview">
+      <img src="/media/xd301-controls-overview.webp" alt="XD301 controls overview: turntable decks A and B, Space Control sensors, pitch controls, soundpads, bass booster, master control, beat players, crossfader, Drop Mix and DJ Talk, and rechargeable battery." width={1920} height={1301} loading="lazy" decoding="async"/>
+    </section>
     <section tabIndex={-1} id="Specifications" className={styles.section} aria-labelledby="specifications-heading">
       <div className={styles.specLayout}>
         <div id="ProductImage" className={styles.specImages}>
@@ -79,7 +82,7 @@ export function XD301Product({ product }: { product: Product }) {
         </div>
         <div className={styles.specContent}>
           <details open><summary><span><FileText size={20} aria-hidden="true"/>Product details</span></summary><dl className={styles.specifications}>
-            <div><dt>Category</dt><dd>DJ / DJ Mixer</dd></div>
+            <div><dt>Category</dt><dd>DJ / DJ Station</dd></div>
             <div><dt>Item number</dt><dd>{product.itemNumber || "Details coming soon"}</dd></div>
             <div><dt>Item name</dt><dd>{product.name} Portable DJ Station</dd></div>
             <div><dt>Description</dt><dd>{product.summary}</dd></div>

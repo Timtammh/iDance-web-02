@@ -1,3 +1,6 @@
+import { AllProductCatalogue } from "../components/layout/AllProductCatalogue";
+import { pendingProducts } from "../data/pendingProductLists";
+import { PendingProductDetail } from "./Categories";
 import { useAboutMotion } from "../hooks/useAboutMotion";
 import aboutStyles from "./About.module.css";
 import { ProductFamilyNavigation } from "../components/layout/ProductFamilyNavigation";
@@ -18,106 +21,27 @@ import { TVLibrary } from "../components/ui/TVLibrary";
 import { item, track } from "../lib/analytics";
 export function Products() {
   const data = useContent();
-  const [params, setParams] = useSearchParams();
-  const category = params.get("category") || "";
+  const [params] = useSearchParams();
   const topic = productTopics.find(item => item.id === params.get("topic"));
-  const q = params.get("q") || "";
   usePage("Explore Products");
-  const products = (topic ? getTopicProducts(data, topic) : data.products).filter(
-    (p) =>
-      (!category || p.category.slug === category) &&
-      p.name.toLowerCase().includes(q.toLowerCase()),
-  );
-  const seen = useRef("");
-  useEffect(() => {
-    const key = products.map((p) => p.id).join(",");
-    if (seen.current === key) return;
-    seen.current = key;
-    track("view_item_list", {
-      item_list_id: "catalogue",
-      items: products.map(item),
-    });
-  }, [products]);
-  function update(key: string, value: string) {
-    const next = new URLSearchParams(params);
-    if (key === "category") next.delete("topic");
-    if (value) next.set(key, value);
-    else next.delete(key);
-    setParams(next, { replace: key === "q" });
-  }
-  if (topic && products[0]) return <Navigate to={`/products/${encodeURIComponent(products[0].slug)}?topic=${encodeURIComponent(topic.id)}&collection=all`} replace />;
-  return (
-    <> {topic && <ProductFamilyNavigation topicId={topic.id} />}<section className="page light catalogue-page">
-      <div className="container">
-        <h1 className="sr-only">{topic ? `${topic.label} products` : "All products"}</h1>
-        {products.some(product => product.demo) && (
-          <p className="demo-notice">Items marked as demo are placeholder concepts. Other listings use supplied product information.</p>
-        )}
-        <div className="filters">
-          <label className="field">
-            Category
-            <select
-              value={category}
-              onChange={(e) => {
-                update("category", e.target.value);
-                track("product_filter", {
-                  category:
-                    data.categories.find((c) => c.slug === e.target.value)
-                      ?.name || "All",
-                });
-              }}
-            >
-              <option value="">All products</option>
-              {data.categories.map((c) => (
-                <option key={c.id} value={c.slug}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            Search products
-            <input
-              type="search"
-              value={q}
-              placeholder="Search by product name"
-              onChange={(e) => update("q", e.target.value)}
-            />
-          </label>
-        </div>
-        <p aria-live="polite" className="result-count">
-          {products.length} {products.length === 1 ? "product" : "products"}
-        </p>
-        <div className="product-grid">
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-        {!products.length && (
-          <div className="empty">
-            <h2>No sound found, Yet</h2>
-            <p>Try a different name or category.</p>
-            <button
-              className="button dark-button"
-              onClick={() => setParams({})}
-            >
-              Clear filters
-            </button>
-          </div>
-        )}
-      </div>
-    </section></>
-  );
+  if (!topic) return <AllProductCatalogue />;
+  const firstProduct = getTopicProducts(data, topic)[0];
+  const firstPending = pendingProducts.find(product => product.topicId === topic.id);
+  const slug = firstProduct?.slug ?? firstPending?.slug;
+  if (slug) return <Navigate to={`/products/${encodeURIComponent(slug)}?topic=${encodeURIComponent(topic.id)}&collection=all`} replace />;
+  return <ProductFamilyNavigation topicId={topic.id} />;
 }
+
 export function ProductDetail() {
   const { slug } = useParams();
   const data = useContent();
   const p = data.products.find((p) => p.slug === slug);
+  const pending = pendingProducts.find(product => product.slug === slug);
   const [selected, setSelected] = useState(0);
   const seen = useRef("");
   usePage(
-    p?.seo?.title || p?.name || "Product not found",
-    p?.seo?.description || p?.summary,
+    p?.seo?.title || p?.name || pending?.name || "Product not found",
+    p?.seo?.description || p?.summary || (pending ? `Product details for ${pending.name} are coming soon.` : undefined),
     p?.images[0]?.url,
   );
   useEffect(() => {
@@ -142,6 +66,7 @@ export function ProductDetail() {
     document.head.appendChild(script);
     return () => script.remove();
   }, [p]);
+  if (!p && pending) return <PendingProductDetail product={pending} />;
   if (!p) return <NotFound />;
   if (p.slug === "xd301") return <XD301Product key={p.id} product={p} />;
   const related = data.products

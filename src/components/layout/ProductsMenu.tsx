@@ -27,7 +27,7 @@ type Catalogue = Pick<Content, "categories" | "products">;
 function MenuColumns({ onNavigate }: { onNavigate: () => void }) {
   return <div className={styles.columns}>
     {productTopics.map(topic => <section className={styles.column} key={topic.id} aria-label={topic.label}>
-      <div className={styles.headingRow}><h3 className={styles.heading}>{topic.id === "ds" ? "DEEJAY | DJ" : topic.label.toUpperCase()}</h3>
+      <div className={styles.headingRow}><h3 className={styles.heading}><Link className={styles.headingLink} to={topicHref(topic.id)} onClick={onNavigate}>{topic.id === "ds" ? "DEEJAY | DJ" : topic.label.toUpperCase()}</Link></h3>
         <Link className={styles.collectionLink} to={topicHref(topic.id)} onClick={onNavigate}>All</Link>
       </div>
       <div className={`${styles.card} ${topic.id === "apps" ? styles.apps : ""}`}>

@@ -1,5 +1,7 @@
 // Display-only sizing from visible product bounds. Original photography is unchanged.
 export const productThumbnailSizing: Record<string, { width: number; height: number; left: number; top: number; clipPath?: string; transform?: string; transformOrigin?: string }> = {
+  "/media/product-thumbnails/deejay-mini-verse.png": {"width": 84.241, "height": 56.161, "left": 12.989, "top": 9.85},
+  "/media/product-thumbnails/playcube.png": {"width": 73.98, "height": 41.613, "left": 17.342, "top": 18.771},
   "/media/product-thumbnails/stage-deejay-dj1-v2.png": {
     "width": 47.424,
     "height": 63.232,

@@ -113,3 +113,19 @@
 }
 .productTile[aria-current="page"] .productAction { color:#005b78; }
 .productTile:focus-visible,.navigator .productTile:focus-visible { outline:3px solid #005b78; outline-offset:4px; }
+
+/* Fine strokes for the newly supplied detailed category icons. */
+.categoryTile > svg:is(:global(.lucide-keyboard-music), :global(.lucide-portable-karaoke), :global(.lucide-pedestal-karaoke), :global(.lucide-trolley-karaoke), :global(.lucide-dj-station), :global(.lucide-ipad-controller), :global(.lucide-deejay-mini-verse), :global(.lucide-pocket-player), :global(.lucide-my-stage)) { stroke-width:.8; }
+
+/* PARTY MIC preview only: three roomier choices per desktop row. */
+.products.partyMicProducts { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.partyMicProducts .productTile { min-height:140px; padding:14px 18px 14px 10px; gap:14px; }
+.partyMicProducts .productTile > .photoSlot,.partyMicProducts .productTile > .pendingThumbnail { zoom:1.4; }
+.partyMicProducts .productLabel strong { font-size:14px; }
+.partyMicProducts .productAction { font-size:11px; }
+@media(min-width:601px) and (max-width:1000px) { .products.partyMicProducts { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .products.partyMicProducts { grid-template-columns:1fr; } }
+
+/* Selected category uses the iDance logo blue with white artwork and label. */
+.categoryTile[data-active="true"],.categoryTile[data-active="true"]:hover { background:#00aeef; color:#fff; box-shadow:none; }
+.categoryTile[data-active="true"] > svg:first-child { color:#fff; }

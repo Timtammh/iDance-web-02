@@ -1,5 +1,7 @@
 // Owner-supplied thumbnail photography. Detail galleries remain independent.
 export const productThumbnailImages: Record<string, string> = {
+  "DEEJAY mini VERSE": "/media/product-thumbnails/deejay-mini-verse.png",
+  "PLAYCUBE": "/media/product-thumbnails/playcube.png",
   "STAGE-DEEJAY-DJ1": "/media/product-thumbnails/stage-deejay-dj1-v2.png",
   DJX502W4: "/media/product-thumbnails/djx502w4.png",
   "KPP-1": "/media/product-thumbnails/kpp-1.png",

@@ -16,7 +16,7 @@ function FeatureIcon({ feature }: { feature: string }) {
     : label.includes("space control") ? <><path d="M8 22v-9a2 2 0 0 1 4 0v5-11a2 2 0 0 1 4 0v10-8a2 2 0 0 1 4 0v9-5a2 2 0 0 1 4 0v9c0 5-3 7-8 7s-8-2-8-7Z"/><path d="M3 13a13 13 0 0 1 2-7m22 0a13 13 0 0 1 2 7"/></>
     : label.includes("crossfader") ? <><path d="M3 16h9m8 0h9M4 11v10m24-10v10"/><rect x="12" y="8" width="8" height="16" rx="2"/><path d="M16 12v8"/></>
     : label.includes("battery") ? <><rect x="3" y="9" width="24" height="14" rx="3"/><path d="M29 13v6m-11-7-5 6h5l-3 5"/></>
-    : <><path d="M7 5v22m18-22v22M3 9h8m10 14h8M16 6v20m-3-17 3-3 3 3m-6 14 3 3 3-3"/><rect x="3" y="15" width="8" height="4" rx="1"/><rect x="21" y="11" width="8" height="4" rx="1"/></>;
+    : <><path d="M11 5v22M7 8h8M7 24h8M23 6v20m-3-17 3-3 3 3m-6 14 3 3 3-3"/><rect x="7" y="14" width="8" height="4" rx="1"/></>;
   return <svg className={styles.featureIcon} viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{artwork}</svg>;
 }
 

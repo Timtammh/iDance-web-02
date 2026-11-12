@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({testDir:'./tests',testMatch:['tv-library.spec.ts','hero-playlist.spec.ts','direct-dj-navigation.spec.ts'],outputDir:'test-results-tv',use:{baseURL:'http://127.0.0.1:5198',launchOptions:{executablePath:'/usr/bin/chromium'}},webServer:{command:'npm run dev -- --host 127.0.0.1 --port 5198',url:'http://127.0.0.1:5198',reuseExistingServer:false},reporter:'list'});

@@ -3,6 +3,8 @@ import { useContext, useEffect, useMemo, useRef, useState, type CSSProperties, t
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useContent } from "../../hooks/useContent";
+import { useDeckAudio } from "../../hooks/useDeckAudio";
+import { PAD_NAMES, DEMO_BPM, playbackRate } from "../../lib/audio/deckAudio";
 import { useDeckMotion } from "../../hooks/useDeckMotion";
 import { subscribeAnalyticsConsent, track } from "../../lib/analytics";
 import styles from "./ProductDeck.module.css";
@@ -12,11 +14,10 @@ import brick from "../../productShot/SURF ROCK Speaker Brick Packaging.png";
 import studio from "../../productShot/iDance Sing Creator Studio Set.png";
 import party from "../../productShot/RGB Party Speaker with Four Microphones2.png";
 
-function MixerKnob({ label }: { label: string }) {
-  const [value, setValue] = useState(50);
+function MixerKnob({ label, value, onChange: setValue }: { label: string; value: number; onChange: (value: number) => void }) {
   const start = useRef<{ y: number; value: number } | null>(null);
   const clamp = (v: number) => Math.max(0, Math.min(100, v));
-  return <div className={styles.knobControl} role="slider" tabIndex={0} aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={value}
+  return <div className={styles.knobControl} role="slider" tabIndex={0} title={`${label}: ${value}% · Drag up/down or use arrow keys`} aria-valuetext={`${value}%`} aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={value}
     onPointerDown={e => { if (e.button !== 0) return; e.currentTarget.focus(); start.current = { y: e.clientY, value }; e.currentTarget.setPointerCapture(e.pointerId); }}
     onPointerMove={e => { if (start.current) setValue(clamp(Math.round(start.current.value + (start.current.y - e.clientY) * .7))); }}
     onPointerUp={() => { start.current = null; }} onPointerCancel={() => { start.current = null; }} onLostPointerCapture={() => { start.current = null; }}
@@ -25,13 +26,14 @@ function MixerKnob({ label }: { label: string }) {
     <i className={styles.knob} style={{ transform: `rotate(${(value - 50) * 2.7}deg)` }} aria-hidden="true" />
   </div>;
 }
-function MixerPads({ side, onColor }: { side: string; onColor: (color: string) => void }) {
-  const [active, setActive] = useState<number[]>([]);
-  return <div className={styles.pads} aria-label={`${side} light pads`}>{[0,1,2,3].map(i => <button key={i} aria-label={`${side} light pad ${i + 1}`} aria-pressed={active.includes(i)} style={{ "--pad-color": ["#64dcff", "#b49aff", "#ffadcb", "#91e7c0"][i] } as CSSProperties} onClick={() => { setActive(current => current.includes(i) ? current.filter(n => n !== i) : [...current, i]); onColor(["#64dcff", "#b49aff", "#ffadcb", "#91e7c0"][i]); }}/>)}</div>;
+function MixerPads({ side, active, onPad }: { side: "Left" | "Right"; active: number[]; onPad: (pad: number, color: string) => void }) {
+  return <div className={styles.pads} role="group" aria-label={`${side} sound pads`}>{[0,1,2,3].map(i => {
+    const pad = i + (side === "Right" ? 4 : 0), color = ["#64dcff", "#b49aff", "#ffadcb", "#91e7c0"][i];
+    return <button key={pad} type="button" aria-label={`${PAD_NAMES[pad]} loop`} aria-pressed={active.includes(pad)} title={`Toggle ${PAD_NAMES[pad]} loop`} style={{ "--pad-color": color } as CSSProperties} onClick={() => onPad(pad, color)}><span>{PAD_NAMES[pad]}</span></button>;
+  })}</div>;
 }
-function MixerFader({ side }: { side: "left" | "right" }) {
-  const [value, setValue] = useState(50);
-  return <div className={`${styles.sideFader} ${styles[side]}`}><input type="range" min="0" max="100" value={value} aria-label={`${side} mixer fader`} onChange={e => setValue(Number(e.target.value))}/></div>;
+function MixerFader({ side, value, onChange }: { side: "left" | "right"; value: number; onChange: (value: number) => void }) {
+  return <div className={`${styles.sideFader} ${styles[side]}`}><input type="range" min="0" max="100" value={value} aria-label={`${side} mixer volume`} aria-valuetext={`${value}%`} title={`${side === "left" ? "Drums" : "Melody"} volume: ${value}%`} onChange={e => onChange(Number(e.target.value))}/></div>;
 }
 
 const shots = [
@@ -46,6 +48,8 @@ const analyticsItem = (p: { id: string; name: string; category: string }, index:
 });
 export function ProductDeck() {
   const data = useContent();
+  const audio = useDeckAudio();
+  const stopAudio = audio.stop;
   const motionEnabled = useContext(WaveMotionContext);
   const [lightColor, setLightColor] = useState("#64dcff");
   const [cue, setCue] = useState(false);
@@ -63,6 +67,13 @@ export function ProductDeck() {
   const [canScroll, setCanScroll] = useState(false);
   const rail = useRef<HTMLDivElement>(null);
   const section = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = section.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) stopAudio(); });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [stopAudio]);
   const drag = useRef({ x: 0, y: 0, scroll: 0, active: false, moved: false });
   const animation = useRef(0);
   const isPhone = () => window.matchMedia("(max-width: 767px)").matches;
@@ -221,20 +232,20 @@ export function ProductDeck() {
   };
   return <section ref={section} id="products" className={styles.section} aria-label="Product collection">
     <div className={styles.heading}><div><span>FIND YOUR NEXT SOUND</span><h2>Products</h2></div><Link to="/products">View all products <ArrowUpRight size={18} /></Link></div>
-    <div className={styles.deck} data-cue={cue && lightsMove} data-light-motion={lightsMove} style={{"--deck-accent":lightColor,"--light-x":`${lightsMove ? position : 50}%`} as CSSProperties}>
+    <div className={styles.deck} data-playing={audio.active.length > 0} data-cue={cue && lightsMove} data-light-motion={lightsMove} style={{"--deck-accent":lightColor,"--light-x":`${lightsMove ? position : 50}%`} as CSSProperties}>
       <div className={styles.deckGlow} aria-hidden="true"/>
       <div className={styles.cueEdge} aria-hidden="true"/>
       <div className={styles.levelLeds} aria-hidden="true">{Array.from({length:12},(_,i)=><i key={i} data-lit={i <= (lightsMove ? Math.round(position / 100 * 11) : 5)} style={{"--led-delay":`${i * 45}ms`} as CSSProperties}/>)}</div>
       <div className={styles.top}>
-        <MixerKnob label="Channel tone" />
+        <MixerKnob label="Channel tone" value={audio.settings.tone} onChange={value => audio.update("tone", value)} />
         <div role="tablist" aria-label="Product collections" className={styles.tabGroup}>{["popular", "new"].map((t, i) => <button key={t} role="tab" id={`tab-${t}`} aria-controls="home-products" aria-selected={tab === t} tabIndex={tab === t ? 0 : -1} onClick={() => changeTab(t)} onKeyDown={e => {
           if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
             e.preventDefault(); const next = e.key === "Home" ? "popular" : e.key === "End" ? "new" : i ? "popular" : "new";
             changeTab(next); document.getElementById(`tab-${next}`)?.focus();
           }
         }}>{t === "popular" ? "Popular" : "New Releases"}</button>)}</div>
-        <div className={styles.controls}><MixerKnob label="Left effect" /><span aria-hidden="true">▪ ▪ ▪</span><MixerKnob label="Right effect" /></div>
-        <MixerKnob label="Channel balance" />
+        <div className={styles.controls}><MixerKnob label="Echo effect" value={audio.settings.echo} onChange={value => audio.update("echo", value)} /><span aria-hidden="true">▪ ▪ ▪</span><MixerKnob label="Pitch and tempo" value={audio.settings.pitch} onChange={value => audio.update("pitch", value)} /></div>
+        <MixerKnob label="Channel balance" value={audio.settings.balance} onChange={value => audio.update("balance", value)} />
       </div>
       <div ref={rail} className={styles.rail} id="home-products" role="tabpanel" aria-labelledby={`tab-${tab}`} tabIndex={0}
         onPointerDown={startDrag} onPointerMove={updateDrag}
@@ -247,11 +258,15 @@ export function ProductDeck() {
         {!products.length && <p>No products in this collection yet.</p>}
       </div>
       <div className={styles.bottom}>
-        <MixerPads side="Left" onColor={changeLight} />
+        <MixerPads side="Left" active={audio.active} onPad={(pad, color) => { changeLight(color); void audio.toggle(pad); }} />
         <div className={styles.faderGroup}><div className={styles.fader}><button aria-label="Previous products" disabled={!canScroll || position < 1} onClick={() => navigateCarousel(-1, "button")}><ChevronLeft size={20}/></button><input aria-label="Slide through products" type="range" min="0" max="100" step="0.1" value={position} disabled={!canScroll} onPointerDown={() => { sliderStart.current = rail.current?.scrollLeft || 0; }} onPointerUp={finishSlider} onPointerCancel={() => { sliderStart.current = null; }} onKeyDown={() => { sliderStart.current ??= rail.current?.scrollLeft || 0; }} onKeyUp={finishSlider} onBlur={finishSlider} onChange={e => move(Number(e.target.value))}/><button aria-label="Next products" disabled={!canScroll || position > 99} onClick={() => navigateCarousel(1, "button")}><ChevronRight size={20}/></button></div><span>DRAG TO DISCOVER</span></div>
-        <MixerPads side="Right" onColor={changeLight} />
+        <MixerPads side="Right" active={audio.active} onPad={(pad, color) => { changeLight(color); void audio.toggle(pad); }} />
       </div>
-      <MixerFader side="left"/><MixerFader side="right"/>
+      <MixerFader side="left" value={audio.settings.left} onChange={value => audio.update("left", value)}/><MixerFader side="right" value={audio.settings.right} onChange={value => audio.update("right", value)}/>
+      <div className={styles.audioBar}>
+        <span role="status" aria-live="polite">{audio.error || (audio.loading ? "Loading synced stems…" : audio.active.length ? `${Math.round(DEMO_BPM * playbackRate(audio.settings.pitch))} BPM · ${audio.active.length} ${audio.active.length === 1 ? "loop" : "loops"} playing` : "Tap a pad to mix · Sound starts on tap")}</span>
+        <button type="button" onClick={audio.stop} disabled={!audio.active.length && !audio.loading}>Stop sound</button>
+      </div>
     </div>
   </section>;
 }

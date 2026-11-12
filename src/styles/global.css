@@ -1241,6 +1241,11 @@ body { background:#fff; }
 
 /* Keep the matching logo frame visible while mobile autoplay loads or is blocked. */
 .intro-screen .intro-poster { position:absolute; left:50%; top:50%; width:50vw; height:auto; max-height:80svh; object-fit:contain; transform:translate(-50%,-50%); pointer-events:none; }
+/* Mobile intro artwork is 20% larger than the previous 50vw frame.
+   Keep the fallback poster aligned with the playing video. */
+@media(max-width:767px) {
+  .intro-screen video,.intro-screen .intro-poster { width:60vw; }
+}
 /* Preserve the catalogue landmark without the removed marketing heading. */
 .page h1.sr-only { position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
 

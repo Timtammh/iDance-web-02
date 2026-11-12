@@ -1,6 +1,6 @@
 import type { Content, Product } from "../types/content";
 
-export type MenuEntry = { label: string; unconfirmed?: boolean };
+export type MenuEntry = { label: string; displayLabel?: string; unconfirmed?: boolean };
 export type ProductTopic = { id: string; label: string; children: MenuEntry[] };
 
 // These labels describe the confirmed navigation, not additional products.
@@ -10,22 +10,21 @@ export const productTopics: ProductTopic[] = [
     { label: "Party Mic" }, { label: "Trolley" }, { label: "Category to confirm", unconfirmed: true },
   ] },
   { id: "ds", label: "DJ", children: [
-    { label: "DJ Mixer" }, { label: "DJ Station" }, { label: "Sound Pads" }, { label: "Master Mix" },
+    { label: "DJ Station" }, { label: "Sound Pads" }, { label: "Master Mix" },
+    { label: "DJ Mixer", displayLabel: "Pocket Mixer" },
     { label: "Category to confirm", unconfirmed: true },
-    { label: "Disco Lighting" },
     { label: "DEEJAY Mini Verse" },
-    { label: "Pocket" },
-    { label: "Lighting" },
+    { label: "Disco Lighting" },
   ] },
   { id: "musical-instruments", label: "Musical Instruments", children: [
-    { label: "Guitar" }, { label: "Keyboard" }, { label: "Pocket" },
+    { label: "Guitar" }, { label: "Keyboard" }, { label: "Pocket" }, { label: "Drums" },
   ] },
   { id: "interactive-board", label: "Interactive Board", children: [
     { label: "My Stage" }, { label: "GrooveBrix" }, { label: "DEEJAY Mini Verse" },
   ] },
   { id: "apps", label: "Apps", children: [
-    { label: "Super Rocker" }, { label: "PLAYnJAM" }, { label: "X808" },
-    { label: "iKey Station" }, { label: "LIVEJAM" }, { label: "JAM HERO" },
+    { label: "iKey Station" }, { label: "JAM HERO" }, { label: "LIVEJAM" },
+    { label: "PLAYnJAM" }, { label: "Super Rocker" }, { label: "X808" },
   ] },
 ];
 

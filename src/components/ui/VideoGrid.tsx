@@ -14,7 +14,9 @@ export function videoEmbed(raw?: string) {
       const id =
         u.hostname === "youtu.be"
           ? u.pathname.slice(1)
-          : u.searchParams.get("v");
+          : u.pathname.startsWith("/shorts/")
+            ? u.pathname.split("/")[2]
+            : u.searchParams.get("v");
       return id && /^[\w-]{11}$/.test(id)
         ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`
         : null;

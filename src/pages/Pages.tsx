@@ -14,7 +14,7 @@ import {
   ProductCard,
   NewsCard,
 } from "../components/ui/ContentCards";
-import { VideoGrid } from "../components/ui/VideoGrid";
+import { TVLibrary } from "../components/ui/TVLibrary";
 import { item, track } from "../lib/analytics";
 export function Products() {
   const data = useContent();
@@ -290,19 +290,7 @@ export function About() {
 export function TV() {
   const { videos } = useContent();
   usePage("iDance TV");
-  return (
-    <section className="page dark">
-      <div className="container">
-        <span className="eyebrow">EXPERIENCE iDANCE</span>
-        <h1 className="sound-video-heading">See it, Hear it, Feel it</h1>
-        <p className="intro">
-          A closer look at a world brought to life by sound.
-        </p>
-        <VideoGrid videos={videos} />
-        {!videos.length && <p>Films are coming soon.</p>}
-      </div>
-    </section>
-  );
+  return <TVLibrary videos={videos} />;
 }
 export function News() {
   const { news } = useContent();

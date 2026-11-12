@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowUpRight, Grid2X2, Disc3, Music2, Radio, Lightbulb, SlidersHorizontal, PanelsTopLeft } from "lucide-react";
+import { ArrowUpRight, Grid2X2, Disc3, Music2, Lightbulb, SlidersHorizontal, PanelsTopLeft } from "lucide-react";
 import { useContent } from "../../hooks/useContent";
 import { getTopicProducts, productTopics, subcategoryHref, topicHref } from "../../data/productTopics";
 import type { Product } from "../../types/content";
@@ -7,14 +7,12 @@ import styles from "./ProductFamilyNavigation.module.css";
 
 // Presentation labels can differ from catalogue names without changing routes.
 const djNavigation = [
-  { label: "Mixer", entry: "DJ Mixer", icon: Disc3 },
   { label: "DJ Station", entry: "DJ Station", icon: PanelsTopLeft },
   { label: "Sound Pads", entry: "Sound Pads", icon: Grid2X2 },
   { label: "Master Mix", entry: "Master Mix", icon: SlidersHorizontal },
-  { label: "Disco Lighting", entry: "Disco Lighting", icon: Lightbulb },
+  { label: "Pocket Mixer", entry: "DJ Mixer", icon: Disc3 },
   { label: "DEEJAY Mini Verse", entry: "DEEJAY Mini Verse", icon: Music2 },
-  { label: "Pocket", entry: "Pocket", icon: Radio },
-  { label: "Lighting", entry: "Lighting", icon: Lightbulb },
+  { label: "Disco Lighting", entry: "Disco Lighting", icon: Lightbulb },
 ];
 
 export function ProductFamilyNavigation({ product, topicId = "ds", activeEntry }: { product?: Product; topicId?: string; activeEntry?: string }) {

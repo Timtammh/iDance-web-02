@@ -1,0 +1,7 @@
+.hero { background:#08090c !important; }
+.hero > img { width:100% !important; height:100% !important; position:absolute; inset:0; object-fit:cover !important; object-position:center; }
+.logo { display:block; width:100% !important; height:auto !important; object-fit:contain !important; }
+.placeholder { min-height:280px; display:grid; place-items:center; color:#777; text-align:center; }
+.videoPlaceholder { aspect-ratio:16/9; color:#ddd; min-height:0; }
+.story { background-color:#08090c; background-image:linear-gradient(to right,#000 0%,#000a 40%,#0003 100%),url('/media/mastermix/front.png') !important; background-size:cover,180% auto !important; background-position:center,72% 62% !important; background-repeat:no-repeat; }
+@media(max-width:767px) { .hero > img { width:100% !important; }.placeholder { min-height:220px; }.videoPlaceholder { min-height:0; }.story { background-size:cover,auto 115% !important; } }

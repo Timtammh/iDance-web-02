@@ -6,6 +6,13 @@ export const DEFAULT_MIXER: MixerSettings = { tone: 65, echo: 25, pitch: 50, bal
 export const DEMO_BPM = 60 * 16 / (278528 / 44100);
 export const playbackRate = (pitch: number) => Math.pow(2, (pitch - 50) / 100);
 
+function withTimeout<T>(promise: Promise<T>, milliseconds: number, message: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), milliseconds);
+    promise.then(value => { clearTimeout(timer); resolve(value); }, error => { clearTimeout(timer); reject(error); });
+  });
+}
+
 export class DeckAudio {
   readonly context: AudioContext;
   private master: GainNode;
@@ -53,11 +60,19 @@ export class DeckAudio {
     this.delay.delayTime.setTargetAtTime(60 / DEMO_BPM * .75 / rate, t, .03);
   }
   async resume() {
-    // Resume synchronously in the tap handler before any network/decode await (iOS).
-    await this.context.resume();
+    // Both operations run synchronously inside the user's tap, before any fetch.
+    // A silent one-frame source unlocks older iOS/WebKit audio output without autoplay.
+    if (this.context.state !== 'running') {
+      const unlock = this.context.createBufferSource();
+      unlock.buffer = this.context.createBuffer(1, 1, this.context.sampleRate || 44100);
+      unlock.connect(this.context.destination);
+      unlock.onended = () => unlock.disconnect();
+      unlock.start(0);
+    }
+    await withTimeout(this.context.resume(), 8000, 'Audio start timed out. Tap a pad to retry.');
     if (this.context.state !== 'running') throw new Error('Audio suspended');
     this.loading ??= this.load().catch(error => { this.loading = undefined; throw error; });
-    await this.loading;
+    await withTimeout(this.loading, 15000, 'Sound loading timed out. Check your connection and tap a pad to retry.');
     if (this.context.state !== 'running') throw new Error('Audio interrupted');
   }
   private async load() {

@@ -1,12 +1,22 @@
 // Display-only sizing from visible product bounds. Original photography is unchanged.
 export const productThumbnailSizing: Record<string, { width: number; height: number; left: number; top: number; clipPath?: string; transform?: string; transformOrigin?: string }> = {
-  "/media/product-thumbnails/deejay-mini-verse.png": {"width": 84.241, "height": 56.161, "left": 12.989, "top": 9.85},
-  "/media/product-thumbnails/playcube.png": {"width": 73.98, "height": 41.613, "left": 17.342, "top": 18.771},
+  "/media/product-thumbnails/deejay-mini-verse.png": {
+    "width": 138.793,
+    "height": 92.529,
+    "left": 7.784,
+    "top": 10.973
+  },
+  "/media/product-thumbnails/playcube.png": {
+    "width": 162.755,
+    "height": 91.548,
+    "left": -5.847,
+    "top": 14.496
+  },
   "/media/product-thumbnails/stage-deejay-dj1-v2.png": {
-    "width": 47.424,
-    "height": 63.232,
-    "left": 31.72,
-    "top": 4.806
+    "width": 98.36,
+    "height": 131.147,
+    "left": 28.716,
+    "top": -11.92
   },
   "/media/product-thumbnails/9m7.png": {
     "width": 62.872,
@@ -15,70 +25,70 @@ export const productThumbnailSizing: Record<string, { width: number; height: num
     "top": 7.487
   },
   "/media/product-thumbnails/djx502w4.png": {
-    "width": 63.051,
-    "height": 63.051,
-    "left": 23.69,
-    "top": 7.259
+    "width": 130.848,
+    "height": 130.848,
+    "left": 12.023,
+    "top": -6.871
   },
   "/media/product-thumbnails/kpp-1.png": {
-    "width": 60.0,
-    "height": 47.988,
-    "left": 25.0,
-    "top": 12.325
+    "width": 129.991,
+    "height": 103.967,
+    "left": 12.005,
+    "top": 1.208
   },
   "/media/product-thumbnails/k200-w2.png": {
-    "width": 67.806,
-    "height": 67.806,
-    "left": 21.61,
-    "top": 4.517
+    "width": 140.808,
+    "height": 140.808,
+    "left": 7.661,
+    "top": -12.608
   },
   "/media/product-thumbnails/k10-1w.png": {
-    "width": 68.343,
-    "height": 51.257,
-    "left": 16.924,
-    "top": 10.769
+    "width": 156.286,
+    "height": 117.214,
+    "left": -10.072,
+    "top": -5.558
   },
   "/media/product-thumbnails/cyclone-400x.png": {
-    "width": 73.802,
-    "height": 49.189,
-    "left": 17.865,
-    "top": 14.586
+    "width": 134.729,
+    "height": 89.797,
+    "left": 9.208,
+    "top": 14.431
   },
   "/media/product-thumbnails/party-groove-3.png": {
-    "width": 63.298,
-    "height": 63.298,
-    "left": 22.568,
-    "top": 8.389
+    "width": 105.952,
+    "height": 105.952,
+    "left": 22.714,
+    "top": 7.762
   },
   "/media/product-thumbnails/partygroove3mk4.png": {
-    "width": 121.797,
-    "height": 62.802,
-    "left": -9.348,
-    "top": 9.502
+    "width": 196.762,
+    "height": 101.456,
+    "left": -26.954,
+    "top": 11.346
   },
   "/media/product-thumbnails/party-groove.jpg": {
-    "width": 63.343,
-    "height": 63.343,
-    "left": 22.22,
-    "top": 6.405
+    "width": 111.492,
+    "height": 111.492,
+    "left": 19.303,
+    "top": 1.628
   },
   "/media/product-thumbnails/party-groove-x1.png": {
-    "width": 92.083,
-    "height": 62.273,
-    "left": 11.589,
-    "top": 6.739
+    "width": 167.92,
+    "height": 113.559,
+    "left": -2.163,
+    "top": 0.17
   },
   "/media/product-thumbnails/party-groove-x2.png": {
-    "width": 36.054,
-    "height": 54.26,
-    "left": 36.973,
-    "top": 11.74
+    "width": 69.67,
+    "height": 104.851,
+    "left": 42.165,
+    "top": 6.323
   },
   "/media/product-thumbnails/9m16.png": {
-    "width": 70.783,
-    "height": 59.689,
-    "left": 21.336,
-    "top": 8.965
+    "width": 109.682,
+    "height": 92.491,
+    "left": 24.836,
+    "top": 12.459
   },
   "/media/product-thumbnails/boombox2.jpg": {
     "width": 87.211,
@@ -87,70 +97,70 @@ export const productThumbnailSizing: Record<string, { width: number; height: num
     "top": 8.915
   },
   "/media/product-thumbnails/boombox.png": {
-    "width": 86.841,
-    "height": 69.456,
-    "left": 12.067,
-    "top": 3.869
+    "width": 136.574,
+    "height": 109.233,
+    "left": 9.48,
+    "top": 3.75
   },
   "/media/product-thumbnails/bb10kw.png": {
-    "width": 73.891,
-    "height": 46.218,
-    "left": 17.026,
-    "top": 15.422
+    "width": 156.0,
+    "height": 97.577,
+    "left": -3.172,
+    "top": 9.222
   },
   "/media/product-thumbnails/bb10k2.png": {
-    "width": 67.566,
-    "height": 67.566,
-    "left": 19.435,
-    "top": 5.861
+    "width": 113.13,
+    "height": 113.13,
+    "left": 17.451,
+    "top": 3.513
   },
   "/media/product-thumbnails/pm8kpop.png": {
-    "width": 98.858,
-    "height": 55.607,
-    "left": 5.499,
-    "top": 9.869
+    "width": 161.761,
+    "height": 90.989,
+    "left": -3.998,
+    "top": 11.333
   },
   "/media/product-thumbnails/pm6.png": {
-    "width": 22.996,
-    "height": 57.666,
-    "left": 43.517,
-    "top": 10.211
+    "width": 47.696,
+    "height": 119.605,
+    "left": 53.183,
+    "top": -0.711
   },
   "/media/product-thumbnails/pm15l.png": {
-    "width": 83.973,
-    "height": 60.355,
-    "left": 13.014,
-    "top": 9.294
+    "width": 174.167,
+    "height": 125.181,
+    "left": -10.083,
+    "top": -2.613
   },
   "/media/product-thumbnails/pm21.png": {
-    "width": 24.717,
-    "height": 59.554,
-    "left": 42.7,
-    "top": 10.401
+    "width": 51.376,
+    "height": 123.786,
+    "left": 51.434,
+    "top": -0.445
   },
   "/media/product-thumbnails/xd301la.png": {
-    "width": 62.854,
-    "height": 47.141,
-    "left": 23.097,
-    "top": 14.739
+    "width": 138.279,
+    "height": 103.711,
+    "left": 6.813,
+    "top": 5.626
   },
   "/media/product-thumbnails/xd92.png": {
-    "width": 74.699,
-    "height": 56.024,
-    "left": 15.188,
-    "top": 10.897
+    "width": 164.338,
+    "height": 123.253,
+    "left": -10.587,
+    "top": -2.827
   },
   "/media/product-thumbnails/deejayone.png": {
-    "width": 125.53,
-    "height": 70.611,
-    "left": -4.915,
-    "top": 4.89
+    "width": 209.499,
+    "height": 117.844,
+    "left": -22.993,
+    "top": 2.073
   },
   "/media/product-thumbnails/remix.png": {
-    "width": 67.852,
-    "height": 38.167,
-    "left": 21.057,
-    "top": 19.072
+    "width": 149.274,
+    "height": 83.967,
+    "left": 2.325,
+    "top": 15.158
   },
   "/media/product-thumbnails/beatmix303.png": {
     "width": 91.55,
@@ -159,40 +169,40 @@ export const productThumbnailSizing: Record<string, { width: number; height: num
     "top": 5.697
   },
   "/media/product-thumbnails/beatbox.png": {
-    "width": 69.977,
-    "height": 36.321,
-    "left": 19.636,
-    "top": 21.711
+    "width": 142.074,
+    "height": 73.742,
+    "left": 5.201,
+    "top": 23.898
   },
   "/media/product-thumbnails/starpads-36pack.png": {
-    "width": 129.347,
-    "height": 66.063,
-    "left": -3.611,
-    "top": 6.884
+    "width": 211.649,
+    "height": 108.098,
+    "left": -18.904,
+    "top": 6.449
   },
   "/media/product-thumbnails/starpads-20pack2.png": {
-    "width": 71.944,
-    "height": 46.897,
-    "left": 18.009,
-    "top": 14.41
+    "width": 158.369,
+    "height": 103.234,
+    "left": -4.428,
+    "top": 4.87
   },
   "/media/product-thumbnails/starpads-20e.png": {
-    "width": 68.84,
-    "height": 55.059,
-    "left": 21.269,
-    "top": 8.647
+    "width": 116.595,
+    "height": 93.254,
+    "left": 19.87,
+    "top": 7.591
   },
   "/media/product-thumbnails/starpads-s9x.png": {
-    "width": 117.701,
-    "height": 73.621,
-    "left": 1.839,
-    "top": 2.391
+    "width": 179.978,
+    "height": 112.575,
+    "left": -4.289,
+    "top": 3.021
   },
   "/media/product-thumbnails/mastermix.png": {
-    "width": 64.134,
-    "height": 41.743,
-    "left": 22.276,
-    "top": 18.551
+    "width": 137.145,
+    "height": 89.264,
+    "left": 7.023,
+    "top": 15.272
   },
   "/media/product-thumbnails/rm808.jpg": {
     "width": 76.752,
@@ -201,309 +211,253 @@ export const productThumbnailSizing: Record<string, { width: number; height: num
     "top": -7.359
   },
   "/media/product-thumbnails/pocket-vinyl.png": {
-    "width": 105.476,
-    "height": 59.33,
-    "left": 3.215,
-    "top": 10.803
+    "width": 170.567,
+    "height": 95.944,
+    "left": -6.742,
+    "top": 13.402
   },
   "/media/product-thumbnails/dl6-octo.png": {
-    "width": 60.0,
-    "height": 41.895,
-    "left": 25.0,
-    "top": 17.877
+    "width": 129.531,
+    "height": 90.445,
+    "left": 12.235,
+    "top": 13.399
   },
   "/media/product-thumbnails/dl-lb1.png": {
-    "width": 63.872,
-    "height": 59.042,
-    "left": 23.043,
-    "top": 6.71
+    "width": 99.77,
+    "height": 92.226,
+    "left": 27.082,
+    "top": 8.562
   },
   "/media/product-thumbnails/dl-b4.png": {
-    "width": 85.571,
-    "height": 64.178,
-    "left": 11.086,
-    "top": 6.89
+    "width": 188.256,
+    "height": 141.192,
+    "left": -19.611,
+    "top": -11.642
   },
   "/media/product-thumbnails/xd301.png": {
-    "width": 66.422,
-    "height": 49.816,
-    "left": 20.881,
-    "top": 11.838
+    "width": 145.066,
+    "height": 108.798,
+    "left": 2.484,
+    "top": -0.322
   },
   "/media/product-thumbnails/pm10kpop.png": {
-    "width": 103.745,
-    "height": 69.906,
-    "left": 1.0,
-    "top": 3.895
+    "width": 215.175,
+    "height": 144.991,
+    "left": -35.0,
+    "top": -13.811
   },
   "/media/product-thumbnails/jamhero1.png": {
-    "width": 92.605,
-    "height": 74.084,
-    "left": 8.495,
-    "top": 1.814
+    "width": 168.007,
+    "height": 134.406,
+    "left": -7.371,
+    "top": -8.464
   },
   "/media/product-thumbnails/jamhero2.png": {
-    "width": 73.428,
-    "height": 83.083,
-    "left": 18.022,
-    "top": -3.718
+    "width": 117.396,
+    "height": 132.832,
+    "left": 17.88,
+    "top": -9.297
   },
   "/media/product-thumbnails/jamhero2e.png": {
-    "width": 71.152,
-    "height": 53.364,
-    "left": 20.345,
-    "top": 11.901
+    "width": 111.713,
+    "height": 83.784,
+    "left": 22.59,
+    "top": 16.453
   },
   "/media/product-thumbnails/jamhero3.png": {
-    "width": 62.598,
-    "height": 50.066,
-    "left": 23.502,
-    "top": 22.449
+    "width": 124.532,
+    "height": 99.601,
+    "left": 14.338,
+    "top": 26.074
   },
   "/media/product-thumbnails/k-synth.png": {
-    "width": 89.108,
-    "height": 50.123,
-    "left": 7.161,
-    "top": 14.286
+    "width": 194.649,
+    "height": 109.489,
+    "left": -27.5,
+    "top": 5.014
   },
   "/media/product-thumbnails/fp-50.png": {
-    "width": 73.449,
-    "height": 41.315,
-    "left": 18.939,
-    "top": 17.41
+    "width": 161.684,
+    "height": 90.947,
+    "left": -2.382,
+    "top": 11.474
   },
   "/media/product-thumbnails/g-600-pack.png": {
-    "width": 64.167,
-    "height": 43.394,
-    "left": 23.057,
-    "top": 15.407
+    "width": 141.168,
+    "height": 95.467,
+    "left": 6.725,
+    "top": 7.095
   },
   "/media/product-thumbnails/g-600la.png": {
-    "width": 65.606,
-    "height": 36.903,
-    "left": 22.213,
-    "top": 22.775
+    "width": 144.41,
+    "height": 81.23,
+    "left": 4.83,
+    "top": 23.286
   },
   "/media/product-thumbnails/g-600l-pack.png": {
-    "width": 67.89,
-    "height": 67.89,
-    "left": 21.055,
-    "top": 3.348
+    "width": 103.194,
+    "height": 103.194,
+    "left": 25.403,
+    "top": 4.808
   },
   "/media/product-thumbnails/g-900-pack.png": {
-    "width": 68.002,
-    "height": 54.388,
-    "left": 20.849,
-    "top": 12.171
+    "width": 110.078,
+    "height": 88.04,
+    "left": 21.718,
+    "top": 15.571
   },
   "/media/product-thumbnails/keyloop-25.png": {
-    "width": 82.692,
-    "height": 61.938,
-    "left": 11.716,
-    "top": 6.86
+    "width": 148.193,
+    "height": 111.0,
+    "left": -0.57,
+    "top": 1.402
   },
+  "/media/product-thumbnails/iamthestar-k3.jpg": {"width": 97.971, "height": 97.971, "left": 28.7, "top": 8.006},
+  "/media/product-thumbnails/vl1-x.png": {"width": 127.904, "height": 127.904, "left": 14.797, "top": 6.633},
   "/media/product-thumbnails/vl-2x.png": {
-    "width": 81.081,
-    "height": 56.655,
-    "left": 9.949,
-    "top": 7.201
+    "width": 150.425,
+    "height": 105.109,
+    "left": -6.581,
+    "top": 0.005
   },
   "/media/product-thumbnails/psx-f80.png": {
-    "width": 63.112480739599384,
-    "height": 42.68104776579353,
-    "left": 24.013867488443758,
-    "top": 20.001540832049308
+    "width": 138.847,
+    "height": 93.898,
+    "left": 8.831,
+    "top": 17.203
   },
-  "/media/product-thumbnails/musika-piano-pack.png": {
-    "width": 111.709,
-    "height": 63.273,
-    "left": 0.782,
-    "top": 6.382
-  },
-  "/media/product-thumbnails/musika-beat-station-pack.png": {
-    "width": 101.182,
-    "height": 67.537,
-    "left": -10.067,
-    "top": 5.231
-  },
+  "/media/product-thumbnails/musika-piano-pack-v2.png": {"width": 207.383, "height": 117.463, "left": -23.654, "top": -1.504},
+  "/media/product-thumbnails/musika-beat-station-pack-v2.png": {"width": 106.599, "height": 129.07, "left": 24.953, "top": 0.624},
   "/media/product-thumbnails/pocket-dj.png": {
-    "width": 86.739,
-    "height": 65.054,
-    "left": 12.308,
-    "top": 7.426
+    "width": 139.336,
+    "height": 104.501,
+    "left": 8.421,
+    "top": 8.28
   },
   "/media/product-thumbnails/pocket-solo.png": {
-    "width": 110.703,
-    "height": 62.27,
-    "left": 2.784,
-    "top": 9.162
+    "width": 180.94,
+    "height": 101.778,
+    "left": -8.345,
+    "top": 10.231
   },
   "/media/product-thumbnails/pocket-chord.png": {
-    "width": 125.516,
-    "height": 70.603,
-    "left": -6.808,
-    "top": 5.261
+    "width": 203.756,
+    "height": 114.613,
+    "left": -23.336,
+    "top": 4.23
   },
   "/media/product-thumbnails/pocket-pads.png": {
-    "width": 134.868,
-    "height": 75.863,
-    "left": -11.315,
-    "top": 2.583
+    "width": 216.044,
+    "height": 121.524,
+    "left": -29.229,
+    "top": 0.664
   },
   "/media/product-thumbnails/stage-rocker-2-pack.png": {
-    "width": 141.241,
-    "height": 79.448,
-    "left": -13.759,
-    "top": -6.897
+    "width": 235.892,
+    "height": 132.689,
+    "left": -37.837,
+    "top": -17.654
   },
   "/media/product-thumbnails/stage-rocker-2-dj.png": {
-    "width": 76.37,
-    "height": 42.958,
-    "left": 17.02,
-    "top": 16.514
+    "width": 152.836,
+    "height": 85.97,
+    "left": 0.992,
+    "top": 14.0
   },
   "/media/product-thumbnails/silent-drum-s100n.png": {
-    "width": 86.4,
-    "height": 60.328,
-    "left": 12.074,
-    "top": 8.752
+    "width": 141.997,
+    "height": 99.148,
+    "left": 6.452,
+    "top": 9.288
   },
   "/media/product-thumbnails/freedoms-solo.png": {
-    "width": 85.202,
-    "height": 62.154,
-    "left": 12.524,
-    "top": 8.963
+    "width": 176.715,
+    "height": 128.912,
+    "left": -11.098,
+    "top": -3.299
   },
   "/media/product-thumbnails/stage-pad.png": {
-    "width": 121.13,
-    "height": 68.136,
-    "left": -4.826,
-    "top": 5.317
+    "width": 195.547,
+    "height": 109.996,
+    "left": -19.581,
+    "top": 4.624
   },
   "/media/product-thumbnails/mystage.png": {
-    "width": 81.702,
-    "height": 45.957,
-    "left": 17.021,
-    "top": 18.215
+    "width": 164.115,
+    "height": 92.314,
+    "left": 0.711,
+    "top": 17.249
   },
   "/media/product-thumbnails/gbs.png": {
-    "width": 126.942,
-    "height": 71.405,
-    "left": -9.029,
-    "top": 2.957
+    "width": 205.187,
+    "height": 115.418,
+    "left": -26.495,
+    "top": 0.741
   },
   "/media/product-thumbnails/boombox2-v2.png": {
-    "width": 92.67,
-    "height": 62.624,
-    "left": 7.896,
-    "top": 6.624
+    "width": 142.03,
+    "height": 95.98,
+    "left": 4.806,
+    "top": 9.379
   },
   "/media/product-thumbnails/dj303.png": {
-    "width": 82.029,
-    "height": 46.302,
-    "left": 15.547,
-    "top": 15.288
+    "width": 147.151,
+    "height": 83.061,
+    "left": 6.226,
+    "top": 16.463
   },
   "/media/product-thumbnails/fp-50bt.png": {
-    "width": 73.669,
-    "height": 41.439,
-    "left": 18.489,
-    "top": 17.147
+    "width": 162.072,
+    "height": 91.166,
+    "left": -3.324,
+    "top": 10.923
   },
   "/media/product-thumbnails/rm808-v2.png": {
-    "width": 66.136,
-    "height": 44.726,
-    "left": 22.481,
-    "top": 15.814
+    "width": 132.164,
+    "height": 89.379,
+    "left": 12.015,
+    "top": 12.666
   },
   "/media/product-thumbnails/beatmix303-v2.png": {
-    "width": 99.008,
-    "height": 74.256,
-    "left": 5.593,
-    "top": 2.428
+    "width": 161.7,
+    "height": 121.275,
+    "left": -3.691,
+    "top": -0.729
   },
   "/media/product-thumbnails/9m7-transparent.png": {
-    "width": 82.23,
-    "height": 46.279,
-    "left": 9.557,
-    "top": 16.18
+    "width": 150.766,
+    "height": 84.851,
+    "left": -6.318,
+    "top": 17.16
   },
-  "/media/product-thumbnails/app-icons-reference.jpg#ikey-station": {
-    "width": 476.31724137931036,
-    "height": 635.3379310344828,
-    "left": -130.0896551724138,
-    "top": -358.55172413793105,
-    "clipPath": "polygon(38.624% 58.324%, 40.266% 58.617%, 44.410% 62.954%, 44.332% 64.185%, 39.171% 66.823%, 37.529% 66.764%, 33.307% 62.954%, 33.385% 61.665%)",
-    "transformOrigin": "38.858483189992185% 62.57327080890972%",
-    "transform": "rotate(38deg)"
-  },
-  "/media/product-thumbnails/app-icons-reference.jpg#jam-hero": {
-    "width": 489.82978723404256,
-    "height": 653.3617021276596,
-    "left": -313.6170212765957,
-    "top": -230.04255319148933,
-    "clipPath": "polygon(74.902% 37.046%, 76.701% 37.163%, 80.923% 40.973%, 80.766% 42.614%, 75.762% 45.311%, 74.042% 45.311%, 69.742% 41.676%, 69.586% 40.270%)",
-    "transformOrigin": "75.25410476935104% 41.17819460726846%",
-    "transform": "rotate(38deg)"
-  },
-  "/media/product-thumbnails/app-icons-reference.jpg#livejam": {
-    "width": 486.38028169014086,
-    "height": 648.7605633802817,
-    "left": -222.98591549295776,
-    "top": -297.5492957746479,
-    "clipPath": "polygon(56.763% 47.714%, 58.483% 47.714%, 62.705% 51.407%, 62.783% 52.814%, 57.858% 55.803%, 56.059% 56.038%, 51.681% 52.345%, 51.525% 51.055%)",
-    "transformOrigin": "57.15402658326818% 51.875732708089096%",
-    "transform": "rotate(38deg)"
-  },
-  "/media/product-thumbnails/app-icons-reference.jpg#playnjam": {
-    "width": 500.47826086956525,
-    "height": 667.5652173913044,
-    "left": -250.2173913043478,
-    "top": -147.6521739130435,
-    "clipPath": "polygon(60.672% 23.916%, 62.392% 24.033%, 66.380% 27.726%, 66.458% 29.132%, 61.454% 32.005%, 59.656% 32.005%, 55.668% 28.429%, 55.512% 27.022%)",
-    "transformOrigin": "60.98514464425332% 27.96014067995311%",
-    "transform": "rotate(38deg)"
-  },
-  "/media/product-thumbnails/app-icons-reference.jpg#super-rocker": {
-    "width": 496.8776978417267,
-    "height": 662.7625899280577,
-    "left": -159.05755395683454,
-    "top": -216.431654676259,
-    "clipPath": "polygon(42.690% 34.467%, 44.488% 34.525%, 48.397% 38.042%, 48.554% 39.508%, 43.706% 42.497%, 41.908% 42.614%, 37.764% 38.980%, 37.608% 37.632%)",
-    "transformOrigin": "43.080531665363566% 38.540445486518166%",
-    "transform": "rotate(38deg)"
-  },
-  "/media/product-thumbnails/app-icons-reference.jpg#x808": {
-    "width": 454.38157894736844,
-    "height": 606.078947368421,
-    "left": -38.078947368421055,
-    "top": -406.85526315789474,
-    "clipPath": "polygon(20.328% 69.109%, 21.345% 69.637%, 26.114% 73.974%, 26.036% 75.029%, 20.954% 78.019%, 19.859% 77.843%, 14.934% 73.447%, 14.855% 72.626%)",
-    "transformOrigin": "20.484753713838934% 73.5638921453693%",
-    "transform": "rotate(38deg)"
-  },
+  "/media/product-thumbnails/app-ikey-station-hd.png": { "width": 93.478, "height": 93.478, "left": 30.261, "top": 12.261, "clipPath": "inset(4% round 21%)" },
+  "/media/product-thumbnails/app-jam-hero-hd.png": { "width": 86, "height": 86, "left": 34, "top": 16 },
+  "/media/product-thumbnails/app-livejam-hd.png": { "width": 86, "height": 86, "left": 34, "top": 16 },
+  "/media/product-thumbnails/app-playnjam-hd.png": { "width": 86, "height": 86, "left": 34, "top": 16 },
+  "/media/product-thumbnails/app-super-rocker-hd.png": { "width": 86, "height": 86, "left": 34, "top": 16 },
+  "/media/product-thumbnails/app-x808-hd.png": { "width": 86, "height": 86, "left": 34, "top": 16 },
   "/media/product-thumbnails/khp.png": {
-    "width": 128.745,
-    "height": 72.419,
-    "left": -6.072,
-    "top": 2.822
+    "width": 253.981,
+    "height": 142.864,
+    "left": -43.48,
+    "top": -12.37
   },
   "/media/product-thumbnails/sonic.png": {
-    "width": 123.429,
-    "height": 69.429,
-    "left": -5.84,
-    "top": 4.768
+    "width": 205.243,
+    "height": 115.449,
+    "left": -24.167,
+    "top": 2.078
   },
   "/media/product-thumbnails/vs-1.png": {
-    "width": 122.88,
-    "height": 69.12,
-    "left": -6.32,
-    "top": 6.0
+    "width": 239.834,
+    "height": 134.906,
+    "left": -42.683,
+    "top": -5.408
   },
   "/media/product-thumbnails/xd93.png": {
-    "width": 69.073,
-    "height": 38.853,
-    "left": 20.919,
-    "top": 19.607
+    "width": 151.96,
+    "height": 85.476,
+    "left": 2.022,
+    "top": 16.336
   }
 };

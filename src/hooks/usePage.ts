@@ -10,7 +10,7 @@ export function usePage(
   const { pathname } = useLocation();
   usePageMotion(pathname);
   useEffect(() => {
-    document.title = `${title} | iDance`;
+    document.title = title === "iDance" ? title : `${title} | iDance`;
     const base = import.meta.env.VITE_SITE_URL || location.origin;
     const canonical = new URL(pathname, base).href;
     const meta = (name: string, content: string, property = false) => {

@@ -529,7 +529,8 @@ section[id] {
   letter-spacing: 0;
   margin-bottom: 25px;
 }
-.footer-top > div:not(:first-child) > a {
+.footer-top > div:not(:first-child) > a,
+.footer-top > div > .footer-resource-label {
   display: flex;
   align-items: center;
   gap: 8px;

@@ -6,6 +6,8 @@ import { HomeAudio } from "../../sections/home/HomeAudio";
 import { Modal } from "../ui/Modal";
 import { savedConsent, setConsent } from "../../lib/analytics";
 import { MobileProductsMenu, ProductsMenu } from "./ProductsMenu";
+import { pendingProducts } from "../../data/pendingProductLists";
+import { productTopics, topicHref } from "../../data/productTopics";
 
 import bottomLogo from "../../pic/bottom.jpg";
 import headerLogo from "../../pic/idance-logo.svg";
@@ -50,6 +52,14 @@ export function Layout() {
   );
   const contactIndex = mainNav.findIndex(n => n.path === "/contact" || n.label.trim().toLowerCase() === "contact");
   mainNav.splice(contactIndex < 0 ? mainNav.length : contactIndex, 0, { label: "News", path: "/#news" });
+  // The global search covers the same supplied catalogue as the product pages.
+  // Prefer a published product when a pending entry names the same model.
+  const modelKey = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const searchProducts = [
+    ...data.products.map(product => ({ name: product.name, href: `/products/${encodeURIComponent(product.slug)}` })),
+    ...pendingProducts.map(product => ({ name: product.name, href: `/products/${encodeURIComponent(product.slug)}?topic=${encodeURIComponent(product.topicId)}&category=${encodeURIComponent(product.subcategoryId)}` })),
+  ].filter((product, index, all) => all.findIndex(other => modelKey(other.name) === modelKey(product.name)) === index);
+  const searchResults = searchProducts.filter(product => modelKey(product.name).includes(modelKey(query)));
   const close = () => {
     setMenu(false);
     setSearch(false);
@@ -117,9 +127,9 @@ export function Layout() {
           <div>
             <h3>Discover</h3>
             <Link to="/products">All products</Link>
-            {data.categories.map((c) => (
-              <Link key={c.id} to={`/products?category=${c.slug}`}>
-                {c.name}
+            {productTopics.map((topic) => (
+              <Link key={topic.id} to={topicHref(topic.id)}>
+                {topic.label}
               </Link>
             ))}
           </div>
@@ -127,8 +137,10 @@ export function Layout() {
             <h3>iDance</h3>
             <Link to="/about">Our story</Link>
             <Link to="/tv">iDance TV</Link>
-            <Link to="/news">News & stories</Link>
+            <Link to="/news">News</Link>
             <Link to="/contact">Contact us</Link>
+            <span className="footer-resource-label">Instruction manual</span>
+            <span className="footer-resource-label">Declaration of conformity</span>
           </div>
           <div>
             <h3>Stay connected</h3>
@@ -184,19 +196,15 @@ export function Layout() {
               type="search"
             />
           </label>
-          <div className="search-results" aria-live="polite">
-            {data.products
-              .filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
-              .map((p) => (
-                <Link onClick={close} key={p.id} to={`/products/${p.slug}`}>
+          {query.trim() && <div className="search-results" aria-live="polite">
+            {searchResults.map((p) => (
+                <Link onClick={close} key={modelKey(p.name)} to={p.href}>
                   {p.name}
                   <ArrowUpRight size={18} />
                 </Link>
               ))}
-            {!data.products.some((p) =>
-              p.name.toLowerCase().includes(query.toLowerCase()),
-            ) && <p>No products found. Try another name.</p>}
-          </div>
+            {!searchResults.length && <p>No products found. Try another name.</p>}
+          </div>}
         </Modal>
       )}
       {cookies && (

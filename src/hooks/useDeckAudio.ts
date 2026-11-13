@@ -21,15 +21,21 @@ export function useDeckAudio() {
     const request = ++generation.current;
     if (!next.length) { stop(); return; }
     try {
-      setLoading(true); setError('');
+      setActive(next); setLoading(true); setError('');
       engine.current ??= new DeckAudio();
       engine.current.update(settingsRef.current);
       await engine.current.resume();
       if (request !== generation.current) return;
       engine.current.setPads(next); setActive(next); setError(''); setLoading(false);
-    } catch {
+    } catch (cause) {
       if (request !== generation.current) return;
-      stop(); setError('Sound could not start. Tap a pad to try again.');
+      // A stalled/interrupted WebKit context must not poison the next user tap.
+      const failed = engine.current;
+      engine.current = null;
+      stop();
+      try { failed?.dispose(); } catch { /* A browser may already have closed it. */ }
+      setError(cause instanceof Error && cause.message.includes('timed out')
+        ? cause.message : 'Sound could not start. Tap a pad to retry; check your device volume.');
     }
   };
   const update = (key: keyof MixerSettings, value: number) => {

@@ -23,17 +23,19 @@ function MixerKnob({ label, value, onChange: setValue }: { label: string; value:
     onPointerUp={() => { start.current = null; }} onPointerCancel={() => { start.current = null; }} onLostPointerCapture={() => { start.current = null; }}
     onDoubleClick={() => setValue(50)}
     onKeyDown={e => { if (["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft", "Home", "End"].includes(e.key)) { e.preventDefault(); setValue(e.key === "Home" ? 0 : e.key === "End" ? 100 : clamp(value + (["ArrowUp", "ArrowRight"].includes(e.key) ? 5 : -5))); } }}>
+    <span className={styles.knobLabel} aria-hidden="true">{label}</span>
     <i className={styles.knob} style={{ transform: `rotate(${(value - 50) * 2.7}deg)` }} aria-hidden="true" />
   </div>;
 }
 function MixerPads({ side, active, onPad }: { side: "Left" | "Right"; active: number[]; onPad: (pad: number, color: string) => void }) {
-  return <div className={styles.pads} role="group" aria-label={`${side} sound pads`}>{[0,1,2,3].map(i => {
+  return <div className={styles.pads} role="group" aria-label={side === "Left" ? "DRUMS sound pads" : "BAND sound pads"}>{[0,1,2,3].map(i => {
     const pad = i + (side === "Right" ? 4 : 0), color = ["#64dcff", "#b49aff", "#ffadcb", "#91e7c0"][i];
-    return <button key={pad} type="button" aria-label={`${PAD_NAMES[pad]} loop`} aria-pressed={active.includes(pad)} title={`Toggle ${PAD_NAMES[pad]} loop`} style={{ "--pad-color": color } as CSSProperties} onClick={() => onPad(pad, color)}><span>{PAD_NAMES[pad]}</span></button>;
-  })}</div>;
+    const name = pad === 0 ? "KICK" : PAD_NAMES[pad];
+    return <button key={pad} type="button" aria-label={`${name} loop`} aria-pressed={active.includes(pad)} title={`Toggle ${name} loop`} style={{ "--pad-color": color } as CSSProperties} onClick={() => onPad(pad, color)}><span>{name}</span></button>;
+  })}<span className={styles.bankLabel} aria-hidden="true">{side === "Left" ? "DRUMS" : "BAND"}</span></div>;
 }
 function MixerFader({ side, value, onChange }: { side: "left" | "right"; value: number; onChange: (value: number) => void }) {
-  return <div className={`${styles.sideFader} ${styles[side]}`}><input type="range" min="0" max="100" value={value} aria-label={`${side} mixer volume`} aria-valuetext={`${value}%`} title={`${side === "left" ? "Drums" : "Melody"} volume: ${value}%`} onChange={e => onChange(Number(e.target.value))}/></div>;
+  return <div className={`${styles.sideFader} ${styles[side]}`}><span className={styles.levelLabel} aria-hidden="true">LEVEL</span><input type="range" min="0" max="100" value={value} aria-label={`${side} mixer volume`} aria-valuetext={`${value}%`} title={`${side === "left" ? "Drums" : "Melody"} volume: ${value}%`} onChange={e => onChange(Number(e.target.value))}/></div>;
 }
 
 const shots = [
@@ -232,20 +234,20 @@ export function ProductDeck() {
   };
   return <section ref={section} id="products" className={styles.section} aria-label="Product collection">
     <div className={styles.heading}><div><span>FIND YOUR NEXT SOUND</span><h2>Products</h2></div><Link to="/products">View all products <ArrowUpRight size={18} /></Link></div>
-    <div className={styles.deck} data-playing={audio.active.length > 0} data-cue={cue && lightsMove} data-light-motion={lightsMove} style={{"--deck-accent":lightColor,"--light-x":`${lightsMove ? position : 50}%`} as CSSProperties}>
+    <div className={styles.deck} data-playing={audio.active.length > 0 && !audio.loading} aria-busy={audio.loading} data-cue={cue && lightsMove} data-light-motion={lightsMove} style={{"--deck-accent":lightColor,"--light-x":`${lightsMove ? position : 50}%`} as CSSProperties}>
       <div className={styles.deckGlow} aria-hidden="true"/>
       <div className={styles.cueEdge} aria-hidden="true"/>
       <div className={styles.levelLeds} aria-hidden="true">{Array.from({length:12},(_,i)=><i key={i} data-lit={i <= (lightsMove ? Math.round(position / 100 * 11) : 5)} style={{"--led-delay":`${i * 45}ms`} as CSSProperties}/>)}</div>
       <div className={styles.top}>
-        <MixerKnob label="Channel tone" value={audio.settings.tone} onChange={value => audio.update("tone", value)} />
+        <label className={styles.filterFader}><span>FILTER</span><input type="range" min="0" max="100" step="1" value={audio.settings.tone} aria-label="FILTER" aria-orientation="vertical" aria-valuetext={`${audio.settings.tone}%`} title={`FILTER: ${audio.settings.tone}% · Drag up/down or use arrow keys`} onChange={e => audio.update("tone", Number(e.target.value))} onDoubleClick={() => audio.update("tone", 50)} /></label>
         <div role="tablist" aria-label="Product collections" className={styles.tabGroup}>{["popular", "new"].map((t, i) => <button key={t} role="tab" id={`tab-${t}`} aria-controls="home-products" aria-selected={tab === t} tabIndex={tab === t ? 0 : -1} onClick={() => changeTab(t)} onKeyDown={e => {
           if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
             e.preventDefault(); const next = e.key === "Home" ? "popular" : e.key === "End" ? "new" : i ? "popular" : "new";
             changeTab(next); document.getElementById(`tab-${next}`)?.focus();
           }
         }}>{t === "popular" ? "Popular" : "New Releases"}</button>)}</div>
-        <div className={styles.controls}><MixerKnob label="Echo effect" value={audio.settings.echo} onChange={value => audio.update("echo", value)} /><span aria-hidden="true">▪ ▪ ▪</span><MixerKnob label="Pitch and tempo" value={audio.settings.pitch} onChange={value => audio.update("pitch", value)} /></div>
-        <MixerKnob label="Channel balance" value={audio.settings.balance} onChange={value => audio.update("balance", value)} />
+        <div className={styles.controls}><MixerKnob label="DELAY" value={audio.settings.echo} onChange={value => audio.update("echo", value)} /><span aria-hidden="true">▪ ▪ ▪</span><MixerKnob label="PITCH" value={audio.settings.pitch} onChange={value => audio.update("pitch", value)} /></div>
+        <label className={styles.filterFader} data-pan="true"><span>PAN</span><input type="range" min="0" max="100" step="1" value={audio.settings.balance} aria-label="PAN" aria-orientation="vertical" aria-valuetext={`${audio.settings.balance}%`} title={`PAN: ${audio.settings.balance}% · Drag up/down or use arrow keys`} onChange={e => audio.update("balance", Number(e.target.value))} onDoubleClick={() => audio.update("balance", 50)} /></label>
       </div>
       <div ref={rail} className={styles.rail} id="home-products" role="tabpanel" aria-labelledby={`tab-${tab}`} tabIndex={0}
         onPointerDown={startDrag} onPointerMove={updateDrag}

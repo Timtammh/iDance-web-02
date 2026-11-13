@@ -117,18 +117,21 @@
 /* Fine strokes for the newly supplied detailed category icons. */
 .categoryTile > svg:is(:global(.lucide-keyboard-music), :global(.lucide-portable-karaoke), :global(.lucide-pedestal-karaoke), :global(.lucide-trolley-karaoke), :global(.lucide-dj-station), :global(.lucide-ipad-controller), :global(.lucide-deejay-mini-verse), :global(.lucide-pocket-player), :global(.lucide-my-stage)) { stroke-width:.8; }
 
-/* Only PARTY MIC and DJ Station use three roomier choices per desktop row. */
-.products.largeProductChoices { grid-template-columns:repeat(3,minmax(0,1fr)); }
-.largeProductChoices .productTile { min-height:140px; padding:14px 18px 14px 10px; gap:14px; }
-.largeProductChoices .productTile > .photoSlot,.largeProductChoices .productTile > .pendingThumbnail { zoom:1.4; }
-.largeProductChoices .productLabel strong { font-size:14px; }
-.largeProductChoices .productAction { font-size:11px; }
-@media(min-width:601px) and (max-width:1000px) { .products.largeProductChoices { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(max-width:600px) { .products.largeProductChoices { grid-template-columns:1fr; } }
-
-/* Selected category uses the iDance logo blue with white artwork and label. */
-.categoryTile[data-active="true"],.categoryTile[data-active="true"]:hover { background:#00aeef; color:#fff; box-shadow:none; }
+/* Selected category: near-black background with white artwork and label. */
+.categoryTile[data-active="true"],.categoryTile[data-active="true"]:hover { background:#1a1a1a; color:#fff; box-shadow:none; }
 .categoryTile[data-active="true"] > svg:first-child { color:#fff; }
 
-/* DJ Station photos: a further 30% increase over the previous 1.2 scale. */
-.djStationProducts .productTile > .photoSlot { transform:scale(1.56); transform-origin:center; }
+/* All product collections share the established roomy three-column layout. */
+.products { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.products .productTile { min-height:140px; padding:10px 18px 10px 10px; gap:14px; }
+.productTile > .photoSlot,.productTile > .pendingThumbnail { flex:0 0 154px; width:154px; height:118px; }
+.productLabel strong { font-size:14px; }
+.productAction { font-size:11px; }
+@media(min-width:601px) and (max-width:1000px) { .products { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .products { grid-template-columns:1fr; } }
+/* Make the text-only launch status more prominent than its product name. */
+.productTile[data-coming-soon="true"] .productAction { font-size:18px; font-weight:700; }
+
+.productTile[aria-disabled="true"],.productTile[aria-disabled="true"]:hover { cursor:default; background:#fff; box-shadow:none; }
+
+.productTile[aria-disabled="true"]:not([aria-current="page"]):hover { border-color:#c7cdd0; }

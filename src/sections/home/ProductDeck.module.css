@@ -28,8 +28,8 @@
 .fader button { background:none; border:0; color:#25282c; padding:0; cursor:pointer; }
 .fader button:disabled { opacity:.3; cursor:default; }
 .fader input { appearance:none; min-width:0; width:100%; height:7px; border-top:1px solid #686e74; border-bottom:1px solid #686e74; background:linear-gradient(transparent 40%,#50565c 40%,#50565c 60%,transparent 60%); cursor:ew-resize; }
-.fader input::-webkit-slider-thumb { appearance:none; width:28px; height:54px; border:0; background:url('../../pic/Crossfader.png') center/100% 100% no-repeat; filter:drop-shadow(3px 5px 3px #0008); }
-.fader input::-moz-range-thumb { width:28px; height:54px; border:0; border-radius:0; background:url('../../pic/Crossfader.png') center/100% 100% no-repeat; }
+.fader input::-webkit-slider-thumb { appearance:none; width:38.64px; height:74.52px; border:0; background:url('../../pic/Crossfader.png') center/100% 100% no-repeat; filter:drop-shadow(3px 5px 3px #0008); }
+.fader input::-moz-range-thumb { width:38.64px; height:74.52px; border:0; border-radius:0; background:url('../../pic/Crossfader.png') center/100% 100% no-repeat; }
 .section :focus-visible { outline:2px solid #686e74; outline-offset:6px; }
 .sideFader { position:absolute; bottom:35px; height:145px; width:12px; border:1px solid #686e74; border-radius:8px; }
 .sideFader::after { content:""; position:absolute; top:40%; left:-11px; width:32px; height:26px; border:1px solid #686e74; border-radius:5px; background:linear-gradient(#727578 48%,white 48%,white 52%,#727578 52%); }
@@ -290,3 +290,98 @@
   .controls { display:flex; grid-column:1 / -1; grid-row:2; justify-self:center; width:190px; padding:8px; }
 }
 @media(prefers-reduced-motion:reduce) { .deck[data-playing="true"] .levelLeds i { animation:none!important; } }
+
+/* Printed mixer legends: no change to the control hit areas or audio routing. */
+.knobControl { position:relative; }
+.knobControl .knobLabel { position:absolute; bottom:calc(100% + 9px); left:50%; transform:translateX(-50%); color:#e6eeec; font-size:9px; font-weight:600; line-height:1; letter-spacing:.09em; white-space:nowrap; text-shadow:none; pointer-events:none; }
+.pads { position:relative; }
+.bankLabel { position:absolute; top:calc(100% + 10px); left:0; width:100%; text-align:center; color:#d5dfdf; font-size:10px; font-weight:600; line-height:1; letter-spacing:.14em; pointer-events:none; }
+.levelLabel { position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%); color:#d5dfdf; font-size:9px; font-weight:600; line-height:1; letter-spacing:.09em; white-space:nowrap; pointer-events:none; }
+@media(max-width:767px) {
+  .controls .knobControl .knobLabel { bottom:calc(100% + 3px); font-size:8px; }
+  .controls { padding-top:18px; }
+  .pads { margin-bottom:12px; }
+  .bankLabel { top:calc(100% + 7px); font-size:9px; }
+}
+
+/* Touch feedback remains visible on Safari versions without color-mix(). */
+.pads button { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+.pads button[aria-pressed="true"] { background-color:var(--pad-color); }
+.deck[aria-busy="true"] .pads button[aria-pressed="true"] { outline:2px solid var(--pad-color); outline-offset:3px; }
+
+/* Keep DELAY/PITCH legends inside their control well, clear of its top edge. */
+@media(min-width:768px) { .controls { padding-top:28px; } }
+
+/* FILTER uses a native horizontal range with the matching crossfader handle. */
+.filterFader { display:flex; flex-direction:column; align-items:center; gap:8px; width:112px; justify-self:center; }
+.filterFader>span { color:#e6eeec; font-size:9px; font-weight:600; line-height:1; letter-spacing:.09em; }
+.filterFader input { appearance:none; writing-mode:horizontal-tb; direction:ltr; width:112px; height:64px; margin:0; background:transparent; cursor:ew-resize; touch-action:pan-y; }
+.filterFader input::-webkit-slider-runnable-track { width:100%; height:7px; background:#101619; border-block:1px solid #687679; box-shadow:inset 1px 1px 3px #000; }
+.filterFader input::-webkit-slider-thumb { appearance:none; width:32.2px; height:62.1px; margin-top:-28.55px; border:0; background:url('../../pic/Crossfader.png') center/100% 100% no-repeat; filter:drop-shadow(3px 5px 3px #0008); }
+.filterFader input::-moz-range-track { width:100%; height:7px; background:#101619; border-block:1px solid #687679; box-shadow:inset 1px 1px 3px #000; }
+.filterFader input::-moz-range-thumb { width:32.2px; height:62.1px; border:0; border-radius:0; background:url('../../pic/Crossfader.png') center/100% 100% no-repeat; }
+@media(min-width:768px) { .top { grid-template-columns:112px 1fr 1fr 1fr 42px; } }
+@media(min-width:1200px) and (max-width:1599px) { .top { grid-template-columns:112px 1fr 1fr 1fr 30px; } }
+@media(max-width:767px) {
+ .filterFader { grid-column:1/-1; grid-row:2; }
+ .controls { grid-column:1/-1; grid-row:3; justify-self:center; width:190px; }
+}
+
+/* Allow the larger product-carousel handle its full height. */
+.fader { height:76px; }
+@media(min-width:768px) and (max-width:1199px) { .top { gap:12px; } }
+/* Keep image-thumb padding transparent on WebKit, without a native/composited box. */
+.fader input,.filterFader input { -webkit-appearance:none; }
+.fader input::-webkit-slider-thumb,.filterFader input::-webkit-slider-thumb {
+ -webkit-appearance:none; appearance:none; background-color:transparent;
+ border:0; border-radius:0; box-shadow:none; filter:none;
+}
+.fader input::-moz-range-thumb,.filterFader input::-moz-range-thumb {
+ background-color:transparent; border:0; border-radius:0; box-shadow:none; filter:none;
+}
+/* Soft contact shadow painted behind the PNG, with transparent edges and no filter layer. */
+.fader input::-webkit-slider-thumb,.filterFader input::-webkit-slider-thumb {
+ background-image:url('../../pic/Crossfader.png'),radial-gradient(ellipse 32% 45% at 66% 54%,#000b 50%,#0007 68%,transparent 100%);
+ background-size:100% 100%; background-repeat:no-repeat;
+}
+.fader input::-moz-range-thumb,.filterFader input::-moz-range-thumb {
+ background-image:url('../../pic/Crossfader.png'),radial-gradient(ellipse 32% 45% at 66% 54%,#000b 50%,#0007 68%,transparent 100%);
+ background-size:100% 100%; background-repeat:no-repeat;
+}
+
+/* Matching outer FILTER and PAN faders retain their native range semantics. */
+@media(min-width:1000px) { .top { grid-template-columns:112px 1fr 1fr 1fr 112px; } }
+@media(max-width:999px) {
+ .top { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
+ .filterFader { grid-column:1; grid-row:2; }
+ .filterFader[data-pan="true"] { grid-column:2; grid-row:2; }
+ .tabGroup>button:nth-of-type(2) { grid-column:2; grid-row:1; }
+ .controls { grid-column:1/-1; grid-row:3; justify-self:center; width:190px; }
+}
+
+/* Vertical FILTER/PAN with the existing image handles and transparent contact shadow. */
+.filterFader { width:44px; }
+.filterFader input { writing-mode:vertical-lr; direction:rtl; width:44px; height:112px; cursor:ns-resize; touch-action:none; }
+.filterFader input::-webkit-slider-runnable-track { width:7px; height:100%; border-block:0; border-inline:1px solid #687679; }
+.filterFader input::-webkit-slider-thumb { margin-top:0; margin-left:-13.6px; }
+.filterFader input::-moz-range-track { width:7px; height:100%; border-block:0; border-inline:1px solid #687679; }
+@media(min-width:1000px) {
+ .deck { width:calc(100% + 32px); max-width:1560px; margin-inline:max(-16px,calc((100% - 1560px)/2)); }
+ .top { grid-template-columns:44px 1fr 1fr 1fr 44px; }
+}
+/* Horizontal caps on the vertical FILTER/PAN tracks; carousel cap is unchanged. */
+.filterFader input::-webkit-slider-thumb { transform:rotate(90deg); transform-origin:center; }
+.filterFader input::-moz-range-thumb { transform:rotate(90deg); transform-origin:center; }
+
+/* Approved horizontal cap: retain its narrow width with the requested fuller body. */
+.filterFader input { width:64px; }
+.filterFader input::-webkit-slider-thumb {
+ width:64px; height:44px; margin-left:-29.5px; transform:none;
+ background-image:url('../../pic/FilterPanHandle.png');
+ background-position:center; background-size:63.8px 44px; background-repeat:no-repeat;
+}
+.filterFader input::-moz-range-thumb {
+ width:64px; height:44px; transform:none;
+ background-image:url('../../pic/FilterPanHandle.png');
+ background-position:center; background-size:63.8px 44px; background-repeat:no-repeat;
+}

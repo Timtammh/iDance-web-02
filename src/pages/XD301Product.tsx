@@ -65,12 +65,14 @@ export function XD301Product({ product }: { product: Product }) {
       <h2 id="video-heading" className={styles.visuallyHidden}>XD301 product demonstration</h2>
     </section>
     <XD301FeatureStory/>
+    <section className={`${styles.section} ${styles.controlsOverview}`} aria-label="XD301 controls overview">
+      <a href="/media/xd301-controls-monochrome.png" target="_blank" rel="noopener noreferrer" aria-label="Open the full-size XD301 controls diagram in a new tab">
+        <img src="/media/xd301-controls-monochrome.png" alt="XD301 controls diagram showing turntables, soundpads, space controls, pitch controls, crossfader, beat players, master control and rechargeable battery" loading="lazy" />
+      </a>
+    </section>
     <section tabIndex={-1} id="ThreeSixty" className={`${styles.section} ${styles.threeSixty}`} aria-labelledby="three-sixty-heading">
       <span className="eyebrow">EVERY ANGLE</span><h2 id="three-sixty-heading">360°</h2>
       <ProductAngleViewer/>
-    </section>
-    <section className={styles.controlsOverview} aria-label="XD301 controls overview">
-      <img src="/media/xd301-controls-overview.webp" alt="XD301 controls overview: turntable decks A and B, Space Control sensors, pitch controls, soundpads, bass booster, master control, beat players, crossfader, Drop Mix and DJ Talk, and rechargeable battery." width={1920} height={1301} loading="lazy" decoding="async"/>
     </section>
     <section tabIndex={-1} id="Specifications" className={styles.section} aria-labelledby="specifications-heading">
       <div className={styles.specLayout}>
@@ -78,7 +80,6 @@ export function XD301Product({ product }: { product: Product }) {
           <h2 id="specifications-heading">Specifications</h2>
           <div className={styles.gallery}><img src={image?.url} alt={image?.alt} width={1536} height={1024} loading="lazy"/></div>
           <div className={styles.thumbnails} aria-label="Choose product image">{galleryImages.map((item,index) => <button key={item.url} aria-label={`View image ${index+1}`} aria-pressed={selected === index} onClick={() => setSelected(index)}><img src={item.url} alt="" width={112} height={84} loading="lazy"/></button>)}</div>
-          <p className={styles.caption}>Multi-angle demo visuals. Final 3D images to follow.</p>
         </div>
         <div className={styles.specContent}>
           <details open><summary><span><FileText size={20} aria-hidden="true"/>Product details</span></summary><dl className={styles.specifications}>

@@ -42,7 +42,7 @@ export function Home() {
     ? data.home.featuredNews.map(id => data.news.find(post => post.id === id)).filter(post => !!post)
     : data.news).slice(0, 3);
   usePage(
-    data.settings.seo?.title || "Bring Your Sound to Life",
+    "iDance",
     data.settings.seo?.description,
     data.home.heroImage?.url,
   );
